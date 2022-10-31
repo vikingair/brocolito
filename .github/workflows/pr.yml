@@ -12,7 +12,7 @@ jobs:
         with:
           target: .github/cli
       - run: pnpm build
-        working-dir: .github/cli
+        working-directory: .github/cli
       - run: node .github/cli
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}

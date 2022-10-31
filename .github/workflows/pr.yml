@@ -9,8 +9,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/brocolito
-      - run: brocolito
         id: foo
-        with:
-          TOKEN: ${{ github.token }}
       - run: echo ${{ steps.foo.outputs.changed_files }}

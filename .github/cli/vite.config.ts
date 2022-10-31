@@ -13,7 +13,7 @@ export default defineConfig({
         rollupOptions: {
             // make sure to externalize deps that shouldn't be bundled
             // into your library
-            // external: ['vue', 'vuex'],
+            external: ['@actions/github'],
             output: {
                 dir: 'build',
             },

@@ -7,14 +7,10 @@ const run = async () => {
 
     const octokit = github.getOctokit(token);
 
-    console.log('>>>>');
-    console.log(github.context);
-    console.log('<<<<');
-
     const { data: diff } = await octokit.rest.pulls.get({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
-        pull_number: github.context.runNumber,
+        pull_number: github.context.payload.pull_request!.number,
         mediaType: {
             format: "diff",
         },

@@ -7,17 +7,14 @@ const run = async () => {
 
     const octokit = github.getOctokit(token);
 
-    const { data: diff } = await octokit.rest.pulls.get({
+    const { data: files } = await octokit.rest.pulls.listFiles({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         pull_number: github.context.payload.pull_request!.number,
-        mediaType: {
-            format: "diff",
-        },
     });
 
     console.log('>>>>');
-    console.log(diff);
+    console.log(files.map(({ filename }) => filename));
     console.log('<<<<');
 };
 

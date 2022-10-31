@@ -10,6 +10,9 @@ inputs:
       Also when generating a new PAT, select the least scopes necessary.
       [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
     default: ${{ github.token }}
+  install_dir:
+    description: The directory where to place the symbolic link for aliased execution
+    default: ${{ github.path }}
 
 runs:
   using: composite
@@ -20,5 +23,7 @@ runs:
     - run: pnpm build
       shell: bash
       working-directory: .github/cli
-    - run: alias brocolito="node .github/cli"
+    - run: |
+        chmod a+x .github/cli/build/index.cjs.js
+        cp -s .github/cli/build/index.cjs.js ${{ inputs.install_dir }}/brocolito
       shell: bash

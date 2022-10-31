@@ -19,6 +19,7 @@ export default defineConfig({
             external: Object.keys(packageJSON.dependencies),
             output: {
                 dir: 'build',
+                banner: '#!/usr/bin/env node',
             },
         },
     },

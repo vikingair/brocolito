@@ -22,3 +22,5 @@ runs:
       working-directory: .github/cli
     - run: node .github/cli
       shell: bash
+      env:
+        TOKEN: ${{ inputs.token }}

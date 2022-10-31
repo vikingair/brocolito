@@ -20,7 +20,5 @@ runs:
     - run: pnpm build
       shell: bash
       working-directory: .github/cli
-    - run: node .github/cli
+    - run: alias brocolito="node .github/cli"
       shell: bash
-      env:
-        TOKEN: ${{ inputs.token }}

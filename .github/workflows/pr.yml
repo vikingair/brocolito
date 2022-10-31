@@ -8,13 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/pnpm-install
-        with:
-          target: .github/cli
-      - run: pnpm build
-        working-directory: .github/cli
-      - run: node .github/cli
+      - uses: ./.github/actions/brocolito
+      - run: brocolito
         id: foo
-        env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          TOKEN: ${{ github.token }}
       - run: echo ${{ steps.foo.outputs.changed_files }}

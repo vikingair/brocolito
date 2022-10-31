@@ -10,7 +10,7 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, 'src/main.ts'),
             name: 'MyLib',
-            fileName: (format) => `index.${format}.js`,
+            fileName: (_format) => `brocolito`,
             formats: ['cjs'],
         },
         rollupOptions: {

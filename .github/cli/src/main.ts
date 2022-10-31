@@ -5,12 +5,16 @@ const run = async () => {
     // const token = core.getInput('token');
     const token = process.env.TOKEN!;
 
-    const octokit = github.getOctokit(token)
+    const octokit = github.getOctokit(token);
+
+    console.log('>>>>');
+    console.log(github.context);
+    console.log('<<<<');
 
     const { data: diff } = await octokit.rest.pulls.get({
-        owner: "octokit",
-        repo: "rest.js",
-        pull_number: 1,
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        pull_number: github.context.runNumber,
         mediaType: {
             format: "diff",
         },

@@ -1,5 +1,8 @@
 import { resolve } from 'path';
+import { readFileSync } from 'fs';
 import { defineConfig } from 'vite';
+
+const packageJSON = JSON.parse(readFileSync('package.json', 'utf-8'));
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,7 +16,7 @@ export default defineConfig({
         rollupOptions: {
             // make sure to externalize deps that shouldn't be bundled
             // into your library
-            external: ['@actions/github'],
+            external: Object.keys(packageJSON.dependencies),
             output: {
                 dir: 'build',
             },

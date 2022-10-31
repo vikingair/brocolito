@@ -14,5 +14,7 @@ jobs:
       - run: pnpm build
         working-directory: .github/cli
       - run: node .github/cli
+        id: foo
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo ${{ steps.foo.outputs.changed_files }}

@@ -1,5 +1,6 @@
-// import * as core from '@actions/core';
+import * as core from '@actions/core';
 import * as github from '@actions/github';
+import { Utils } from './utils';
 
 const run = async () => {
     // const token = core.getInput('token');
@@ -7,15 +8,14 @@ const run = async () => {
 
     const octokit = github.getOctokit(token);
 
-    const { data: files } = await octokit.rest.pulls.listFiles({
+    const files = await Utils.paginate((params) => octokit.rest.pulls.listFiles(params), {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         pull_number: github.context.payload.pull_request!.number,
+        per_page: 100,
     });
 
-    console.log('>>>>');
-    console.log(files.map(({ filename }) => filename));
-    console.log('<<<<');
+    core.setOutput('changed_files', files.map(({ filename }) => filename))
 };
 
 run();

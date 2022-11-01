@@ -1,0 +1,16 @@
+name: PR
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/brocolito
+      - run: brocolito
+        id: foo
+        env:
+          TOKEN: ${{ github.token }}
+      - run: echo ${{ steps.foo.outputs.changed_files }}

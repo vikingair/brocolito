@@ -1,0 +1,26 @@
+name: 'Brocolito'
+description: 'Prepare Brocolito CLI'
+inputs:
+  token:
+    description: >
+      Personal access token (PAT) used to fetch the repository. The PAT is configured
+      with the local git config, which enables your scripts to run authenticated git
+      commands. The post-job step removes the PAT.
+      We recommend using a service account with the least permissions necessary.
+      Also when generating a new PAT, select the least scopes necessary.
+      [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/pnpm-install
+      with:
+        target: .github/cli
+    - run: pnpm build
+      shell: bash
+      working-directory: .github/cli
+    - run: |
+        chmod a+x .github/cli/build/brocolito
+        realpath .github/cli/build >> $GITHUB_PATH
+      shell: bash

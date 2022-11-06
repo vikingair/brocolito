@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
-import { defineConfig } from 'vite';
+import { defineConfig, UserConfig } from 'vite';
 
 const packageJSON = JSON.parse(readFileSync('package.json', 'utf-8'));
 
@@ -8,8 +8,7 @@ const packageJSON = JSON.parse(readFileSync('package.json', 'utf-8'));
 export default defineConfig({
     build: {
         lib: {
-            entry: resolve(__dirname, 'src/main.ts'),
-            name: 'MyLib',
+            entry: resolve('src/main.ts'),
             fileName: (_format) => `brocolito`,
             formats: ['cjs'],
         },

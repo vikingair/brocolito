@@ -6,6 +6,8 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/.github/cli/build" />
+      <excludeFolder url="file://$MODULE_DIR$/brocolito/build" />
+      <excludeFolder url="file://$MODULE_DIR$/brocolito/dist" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

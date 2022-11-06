@@ -10,17 +10,21 @@ inputs:
       Also when generating a new PAT, select the least scopes necessary.
       [Learn more about creating and using encrypted secrets](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
     default: ${{ github.token }}
+  dir:
+    description: The directory where you have placed your CLI code.
+    default: .github/cli
 
 runs:
   using: composite
   steps:
     - uses: ./.github/actions/pnpm-install
       with:
-        target: .github/cli
+        target: ${{ inputs.dir }}
     - run: pnpm build
       shell: bash
-      working-directory: .github/cli
+      working-directory: ${{ inputs.dir }}
     - run: |
-        chmod a+x .github/cli/build/brocolito
-        realpath .github/cli/build >> $GITHUB_PATH
+        chmod a+x build/brocolito
+        realpath build >> $GITHUB_PATH
       shell: bash
+      working-directory: ${{ inputs.dir }}

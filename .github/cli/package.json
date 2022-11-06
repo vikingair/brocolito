@@ -2,15 +2,15 @@
   "name": "cli",
   "dependencies": {
     "@actions/core": "^1.10.0",
-    "@actions/github": "^5.1.1"
+    "@actions/github": "^5.1.1",
+    "brocolito": "0.0.1-beta.0"
   },
-  "main": "./build/index.cjs.js",
   "scripts": {
-    "build": "vite build"
+    "build": "brocolito build",
+    "build:watch": "brocolito build:watch"
   },
   "devDependencies": {
     "@types/node": "^18.11.8",
-    "typescript": "^4.8.4",
-    "vite": "^3.2.1"
+    "typescript": "^4.8.4"
   }
 }

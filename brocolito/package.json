@@ -1,0 +1,40 @@
+{
+  "name": "brocolito",
+  "version": "0.0.1-beta.0",
+  "description": "Create type-safe CLIs to align local development and pipeline workflows",
+  "main": "dist/brocolito.cjs",
+  "module": "dist/brocolito.mjs",
+  "types": "dist/brocolito.d.ts",
+  "files": [
+    "dist",
+    "vite.peer.config.ts"
+  ],
+  "bin": {
+    "brocolito": "./bin/build.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fdc-viktor-luft/brocolito"
+  },
+  "keywords": [
+    "CLI",
+    "GitHub Actions"
+  ],
+  "author": "Viktor Luft <viktor.luft@freiheit.com> (https://github.com/fdc-viktor-luft)",
+  "license": "MIT",
+  "scripts": {
+    "dist": "vite build && pnpm dist:ts",
+    "dist:ts": "tsc --outDir dist-ts --declaration true --noEmit false && rm dist-ts/**.js && cp -r dist-ts/* dist && rm -r dist-ts",
+    "lint": "tsc"
+  },
+  "dependencies": {
+    "@types/minimist": "^1.2.2",
+    "cac": "^6.7.14",
+    "minimist": "^1.2.7",
+    "vite": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "typescript": "^4.6.4"
+  }
+}

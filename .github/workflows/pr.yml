@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/brocolito
-      - run: brocolito
+      - uses: ./.github/actions/brocolito-setup
+      - run: brocolito changed_files
         id: foo
         env:
           TOKEN: ${{ github.token }}

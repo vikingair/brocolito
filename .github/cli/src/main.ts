@@ -17,6 +17,8 @@ CLI.command('changed_files').action(async () => {
         per_page: 100,
     });
 
+    console.log(files);
+
     core.setOutput('changed_files', files.map(({ filename }) => filename));
 });
 

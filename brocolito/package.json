@@ -1,13 +1,13 @@
 {
   "name": "brocolito",
-  "version": "0.0.1-beta.0",
+  "version": "0.0.1-beta.3",
   "description": "Create type-safe CLIs to align local development and pipeline workflows",
   "main": "dist/brocolito.cjs",
   "module": "dist/brocolito.mjs",
   "types": "dist/brocolito.d.ts",
   "files": [
     "dist",
-    "vite.peer.config.ts"
+    "bin"
   ],
   "bin": {
     "brocolito": "./bin/build.mjs"

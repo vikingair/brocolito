@@ -9,8 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/brocolito-setup
-      - run: brocolito changed_files
-        id: foo
+      - run: bro changed_files
+        id: find-changed-files
         env:
           TOKEN: ${{ github.token }}
-      - run: echo ${{ steps.foo.outputs.changed_files }}
+      - run: echo ${{ steps.find-changed-files.outputs.changed_files }}

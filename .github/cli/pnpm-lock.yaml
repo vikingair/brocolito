@@ -4,16 +4,16 @@ specifiers:
   '@actions/core': ^1.10.0
   '@actions/github': ^5.1.1
   '@types/node': ^18.11.8
-  brocolito: 0.0.1-beta.0
+  brocolito: 0.0.1-beta.3
   typescript: ^4.8.4
 
 dependencies:
   '@actions/core': 1.10.0
   '@actions/github': 5.1.1
-  brocolito: 0.0.1-beta.0
+  brocolito: 0.0.1-beta.3
 
 devDependencies:
-  '@types/node': 18.11.8
+  '@types/node': 18.11.9
   typescript: 4.8.4
 
 packages:
@@ -152,19 +152,19 @@ packages:
     resolution: {integrity: sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==}
     dev: false
 
-  /@types/node/18.11.8:
-    resolution: {integrity: sha512-uGwPWlE0Hj972KkHtCDVwZ8O39GmyjfMane1Z3GUBGGnkZ2USDq7SxLpVIiIHpweY9DS0QTDH0Nw7RNBsAAZ5A==}
-    dev: true
+  /@types/node/18.11.9:
+    resolution: {integrity: sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==}
 
   /before-after-hook/2.2.3:
     resolution: {integrity: sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==}
     dev: false
 
-  /brocolito/0.0.1-beta.0:
-    resolution: {integrity: sha512-4pybOXmcd8016X7KyHq9kmY9KCss+xKGYBluLPwCW6SUUqdimzOrQmWGsZ+aCWjPXQ2lC4rtXGS308vt1o+hkg==}
+  /brocolito/0.0.1-beta.3:
+    resolution: {integrity: sha512-RybfdzpffbTzu+qXp7Y994MAtz/H6vutfHZworAUjGLO/rUQDJg/vfM1DT0fDYx2GJHEObPTaitbYI4U58hwdA==}
     hasBin: true
     dependencies:
       '@types/minimist': 1.2.2
+      '@types/node': 18.11.9
       cac: 6.7.14
       minimist: 1.2.7
       vite: 3.2.1

@@ -8,8 +8,10 @@ const packageJSON = JSON.parse(readFileSync('package.json', 'utf-8'));
 export default defineConfig({
     build: {
         lib: {
-            entry: resolve(__dirname, 'src/brocolito.ts'),
-            fileName: (format) => `brocolito.${format === 'cjs' ? 'cjs' : 'mjs'}`,
+            entry: {
+                brocolito: resolve(__dirname, 'src/brocolito.ts'),
+            },
+            fileName: (format, entryName) => `${entryName}.${format === 'cjs' ? 'cjs' : 'mjs'}`,
             formats: ['cjs', 'es'],
         },
         rollupOptions: {

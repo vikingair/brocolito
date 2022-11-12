@@ -1,7 +1,7 @@
 // https://github.com/actions/toolkit
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Utils } from './utils';
+import { Utils } from './utils2';
 import { CLI } from 'brocolito';
 
 CLI.command('changed_files').action(async () => {

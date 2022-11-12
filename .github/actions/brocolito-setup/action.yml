@@ -24,7 +24,6 @@ runs:
       shell: bash
       working-directory: ${{ inputs.dir }}
     - run: |
-        chmod a+x build/brocolito
-        realpath build >> $GITHUB_PATH
+        realpath build/bin >> $GITHUB_PATH
       shell: bash
       working-directory: ${{ inputs.dir }}

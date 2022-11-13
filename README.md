@@ -26,6 +26,14 @@ You create some directory for your CLI code and place two mandatory files in it:
 Run the build script to set up the CLI, from the above example with `pnpm build`.
 You will get printed how to make the CLI globally available for you.
 
+Additional recommendations:
+
+- Install `devDependencies`: `typescript` and `@types/node`
+- Add `tsconfig.json`
+- Add `lint` script for your CLI
+
+Feel free to check out the herein provided [example](.github/cli).
+
 ### Minimal code sample
 In your `src/main.ts` you create this code:
 
@@ -48,3 +56,12 @@ Please check the used custom actions of this repository yourself. It uses [pnpm]
 to install the CLI dependencies and a simple [setup](.github/actions/brocolito-setup) to set up the CLI.
 
 In this [workflow](.github/workflows/pr.yml) you can see it in action.
+
+### Future plans
+
+- Add tab completion
+- Add linting, formatting and testing to this repo
+- Enforce linting and testing in workflow
+- Create an initial setup using `create-brocolito-cli` package
+  - Then you can set the above up using `pnpm create brocolito-cli`
+- Include some more examples of interesting CLI relevant features that can be adopted

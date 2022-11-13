@@ -11,4 +11,6 @@ jobs:
       - uses: ./.github/actions/brocolito-setup
       - run: bro changed_files
         id: find-changed-files
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - run: echo ${{ steps.find-changed-files.outputs.changed_files }}

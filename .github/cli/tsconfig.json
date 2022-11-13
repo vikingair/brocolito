@@ -20,7 +20,8 @@
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "preserve",
-    "noEmit": true
+    "noEmit": true,
+    "incremental": true
   },
   "include": ["setupTests.ts", "src", "vue-shims.d.ts"]
 }

@@ -17,7 +17,7 @@ CLI.command('changed_files').action(async () => {
         per_page: 100,
     });
 
-    core.setOutput('changed_files', files.map(({ filename }) => filename));
+    core.setOutput('changed_files', files.flatMap(({ filename, status, previous_filename }) => status === 'renamed' ? [filename, previous_filename] : filename));
 });
 
 CLI.command('test').action(() => console.log('hello world'));

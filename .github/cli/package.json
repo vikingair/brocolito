@@ -6,7 +6,8 @@
     "brocolito": "0.0.1-beta.3"
   },
   "scripts": {
-    "build": "brocolito build"
+    "build": "brocolito build",
+    "lint": "tsc"
   },
   "devDependencies": {
     "@types/node": "^18.11.8",

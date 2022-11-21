@@ -24,7 +24,10 @@ jobs:
           target: brocolito
       - name: Lint 🎨
         run: pnpm lint
+        working-directory: brocolito
       - name: Test 🐛
         run: pnpm test
+        working-directory: brocolito
       - name: Build 🏗️
         run: pnpm dist
+        working-directory: brocolito

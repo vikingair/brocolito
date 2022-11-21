@@ -22,5 +22,5 @@
     "jsx": "preserve",
     "noEmit": true
   },
-  "include": ["src"]
+  "include": ["src", "tests"]
 }

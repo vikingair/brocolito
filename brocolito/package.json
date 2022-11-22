@@ -28,7 +28,8 @@
     "lint": "pnpm lint:es && pnpm lint:ts",
     "lint:es": "eslint --ext .ts --ignore-path ../.gitignore .",
     "lint:ts": "tsc",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "test:update": "vitest --run -u"
   },
   "dependencies": {
     "@types/minimist": "^1.2.2",

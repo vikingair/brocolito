@@ -10,6 +10,7 @@ import {
 } from './types';
 import { State } from './state';
 import { parse } from './parse';
+import { Utils } from './utils';
 
 const camelize = <S extends string>(str: S): SnakeToCamelCase<S> =>
   str.replace(/(-[a-zA-Z])/g, (w) => w[1].toUpperCase()) as SnakeToCamelCase<S>;
@@ -95,6 +96,10 @@ const name = (n: string) => {
 // TODO: Completion
 // TODO: Aliases
 export const CLI = { command, parse, name, _state: State };
+
+// Utility re-exported (no additional installation required for the peer)
+const { pc, complainAndExit } = Utils;
+export { pc, complainAndExit };
 
 // CLI.command('git', 'test description')
 //   .option('--foo-bar <argument>', 'Please use it')

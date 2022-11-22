@@ -2,10 +2,7 @@ import { Command, OptionMeta } from './types';
 import { State } from './state';
 import minimist from 'minimist';
 import { Help } from './help';
-
-const complainAndExit = (errMsg: string): never => {
-  throw new Error(errMsg);
-};
+import { Utils } from './utils';
 
 const _findSubcommand = (command: Command, subcommandsOrArgs: string[]): [command: Command, args: string[]] => {
   if (!subcommandsOrArgs.length) return [command, subcommandsOrArgs];
@@ -18,12 +15,12 @@ const _findCommand = (commands: string[]): [command: Command, args: string[]] =>
   // TODO: What about top-level command? Should we support it?
   if (!commands.length) {
     // TODO: Show help message instead?
-    complainAndExit('No command was specified');
+    Utils.complainAndExit('No command was specified');
   }
   const command = State.commands[commands[0]];
   if (!command) {
     // TODO: Show help message instead?
-    complainAndExit(`Command "${commands[0]}" does not exist`);
+    Utils.complainAndExit(`Command "${commands[0]}" does not exist`);
   }
   return _findSubcommand(command, commands.slice(1));
 };
@@ -35,7 +32,7 @@ const _parseArgs = (command: Command, args: string[]): Record<string, string | s
     command.args.map(({ usage, name }): [string, string | string[]] => {
       const multi = /\.{3}>$/.test(usage);
       if (!usedArgs.length) {
-        return complainAndExit('Too few arguments given: ' + errorDetails);
+        return Utils.complainAndExit('Too few arguments given: ' + errorDetails);
       } else if (!multi) {
         const arg = usedArgs.shift();
         return [name, arg as string];
@@ -47,7 +44,7 @@ const _parseArgs = (command: Command, args: string[]): Record<string, string | s
     })
   );
   if (usedArgs.length) {
-    return complainAndExit('Too many arguments given: ' + errorDetails);
+    return Utils.complainAndExit('Too many arguments given: ' + errorDetails);
   }
   return result;
 };
@@ -62,7 +59,7 @@ const _parseOptions = (command: Command, args: minimist.ParsedArgs): Record<stri
   });
   const remainingArgs = Object.keys(allArgs);
   if (remainingArgs.length) {
-    complainAndExit(`Unrecognized options were used: ${remainingArgs.map((name) => '--' + name).join(', ')}`);
+    Utils.complainAndExit(`Unrecognized options were used: ${remainingArgs.map((name) => '--' + name).join(', ')}`);
   }
   return opts;
 };
@@ -78,7 +75,7 @@ export const parse = (argv = process.argv): void => {
   const action = command._action;
   if (!action) {
     // TODO: Print full command specifier
-    return complainAndExit(`No action for given command specified`);
+    return Utils.complainAndExit(`No action for given command specified`);
   }
   action({ ...options, ...parsedArgs });
 };

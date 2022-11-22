@@ -37,8 +37,8 @@ describe('help', () => {
     `);
   });
 
-  it('prints command help', () => {
-    expect(_getHelp({ ...dummyCommand, _action: () => undefined })).toMatchInlineSnapshot(`
+  it('prints command help with options', () => {
+    expect(_getHelp({ ...dummyCommand, _action: anyCallback })).toMatchInlineSnapshot(`
       "Help:
         run a test
 
@@ -50,7 +50,7 @@ describe('help', () => {
     expect(
       _getHelp({
         ...dummyCommand,
-        _action: () => undefined,
+        _action: anyCallback,
         options: {
           foo: { usage: '--open', description: 'some bool flag' } as OptionMeta,
           bar: { usage: '--file <file:one>', description: 'some single file' } as OptionMeta,
@@ -68,6 +68,75 @@ describe('help', () => {
         --open              some bool flag
         --file <file:one>   some single file
         --more <args...>    more args
+      "
+    `);
+  });
+
+  it('prints command with subcommands', () => {
+    expect(
+      _getHelp({
+        ...dummyCommand,
+        subcommands: { one: { ...dummyCommand, name: 'one', line: 'test one', description: 'subcommand one here' } },
+      })
+    ).toMatchInlineSnapshot(`
+      "Help:
+        run a test
+
+      Usage:
+        $ cli test <command> [options]
+
+      Commands:
+        one   subcommand one here
+      "
+    `);
+  });
+
+  it('prints command with optional subcommands', () => {
+    expect(
+      _getHelp({
+        ...dummyCommand,
+        _action: anyCallback,
+        subcommands: { one: { ...dummyCommand, name: 'one', line: 'test one', description: 'subcommand one here' } },
+      })
+    ).toMatchInlineSnapshot(`
+      "Help:
+        run a test
+
+      Usage:
+        $ cli test [<command>] [options]
+
+      Commands:
+        one   subcommand one here
+      "
+    `);
+  });
+
+  it('prints subcommand', () => {
+    expect(
+      _getHelp({
+        ...dummyCommand,
+        name: 'one',
+        line: 'test one',
+        description: 'subcommand one here',
+        subcommands: {
+          two: { ...dummyCommand, name: 'two', line: 'test one two', description: 'subcommand two here' },
+        },
+        options: {
+          foo: { usage: '--open', description: 'some bool flag' } as OptionMeta,
+        },
+      })
+    ).toMatchInlineSnapshot(`
+      "Help:
+        subcommand one here
+
+      Usage:
+        $ cli test one <command> [options]
+
+      Commands:
+        two   subcommand two here
+
+      Options:
+        --open   some bool flag
       "
     `);
   });

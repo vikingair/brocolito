@@ -1,11 +1,18 @@
-import { describe, it, vi, expect } from 'vitest';
+import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { CLI } from '../src/brocolito';
+import { Utils } from '../src/utils';
 
 const call = (line: string) => {
   CLI.parse(['nodeFile', 'scriptFile'].concat(line.split(' ')));
 };
 
 describe('Example commands', () => {
+  beforeEach(() => {
+    vi.spyOn(Utils, 'complainAndExit').mockImplementation((errMsg) => {
+      throw new Error(errMsg);
+    });
+  });
+
   it('Simple command without options', () => {
     // given
     const spy = vi.fn();

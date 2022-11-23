@@ -1,22 +1,9 @@
-import {
-  Action,
-  ArgumentArg,
-  ArgumentToName,
-  Command,
-  OptionArg,
-  OptionToName,
-  SnakeToCamelCase,
-  Subcommand,
-} from './types';
+import { Action, ArgumentArg, Command, OptionArg, OptionToName, Subcommand } from './types';
 import { State } from './state';
 import { parse } from './parse';
 import { Utils } from './utils';
-
-const camelize = <S extends string>(str: S): SnakeToCamelCase<S> =>
-  str.replace(/(-[a-zA-Z])/g, (w) => w[1].toUpperCase()) as SnakeToCamelCase<S>;
-
-const argumentToName = <S extends string>(str: S): ArgumentToName<S> =>
-  camelize(str.replace(/^<(file:)?([a-zA-Z0-9-]+)(\.{3})?>$/, '$2')) as ArgumentToName<S>;
+import { Arguments } from './arguments';
+import { Completion } from './completion/completion';
 
 const createAction =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>) =>
@@ -34,7 +21,7 @@ const createOption =
       // TODO: add parsers in general
       // TODO: Make types in that case more strict and derive from parser
     }
-    newCommand.options[camelize(name) as OptionToName<USAGE>] = { usage, name, description };
+    newCommand.options[Arguments.camelize(name) as OptionToName<USAGE>] = { usage, name, description };
     return newCommand;
   };
 
@@ -59,7 +46,7 @@ const createArg =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>) =>
   <USAGE extends `<${string}>`>(usage: USAGE, description: string): Command<OPTIONS, ARGS & ArgumentArg<USAGE>> => {
     const newCommand = command as Command<OPTIONS, ARGS & ArgumentArg<USAGE>>;
-    const name = argumentToName(usage);
+    const name = Arguments.toName(usage);
     newCommand.args.push({ usage, name, description });
     return newCommand;
   };
@@ -100,6 +87,8 @@ export const CLI = { command, parse, name, _state: State };
 // Utility re-exported (no additional installation required for the peer)
 const { pc, complainAndExit } = Utils;
 export { pc, complainAndExit };
+
+CLI.command('completion', 'Set up shell completion').action(Completion.run);
 
 // CLI.command('git', 'test description')
 //   .option('--foo-bar <argument>', 'Please use it')

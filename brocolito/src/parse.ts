@@ -11,16 +11,14 @@ const _findSubcommand = (command: Command, subcommandsOrArgs: string[]): [comman
   return _findSubcommand(subcommand, subcommandsOrArgs.slice(1));
 };
 
-const _findCommand = (commands: string[]): [command: Command, args: string[]] => {
+export const findCommand = (commands: string[]): [command: Command, args: string[]] | string => {
   // TODO: What about top-level command? Should we support it?
   if (!commands.length) {
-    // TODO: Show help message instead?
-    Utils.complainAndExit('No command was specified');
+    return 'No command was specified';
   }
   const command = State.commands[commands[0]];
   if (!command) {
-    // TODO: Show help message instead?
-    Utils.complainAndExit(`Command "${commands[0]}" does not exist`);
+    return `Command "${commands[0]}" does not exist`;
   }
   return _findSubcommand(command, commands.slice(1));
 };
@@ -49,15 +47,17 @@ const _parseArgs = (command: Command, args: string[]): Record<string, string | s
   return result;
 };
 
-const _parseOptions = (command: Command, args: minimist.ParsedArgs): Record<string, string | undefined> => {
-  const { _, ...allArgs } = args;
+const _parseOptions = (
+  command: Command,
+  minimistOptions: Omit<minimist.ParsedArgs, '_'>
+): Record<string, string | undefined> => {
   const opts: Record<string, string | undefined> = {};
   Object.entries(command.options as Record<string, OptionMeta>).forEach(([camelName, { name }]) => {
-    const value = allArgs[name];
-    delete allArgs[name];
+    const value = minimistOptions[name];
+    delete minimistOptions[name];
     opts[camelName] = value;
   });
-  const remainingArgs = Object.keys(allArgs);
+  const remainingArgs = Object.keys(minimistOptions);
   if (remainingArgs.length) {
     Utils.complainAndExit(`Unrecognized options were used: ${remainingArgs.map((name) => '--' + name).join(', ')}`);
   }
@@ -65,13 +65,16 @@ const _parseOptions = (command: Command, args: minimist.ParsedArgs): Record<stri
 };
 
 export const parse = (argv = process.argv): void => {
-  const minimistArgs = minimist(argv.slice(2));
-  const wantsHelp = minimistArgs.h || minimistArgs.help;
-  if (wantsHelp && !minimistArgs._[0]) return Help.show();
-  const [command, args] = _findCommand(minimistArgs._);
+  const { _: minimistArgs, ...minimistOpts } = minimist(argv.slice(2));
+  const wantsHelp = minimistOpts.h || minimistOpts.help;
+  if (wantsHelp && !minimistArgs[0]) return Help.show();
+  const foundCommand = findCommand(minimistArgs);
+  // TODO: Show help message instead?
+  if (typeof foundCommand === 'string') return Utils.complainAndExit(foundCommand);
+  const [command, args] = foundCommand;
   if (wantsHelp) return Help.show(command);
   const parsedArgs = _parseArgs(command, args);
-  const options = _parseOptions(command, minimistArgs);
+  const options = _parseOptions(command, minimistOpts);
   const action = command._action;
   if (!action) {
     // TODO: Print full command specifier

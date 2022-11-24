@@ -1,4 +1,4 @@
-import { ArgumentToName, SnakeToCamelCase } from './types';
+import { ArgumentToName, OptionMeta, SnakeToCamelCase } from './types';
 
 const camelize = <S extends string>(str: S): SnakeToCamelCase<S> =>
   str.replace(/(-[a-zA-Z])/g, (w) => w[1].toUpperCase()) as SnakeToCamelCase<S>;
@@ -15,13 +15,16 @@ const deriveInfo = (usage: string): { type: 'boolean' | 'string' | 'file'; multi
   };
 };
 
-const deriveOptionInfo = (usage: string): { type: 'boolean' | 'string' | 'file'; multi: boolean } => {
-  const [_name, arg] = usage.split(' ');
-  const match = arg && arg.match(/^<([a-zA-Z0-9-]+)(\.{3})?>$/);
-  if (!match) return { type: 'boolean', multi: false };
+const deriveOptionInfo = (usage: string): Pick<OptionMeta, 'name' | 'type' | 'prefixedName'> => {
+  const [prefixedName, arg] = usage.split(' ');
+  const name = prefixedName.substring(2);
+  if (!arg) return { name, prefixedName, type: 'boolean' };
+  const match = arg && arg.match(/^<([a-zA-Z0-9-]+)>$/);
+  if (!match) return { name, prefixedName, type: 'string' };
   return {
+    name,
+    prefixedName,
     type: match[1] === 'file' ? 'file' : 'string',
-    multi: !!match[2],
   };
 };
 

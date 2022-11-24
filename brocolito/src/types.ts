@@ -17,13 +17,19 @@ export type ArgumentToName<S extends string> = SnakeToCamelCase<
 
 export type Action<ARGS> = (args: ARGS) => unknown; // take whatever return value and ignore it anyway
 export type OptionArg<USAGE extends `--${string}`> = {
-  [arg in OptionToName<USAGE>]: (USAGE extends `--${string} ${string}` ? string : boolean) | undefined;
+  [arg in OptionToName<USAGE>]: USAGE extends `--${string} ${string}` ? string | undefined : boolean;
 };
 type Option<OPTIONS, ARGS> = <USAGE extends `--${string}`>(
   usage: USAGE,
   description: string
 ) => Command<OPTIONS & OptionArg<USAGE>, ARGS>;
-export type OptionMeta = { usage: string; name: string; description: string };
+export type OptionMeta = {
+  usage: string;
+  name: string;
+  prefixedName: string;
+  description: string;
+  type: 'boolean' | 'string' | 'file';
+};
 export type Subcommand<OPTIONS, ARGS> = (
   name: string,
   description: string,

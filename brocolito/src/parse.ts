@@ -3,6 +3,7 @@ import { State } from './state';
 import minimist from 'minimist';
 import { Help } from './help';
 import { Utils } from './utils';
+import { Completion } from './completion/completion';
 
 const _findSubcommand = (command: Command, subcommandsOrArgs: string[]): [command: Command, args: string[]] => {
   if (!subcommandsOrArgs.length) return [command, subcommandsOrArgs];
@@ -50,12 +51,20 @@ const _parseArgs = (command: Command, args: string[]): Record<string, string | s
 const _parseOptions = (
   command: Command,
   minimistOptions: Omit<minimist.ParsedArgs, '_'>
-): Record<string, string | undefined> => {
-  const opts: Record<string, string | undefined> = {};
-  Object.entries(command.options as Record<string, OptionMeta>).forEach(([camelName, { name }]) => {
+): Record<string, string | boolean | undefined> => {
+  const opts: Record<string, string | boolean | undefined> = {};
+  Object.entries(command.options as Record<string, OptionMeta>).forEach(([camelName, { name, type }]) => {
     const value = minimistOptions[name];
     delete minimistOptions[name];
-    opts[camelName] = value;
+    if (typeof value === 'boolean') {
+      if (type !== 'boolean') Utils.complainAndExit(`Parameter missing for option --${name}`);
+      opts[camelName] = value;
+    }
+    if (type === 'boolean') {
+      opts[camelName] = value === true || value === 'true';
+    } else {
+      opts[camelName] = value;
+    }
   });
   const remainingArgs = Object.keys(minimistOptions);
   if (remainingArgs.length) {
@@ -64,10 +73,12 @@ const _parseOptions = (
   return opts;
 };
 
-export const parse = (argv = process.argv): void => {
-  const { _: minimistArgs, ...minimistOpts } = minimist(argv.slice(2));
+export const parse = async (argv = process.argv): Promise<unknown> => {
+  const { _: minimistArgs, ...minimistOpts } = minimist(argv.slice(2).filter(Boolean));
+  const firstArg = minimistArgs[0];
+  if (firstArg === 'completion') return Completion.run();
   const wantsHelp = minimistOpts.h || minimistOpts.help;
-  if (wantsHelp && !minimistArgs[0]) return Help.show();
+  if (wantsHelp && !firstArg) return Help.show();
   const foundCommand = findCommand(minimistArgs);
   // TODO: Show help message instead?
   if (typeof foundCommand === 'string') return Utils.complainAndExit(foundCommand);
@@ -80,5 +91,5 @@ export const parse = (argv = process.argv): void => {
     // TODO: Print full command specifier
     return Utils.complainAndExit(`No action for given command specified`);
   }
-  action({ ...options, ...parsedArgs });
+  return action({ ...options, ...parsedArgs });
 };

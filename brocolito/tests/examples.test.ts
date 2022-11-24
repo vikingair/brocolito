@@ -2,9 +2,7 @@ import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { CLI } from '../src/brocolito';
 import { Utils } from '../src/utils';
 
-const call = (line: string) => {
-  CLI.parse(['nodeFile', 'scriptFile'].concat(line.split(' ')));
-};
+const call = (line: string) => CLI.parse(['nodeFile', 'scriptFile'].concat(line.split(' ')));
 
 describe('Example commands', () => {
   beforeEach(() => {
@@ -87,7 +85,7 @@ describe('Example commands', () => {
     expect(barSpy).toHaveBeenCalledOnce();
   });
 
-  it('parses options', () => {
+  it('parses options', async () => {
     // given
     const spy = vi.fn();
     CLI.command('example-4', 'example-4-description')
@@ -99,20 +97,20 @@ describe('Example commands', () => {
     call('example-4');
 
     // then
-    expect(spy).toHaveBeenCalledWith({});
+    expect(spy).toHaveBeenCalledWith({ someMore: false });
 
     // when
     spy.mockReset();
     call('example-4 --test foo --some-more=bar');
 
-    // then FIXME parse "someMore" as boolean
-    expect(spy).toHaveBeenCalledWith({ test: 'foo', someMore: 'bar' });
+    // then
+    expect(spy).toHaveBeenCalledWith({ test: 'foo', someMore: false });
 
     // when - called with invalid options
-    expect(() => call('example-4 --invalid=foo')).toThrow('Unrecognized options were used: --invalid');
+    await expect(() => call('example-4 --invalid=foo')).rejects.toThrow('Unrecognized options were used: --invalid');
 
     // when - called with invalid options and valid options
-    expect(() => call('example-4 --invalid=foo --test foo --what else')).toThrow(
+    await expect(() => call('example-4 --invalid=foo --test foo --what else')).rejects.toThrow(
       'Unrecognized options were used: --invalid, --what'
     );
   });
@@ -147,7 +145,7 @@ describe('Example commands', () => {
     // when - calling the sub command
     call('example-5 foo --open=false hot');
 
-    // then FIXME parse "open" as boolean
-    expect(subcommandSpy).toHaveBeenCalledWith({ what: 'hot', open: 'false' });
+    // then
+    expect(subcommandSpy).toHaveBeenCalledWith({ what: 'hot', open: false });
   });
 });

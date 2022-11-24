@@ -19,7 +19,7 @@ const dummyCommand: Command = {
 
 const getTabEnv = (line: string): any => {
   const prev = line.split(' ').filter(Boolean).at(-1);
-  return { prev, line: 'nodeFile scriptFile ' + line };
+  return { prev, line };
 };
 
 describe('completion', () => {
@@ -41,17 +41,15 @@ describe('completion', () => {
         ...dummyCommand,
         name: 'test',
         options: {
-          flag: { usage: '--flag', name: '--flag', description: 'some flag' },
-          file: { usage: '--file <file>', name: '--file', description: 'some file' },
-          str: { usage: '--str <string>', name: '--str', description: 'some string' },
-          files: { usage: '--files <file...>', name: '--files', description: 'some files' },
+          flag: { usage: '--flag', prefixedName: '--flag', description: 'some flag' },
+          file: { usage: '--file <file>', prefixedName: '--file', description: 'some file' },
+          str: { usage: '--str <string>', prefixedName: '--str', description: 'some string' },
         },
       },
     };
     expect(await _completion(getTabEnv('cli test --flag '))).toEqual(['true', 'false']);
     expect(await _completion(getTabEnv('cli test --file'))).toEqual(['__files__']);
     expect(await _completion(getTabEnv('cli test --str'))).toEqual([]);
-    expect(await _completion(getTabEnv('cli test --files file1 file2 file3'))).toEqual(['__files__']);
   });
 
   it('filling args', async () => {
@@ -64,7 +62,7 @@ describe('completion', () => {
           { usage: '<arg2>', name: 'arg2', description: 'some arg2' },
         ],
         options: {
-          flag: { usage: '--flag', name: '--flag', description: 'some flag' },
+          flag: { usage: '--flag', prefixedName: '--flag', description: 'some flag' },
         },
       },
     };
@@ -75,8 +73,8 @@ describe('completion', () => {
 
   it('filling subcommands and options', async () => {
     const options = {
-      flag: { usage: '--flag', name: '--flag', description: 'some flag' },
-      other: { usage: '--other <string>', name: '--other', description: 'some other' },
+      flag: { usage: '--flag', prefixedName: '--flag', description: 'some flag' },
+      other: { usage: '--other <string>', prefixedName: '--other', description: 'some other' },
     };
     State.commands = {
       test: {
@@ -86,7 +84,7 @@ describe('completion', () => {
           one: {
             ...dummyCommand,
             name: 'one',
-            options: { ...options, more: { usage: '--more', name: '--more', description: 'some more' } },
+            options: { ...options, more: { usage: '--more', prefixedName: '--more', description: 'some more' } },
           },
         },
         options,

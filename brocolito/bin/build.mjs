@@ -28,6 +28,9 @@ await build({
     },
 });
 
+// update file hashes for hot reload before next execution
+if (!process.env.CI) (await import('./update_hashes.cjs')).updateHashes(path.resolve('.'));
+
 // create execution wrapper
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const runFile = path.join(__dirname, 'run.cjs');
@@ -36,6 +39,12 @@ const binFile = path.join(binDir, packageJSON.name);
 await fs.mkdir(binDir, { recursive: true });
 await fs.cp(runFile, binFile);
 await fs.chmod(binFile, '744');
+
+// copy completion scripts into build dir
+const bashCompletion = await fs.readFile(path.join(__dirname, 'bash_completion.sh'), 'utf-8');
+const zshCompletion = await fs.readFile(path.join(__dirname, 'zsh_completion.sh'), 'utf-8');
+await fs.writeFile(path.resolve('./build/bash_completion.sh'), bashCompletion.replaceAll('BRO', packageJSON.name));
+await fs.writeFile(path.resolve('./build/zsh_completion.sh'), zshCompletion.replaceAll('BRO', packageJSON.name));
 
 if (!process.env.PATH.split(':').includes(binDir)) console.log(`
 To make the CLI ${packageJSON.name} globally accessible, you have to run this:

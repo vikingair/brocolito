@@ -5,7 +5,7 @@ import { Utils } from './utils';
 import { CLI } from 'brocolito';
 import { config } from 'dotenv';
 
-CLI.name = 'bro'
+CLI.name('bro');
 
 // for local usage you want to set some ENV variables that are natively available in GitHub workflows
 // e.g.
@@ -21,10 +21,9 @@ GITHUB_EVENT_PATH=<path_to_json_file>
 */
 config({ path: '.env.local' });
 
-CLI.command('changed_files')
-    .option('--base-sha <base_sha>', 'Choose a base SHA to compare with on non-pull request events', { default: 'HEAD^1' })
-    .example(`${CLI.name} changed_files --base-sha 41a6ef03`)
-    .action(async ({ baseSha }) => {
+CLI.command('changed_files', 'list changed files on GitHub workflows')
+    .option('--base-sha <string>', 'Choose a base SHA to compare with on non-pull request events (e.g. 41a6ef03)')
+    .action(async ({ baseSha = 'HEAD^1' }) => {
     const octokit = github.getOctokit(process.env.GITHUB_TOKEN!);
 
     // see https://octokit.github.io/rest.js/v19#pulls-list-files
@@ -44,7 +43,6 @@ CLI.command('changed_files')
     core.setOutput('changed_files', files.flatMap(({ filename, status, previous_filename }) => status === 'renamed' ? [filename, previous_filename] : filename));
 });
 
-CLI.command('hello', 'test description').option('--name <name:string>', 'name to greet').action(() => console.log('hello world'));
+CLI.command('hello', 'test description').option('--name <string>', 'name to greet').action(() => console.log('hello world'));
 
-CLI.help();
 CLI.parse();

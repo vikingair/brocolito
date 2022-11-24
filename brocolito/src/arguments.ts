@@ -17,7 +17,12 @@ const deriveInfo = (usage: string): { type: 'boolean' | 'string' | 'file'; multi
 
 const deriveOptionInfo = (usage: string): { type: 'boolean' | 'string' | 'file'; multi: boolean } => {
   const [_name, arg] = usage.split(' ');
-  return deriveInfo(arg || '');
+  const match = arg && arg.match(/^<([a-zA-Z0-9-]+)(\.{3})?>$/);
+  if (!match) return { type: 'boolean', multi: false };
+  return {
+    type: match[1] === 'file' ? 'file' : 'string',
+    multi: !!match[2],
+  };
 };
 
 export const Arguments = { camelize, toName, deriveInfo, deriveOptionInfo };

@@ -53,7 +53,7 @@ describe('help', () => {
         _action: anyCallback,
         options: {
           foo: { usage: '--open', description: 'some bool flag' } as OptionMeta,
-          bar: { usage: '--file <file:one>', description: 'some single file' } as OptionMeta,
+          bar: { usage: '--file <file>', description: 'some single file' } as OptionMeta,
           other: { usage: '--more <args...>', description: 'more args' } as OptionMeta,
         },
       })
@@ -65,9 +65,9 @@ describe('help', () => {
         $ cli test [options]
 
       Options:
-        --open              some bool flag
-        --file <file:one>   some single file
-        --more <args...>    more args
+        --open             some bool flag
+        --file <file>      some single file
+        --more <args...>   more args
       "
     `);
   });

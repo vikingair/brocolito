@@ -3,7 +3,7 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
-    "brocolito": "1.0.0",
+    "brocolito": "2.0.0-beta.0",
     "dotenv": "^16.0.3"
   },
   "scripts": {

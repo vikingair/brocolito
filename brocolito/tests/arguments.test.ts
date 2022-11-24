@@ -6,9 +6,9 @@ describe('arguments', () => {
   it('parses argument info for options', () => {
     expect(Arguments.deriveOptionInfo('--flag')).toEqual({ type: 'boolean', multi: false });
     expect(Arguments.deriveOptionInfo('--foo <bar>')).toEqual({ type: 'string', multi: false });
-    expect(Arguments.deriveOptionInfo('--foo <file:bar>')).toEqual({ type: 'file', multi: false });
+    expect(Arguments.deriveOptionInfo('--foo <file>')).toEqual({ type: 'file', multi: false });
     expect(Arguments.deriveOptionInfo('--foo <bar...>')).toEqual({ type: 'string', multi: true });
-    expect(Arguments.deriveOptionInfo('--foo <file:bar...>')).toEqual({ type: 'file', multi: true });
+    expect(Arguments.deriveOptionInfo('--foo <file...>')).toEqual({ type: 'file', multi: true });
   });
 
   it('parses argument info', () => {

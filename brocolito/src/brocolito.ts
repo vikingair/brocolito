@@ -80,7 +80,6 @@ const name = (n: string) => {
   State.name = n;
 };
 
-// TODO: Completion
 // TODO: Aliases
 export const CLI = { command, parse, name, _state: State };
 
@@ -89,17 +88,3 @@ const { pc, complainAndExit } = Utils;
 export { pc, complainAndExit };
 
 CLI.command('completion', 'Set up shell completion').action(Completion.run);
-
-// CLI.command('git', 'test description')
-//   .option('--foo-bar <argument>', 'Please use it')
-//   .option('--one', 'You have to')
-//   .subcommand('u', 'undo', (u) => {
-//     u.option('--another', 'more').action(({ fooBar, one, another }) => {
-//       console.log(fooBar, one, another);
-//     });
-//   })
-//   .subcommand('p', 'push', (p) => {
-//     p.action(({ fooBar, one }) => {
-//       console.log(fooBar, one);
-//     });
-//   });

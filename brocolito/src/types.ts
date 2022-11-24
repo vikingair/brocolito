@@ -15,7 +15,7 @@ export type ArgumentToName<S extends string> = SnakeToCamelCase<
   RemoveArgumentFilePrefix<RemoveArgumentDots<RemoveArgumentBrackets<S>>>
 >;
 
-export type Action<ARGS> = (args: ARGS) => void | Promise<void>;
+export type Action<ARGS> = (args: ARGS) => unknown; // take whatever return value and ignore it anyway
 export type OptionArg<USAGE extends `--${string}`> = {
   [arg in OptionToName<USAGE>]: (USAGE extends `--${string} ${string}` ? string : boolean) | undefined;
 };
@@ -30,7 +30,7 @@ export type Subcommand<OPTIONS, ARGS> = (
   sub: (subcommand: Command<OPTIONS>) => void
 ) => Command<OPTIONS, ARGS>;
 export type ArgumentArg<USAGE extends `<${string}>`> = {
-  [arg in ArgumentToName<USAGE>]: USAGE extends `<${string}...>` ? string[] : string | undefined;
+  [arg in ArgumentToName<USAGE>]: USAGE extends `<${string}...>` ? string[] : string;
 };
 
 type Argument<OPTIONS, ARGS> = <USAGE extends `<${string}>`>(

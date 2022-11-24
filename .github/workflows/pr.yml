@@ -14,3 +14,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - run: echo ${{ steps.find-changed-files.outputs.changed_files }}
+
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm-install
+        with:
+          target: brocolito
+      - name: Lint 🎨
+        run: pnpm lint
+        working-directory: brocolito
+      - name: Test 🐛
+        run: pnpm test
+        working-directory: brocolito
+      - name: Build 🏗️
+        run: pnpm dist
+        working-directory: brocolito

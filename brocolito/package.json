@@ -1,6 +1,6 @@
 {
   "name": "brocolito",
-  "version": "1.0.0",
+  "version": "2.0.0-beta.0",
   "description": "Create type-safe CLIs to align local development and pipeline workflows",
   "main": "dist/brocolito.cjs",
   "module": "dist/brocolito.mjs",
@@ -24,17 +24,28 @@
   "license": "MIT",
   "scripts": {
     "dist": "vite build && pnpm dist:ts",
-    "dist:ts": "tsc --outDir dist-ts --declaration true --noEmit false && rm dist-ts/**.js && cp -r dist-ts/* dist && rm -r dist-ts",
-    "lint": "tsc"
+    "dist:ts": "tsc -p tsconfig.publish.json",
+    "lint": "pnpm lint:es && pnpm lint:ts",
+    "lint:es": "eslint --ext .ts --ignore-path ../.gitignore .",
+    "lint:ts": "tsc",
+    "test": "vitest --run",
+    "test:update": "vitest --run -u"
   },
   "dependencies": {
     "@types/minimist": "^1.2.2",
-    "cac": "^6.7.14",
     "minimist": "^1.2.7",
-    "vite": "^3.2.1"
+    "picocolors": "^1.0.0",
+    "vite": "^3.2.4"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
-    "typescript": "^4.6.4"
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.7.1",
+    "typescript": "^4.9.3",
+    "vitest": "^0.25.2"
   }
 }

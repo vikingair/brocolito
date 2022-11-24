@@ -4,11 +4,14 @@ import { Arguments } from '../src/arguments';
 
 describe('arguments', () => {
   it('parses argument info for options', () => {
-    expect(Arguments.deriveOptionInfo('--flag')).toEqual({ type: 'boolean', multi: false });
-    expect(Arguments.deriveOptionInfo('--foo <bar>')).toEqual({ type: 'string', multi: false });
-    expect(Arguments.deriveOptionInfo('--foo <file>')).toEqual({ type: 'file', multi: false });
-    expect(Arguments.deriveOptionInfo('--foo <bar...>')).toEqual({ type: 'string', multi: true });
-    expect(Arguments.deriveOptionInfo('--foo <file...>')).toEqual({ type: 'file', multi: true });
+    expect(Arguments.deriveOptionInfo('--flag')).toEqual({ type: 'boolean', name: 'flag', prefixedName: '--flag' });
+    expect(Arguments.deriveOptionInfo('--foo <bar>')).toEqual({ type: 'string', name: 'foo', prefixedName: '--foo' });
+    expect(Arguments.deriveOptionInfo('--foo something')).toEqual({
+      type: 'string',
+      name: 'foo',
+      prefixedName: '--foo',
+    });
+    expect(Arguments.deriveOptionInfo('--foo <file>')).toEqual({ type: 'file', name: 'foo', prefixedName: '--foo' });
   });
 
   it('parses argument info', () => {

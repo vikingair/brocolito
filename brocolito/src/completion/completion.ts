@@ -13,17 +13,22 @@ export const _completion = async ({ prev, line }: TabtabEnv): Promise<string[]> 
   if (prev === State.name) return Object.keys(State.commands).concat(['--help']);
 
   const lineArgs = line.split(' ');
-  const minimistArgs = minimist(lineArgs.slice(3));
+  const minimistArgs = minimist(lineArgs.slice(1));
   const foundCommand = findCommand(minimistArgs._);
+
   if (typeof foundCommand === 'string') return [];
   const [command, args] = foundCommand;
   const commandArgs = command.args.slice(args.length); // all arguments that can still be used
   const options = Object.values(command.options) as OptionMeta[];
-  const optionNames = options.map(({ name }) => name);
-  const startedOption = options.find(({ name }) => name === prev);
-  const lastUsedOptionArg = lineArgs.filter((arg) => optionNames.includes(arg)).at(-1);
-  const lastUsedOption = options.find(({ name }) => name === lastUsedOptionArg);
-  const lastUsedOptionInfo = lastUsedOption ? Arguments.deriveOptionInfo(lastUsedOption.usage) : undefined;
+  const optionNames = options.map(({ prefixedName }) => prefixedName);
+  const startedOption = options.find(({ prefixedName }) => prefixedName === prev);
+
+  // debugging autocompletion
+  // fs.writeFileSync(
+  //   './result.json',
+  //   JSON.stringify({ foundCommand, line, prev, optionNames, options }, null, 2)
+  // );
+
   if (startedOption) {
     // TODO: Custom parsers and options
     const { type } = Arguments.deriveOptionInfo(startedOption.usage);
@@ -42,11 +47,6 @@ export const _completion = async ({ prev, line }: TabtabEnv): Promise<string[]> 
     // FIXME: If args were specified, we cannot complete subcommands anymore
     // TODO: Make use of descriptions for completion by using CompletionItems instead of plain strings
     return Object.keys(command.subcommands).concat(optionNames);
-  } else if (lastUsedOptionInfo?.multi) {
-    const { type } = lastUsedOptionInfo;
-    if (type === 'boolean') return ['true', 'false'];
-    if (type === 'file') return FileCompletion;
-    return [];
   } else {
     return optionNames.filter((o) => !line.includes(o));
   }

@@ -3,7 +3,6 @@ import { State } from './state';
 import { parse } from './parse';
 import { Utils } from './utils';
 import { Arguments } from './arguments';
-import { Completion } from './completion/completion';
 
 const createAction =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>) =>
@@ -15,13 +14,15 @@ const createOption =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>) =>
   <USAGE extends `--${string}`>(usage: USAGE, description: string): Command<OPTIONS & OptionArg<USAGE>, ARGS> => {
     const newCommand = command as Command<OPTIONS & OptionArg<USAGE>, ARGS>;
-    const [name, arg] = usage.substring(2).split(' ');
-    if (!arg) {
-      // TODO: add boolean option parser
-      // TODO: add parsers in general
-      // TODO: Make types in that case more strict and derive from parser
-    }
-    newCommand.options[Arguments.camelize(name) as OptionToName<USAGE>] = { usage, name, description };
+    const { name, prefixedName, type } = Arguments.deriveOptionInfo(usage);
+
+    newCommand.options[Arguments.camelize(name) as OptionToName<USAGE>] = {
+      usage,
+      name,
+      prefixedName,
+      description,
+      type,
+    };
     return newCommand;
   };
 
@@ -86,5 +87,3 @@ export const CLI = { command, parse, name, _state: State };
 // Utility re-exported (no additional installation required for the peer)
 const { pc, complainAndExit } = Utils;
 export { pc, complainAndExit };
-
-CLI.command('completion', 'Set up shell completion').action(Completion.run);

@@ -4,6 +4,11 @@ import { parse } from './parse';
 import { Utils } from './utils';
 import { Arguments } from './arguments';
 
+process.on('unhandledRejection', (err) => {
+  const errMsg = err instanceof Error ? (process.env.DEBUG ? err.stack : err.message) : err;
+  complainAndExit(String(errMsg));
+});
+
 const createAction =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>) =>
   (a: Action<OPTIONS & ARGS>): void => {
@@ -82,6 +87,10 @@ const name = (n: string) => {
 };
 
 // TODO: Aliases
+// TODO: Version printing
+// TODO: README update
+// TODO: Instructions for publishing
+// TODO: create-brocolito-cli
 export const CLI = { command, parse, name, _state: State };
 
 // Utility re-exported (no additional installation required for the peer)

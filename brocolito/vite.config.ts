@@ -18,7 +18,7 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: Object.keys(packageJSON.dependencies),
+      external: [/^node:.*/, ...Object.keys(packageJSON.dependencies)],
     },
   },
   test: {

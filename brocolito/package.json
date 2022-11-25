@@ -1,6 +1,6 @@
 {
   "name": "brocolito",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "Create type-safe CLIs to align local development and pipeline workflows",
   "main": "dist/brocolito.cjs",
   "module": "dist/brocolito.mjs",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fdc-viktor-lu ft/brocolito"
+    "url": "https://github.com/fdc-viktor-luft/brocolito"
   },
   "keywords": [
     "CLI",

@@ -4,14 +4,14 @@ specifiers:
   '@actions/core': ^1.10.0
   '@actions/github': ^5.1.1
   '@types/node': ^18.11.8
-  brocolito: 2.0.0-beta.1
+  brocolito: 2.0.0-beta.2
   dotenv: ^16.0.3
   typescript: ^4.9.3
 
 dependencies:
   '@actions/core': 1.10.0
   '@actions/github': 5.1.1
-  brocolito: 2.0.0-beta.1_@types+node@18.11.9
+  brocolito: 2.0.0-beta.2_@types+node@18.11.9
   dotenv: 16.0.3
 
 devDependencies:
@@ -161,8 +161,8 @@ packages:
     resolution: {integrity: sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==}
     dev: false
 
-  /brocolito/2.0.0-beta.1_@types+node@18.11.9:
-    resolution: {integrity: sha512-Qbe7aHGeNBd8rzwoM7CFE7M91q54maeOx25ogqUSsJCj/aQc/c0j54xTOUzEveWBXCnUtlZptysIny3PqcTuAw==}
+  /brocolito/2.0.0-beta.2_@types+node@18.11.9:
+    resolution: {integrity: sha512-YpcTpIwXO/sY8omSmCySzUXwqcTjntBr3gqV2R0Rtrr9FO6EYh/Q3/+BXHMmeK79jbHemAt+53xMaAa5z9Am6g==}
     hasBin: true
     dependencies:
       '@types/minimist': 1.2.2

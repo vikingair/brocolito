@@ -20,7 +20,7 @@ await build({
         rollupOptions: {
             // make sure to externalize deps that shouldn't be bundled
             // into your library
-            external: Object.keys(packageJSON.dependencies),
+            external: [/^node:.*/, ...Object.keys(packageJSON.dependencies)],
             output: {
                 dir: 'build',
             },
@@ -48,4 +48,4 @@ await fs.writeFile(path.resolve('./build/zsh_completion.sh'), zshCompletion.repl
 
 if (!process.env.PATH.split(':').includes(binDir)) console.log(`
 To make the CLI ${packageJSON.name} globally accessible, you have to run this:
-PATH="${binDir}:$PATH"`);
+export PATH="${binDir}:$PATH"`);

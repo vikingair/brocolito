@@ -37,6 +37,9 @@ jobs:
 
   check-cli:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/pnpm-install
@@ -48,3 +51,5 @@ jobs:
       - name: Test 🐛
         run: pnpm test
         working-directory: .github/cli
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

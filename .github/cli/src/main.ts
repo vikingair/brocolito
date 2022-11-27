@@ -1,9 +1,10 @@
 // https://github.com/actions/toolkit
+// https://octokit.github.io/rest.js/v19
+// https://github.com/octokit/app-permissions/blob/main/generated/api.github.com.json
 import * as core from '@actions/core';
-import * as github from '@actions/github';
-import { Utils } from './utils';
 import { CLI } from 'brocolito';
 import { config } from 'dotenv';
+import { getChangedFiles } from './changed_files';
 
 CLI.name('bro');
 
@@ -22,27 +23,15 @@ GITHUB_EVENT_PATH=<path_to_json_file>
 config({ path: '.env.local' });
 
 CLI.command('changed_files', 'list changed files on GitHub workflows')
-    .option('--base-sha <string>', 'Choose a base SHA to compare with on non-pull request events (e.g. 41a6ef03)')
-    .action(async ({ baseSha = 'HEAD^1' }) => {
-    const octokit = github.getOctokit(process.env.GITHUB_TOKEN!);
+  .option('--base-sha <string>', 'Choose a base SHA to compare with on non-pull request events (e.g. 41a6ef03)')
+  .action(async ({ baseSha = 'HEAD^1' }) => {
+    const changedFiles = getChangedFiles(baseSha);
 
-    // see https://octokit.github.io/rest.js/v19#pulls-list-files
-    const files = github.context.eventName === 'pull_request' ? await Utils.paginate((params) => octokit.rest.pulls.listFiles(params), {
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        pull_number: github.context.payload.pull_request!.number,
-        per_page: 100,
-        // see https://octokit.github.io/rest.js/v19#repos-compare-commits-with-basehead
-    }) : (await Utils.paginate(async (params) => ({ data: (await octokit.rest.repos.compareCommitsWithBasehead(params)).data.files || [] }), {
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        basehead: baseSha + '...HEAD', // or use SHAs
-        per_page: 100,
-    }));
+    core.setOutput('changed_files', changedFiles);
+  });
 
-    core.setOutput('changed_files', files.flatMap(({ filename, status, previous_filename }) => status === 'renamed' ? [filename, previous_filename] : filename));
-});
-
-CLI.command('hello', 'test description').option('--name <string>', 'name to greet').action(() => console.log('hello world'));
+CLI.command('hello', 'test description')
+  .option('--name <string>', 'name to greet')
+  .action(() => console.log('hello world'));
 
 CLI.parse();

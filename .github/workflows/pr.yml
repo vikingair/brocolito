@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/brocolito-setup
@@ -15,7 +18,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
       - run: echo ${{ steps.find-changed-files.outputs.changed_files }}
 
-  check:
+  check-brocolito:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,3 +34,22 @@ jobs:
       - name: Build 🏗️
         run: pnpm dist
         working-directory: brocolito
+
+  check-cli:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm-install
+        with:
+          target: .github/cli
+      - name: Lint 🎨
+        run: pnpm lint
+        working-directory: .github/cli
+      - name: Test 🐛
+        run: pnpm test
+        working-directory: .github/cli
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

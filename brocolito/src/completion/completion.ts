@@ -43,7 +43,7 @@ export const _completion = async ({ prev, line }: TabtabEnv): Promise<string[]> 
     if (type === 'file') return FileCompletion;
     return [];
   } else if (prev === command.name) {
-    // we auto-complete subcommands only as long as no option was used (even though we support writing options first
+    // we autocomplete subcommands only as long as no option was used (even though we support writing options first
     // FIXME: If args were specified, we cannot complete subcommands anymore
     // TODO: Make use of descriptions for completion by using CompletionItems instead of plain strings
     return Object.keys(command.subcommands).concat(optionNames);

@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { _getHelp } from '../src/help';
 import { Arguments } from '../src/arguments';
 
 describe('arguments', () => {

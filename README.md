@@ -1,10 +1,13 @@
+[![npm package][npm-image]][npm-url]
+[![GitHub Push][push-image]][push-url]
+
 # Brocolito
 
 **Bro**ther **co**mannd **li**ne **to**ol
 
 Create type-safe CLIs to align local development and pipeline workflows.
 
-Powered by [vite](https://www.npmjs.com/package/vite) & [cac](https://www.npmjs.com/package/cac).
+Powered by [vite](https://www.npmjs.com/package/vite).
 
 ## What you get
 
@@ -42,13 +45,12 @@ import { CLI } from 'brocolito';
 
 CLI.command('hello').action(() => console.log('hello world'));
 
-CLI.help(); // this will allow your CLI to print help messages on e.g. "-h" option
 CLI.parse(); // this needs to be executed after all "commands" were set up
 ```
 
 Now you can run `cli -h` to see the help message or `cli hello` to print `hello world`.
 
-For more advanced features see [here](https://www.npmjs.com/package/cac).
+For more advanced features see below.
 
 ### Setup in GitHub Actions
 
@@ -59,9 +61,156 @@ In this [workflow](.github/workflows/pr.yml) you can see it in action.
 
 ### Future plans
 
-- Add tab completion
-- Add linting, formatting and testing to this repo
-- Enforce linting and testing in workflow
 - Create an initial setup using `create-brocolito-cli` package
   - Then you can set the above up using `pnpm create brocolito-cli`
 - Include some more examples of interesting CLI relevant features that can be adopted
+
+## CLI features
+
+The CLI contains already many features right away. It was inspired by [commander](https://www.npmjs.com/package/commander)
+and [cac](https://www.npmjs.com/package/cac), but it has a slightly different API and some features
+that I was found to be missing like native subcommand and tab completion support.
+
+### Help
+
+Using the `-h` or `--help` options on any command, subcommand or top-level will display an
+automatically generated help text from your CLI configuration.
+
+### Completion
+
+As soon as you have locally set up the completion, you will get automatically suggestions
+based on your CLI configuration. Run `cli completion` to set up the tab completion.
+
+#### Aliases
+
+If you want to use an alias for e.g. one of your subcommands like `cli get data`, you have
+to register it to make the completion work like so: `CLI.alias('cgd', 'cli get data')`.
+
+### Options
+
+Options are basically named parameters for your command. The specified option names are
+accessible under their camelCase name. E.g. `foo-bar` becomes `fooBar`. Values for options can
+be specified using a space or `=` as separator, e.g. `--my-option=foo` and `--my-option foo`
+are identically treated, whereas `--my-option` without parameters is only valid for option
+flags and will be treated as boolean `true`.
+
+#### Boolean Options (Flags)
+
+- Specification: `--option-name`
+- Parameter type: `boolean`
+- Completion: `true` or `false`
+- Code example:
+```ts
+CLI.command('hello', 'prints hello world')
+   .option('--with-exclamation-mark', 'append exclamation mark')
+   .action(({ withExclamationMark }) => console.log(`hello world${withExclamationMark ? '!' : ''}`));
+```
+- Shell examples:
+```
+cli hello --with-exclamation-mark
+cli hello --with-exclamation-mark=true
+cli hello --with-exclamation-mark false
+```
+
+#### String Options
+
+- Specification: `--option-name <string>`
+- Parameter type: `string`
+- Completion: none
+- Code example:
+```ts
+CLI.command('hello', 'prints greeting')
+   .option('--name <string>', 'who to greet?')
+   .action(({ name }) => console.log(`hello ${name}`));
+```
+- Shell example: `cli hello --name mark`
+
+#### File Options
+
+- Specification: `--option-name <file>`
+- Parameter type: `string`
+- Completion: local file system
+- Code example:
+```ts
+CLI.command('char-count', 'count characters')
+   .option('--content <file>', 'what file to use?')
+   .action(async ({ content }) => console.log((await fs.readFile(content, 'utf-8')).length));
+```
+- Shell example: `cli char-count --content ./foo.txt`
+
+### Args
+
+Args are basically unnamed parameters or parameter lists. The specified arg names are
+accessible under their camelCase name. E.g. `foo-bar` becomes `fooBar`. You can have as
+many different args for the same command as you like. You cannot have args **and** subcommands
+on a command. If you cannot have another arg after an arg list.
+
+#### String Arg
+
+- Specification: `<arg-name>`
+- Parameter type: `string`
+- Completion: none
+- Code example:
+```ts
+CLI.command('hello', 'prints greeting')
+   .arg('<arg-name>', 'greeting name')
+   .action(({ argName }) => console.log(`hello ${name}`));
+```
+- Shell example: `cli hello mark`
+
+
+#### File Arg
+
+- Specification: `<file:arg-name>`
+- Parameter type: `string`
+- Completion: local file system
+- Code example:
+```ts
+CLI.command('exists', 'checks existance')
+   .arg('<file:file-name>', 'what file to check?')
+   .action(({ fileName }) => console.log(fs.existsSync(fileName)));
+```
+- Shell example: `cli exists /tmp/someFile.js`
+
+#### Arg lists
+
+- Specifications: `<arg-name...>` or `<file:arg-name...>`
+- Parameter type: `string[]`
+- Completions: none or local file system
+- Code example:
+```ts
+CLI.command('exists', 'checks existance')
+   .arg('<file:file-names...>', 'what files to check?')
+   .action(({ fileNames }) => console.log(fileNames.map((f) => fs.existsSync(f))));
+```
+- Shell example: `cli exists /tmp/someFile.js ./foo.txt`
+
+
+### Subcommands
+
+Subcommands allow you to create a grouped functionality of commands within other commands.
+Subcommands can be as deeply nested as you like. If a command has subcommands it cannot have
+args. Options are inherited from the command to all afterwards specified subcommands. Every
+subcommand can use further options, args or subcommands as any regular command.
+
+- Code example:
+```ts
+CLI.command('string', 'do something with strings')
+   .option('--error', 'logs as error')
+   .subcommand('trim', 'trims a string', (sub) => {
+     sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.trim()));
+   })
+   .subcommand('length', 'counts the chars', (sub) => {
+     sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.length));
+   })
+```
+- Shell examples:
+```
+cli string trim " foo"
+cli string length "lorem ipsum"
+```
+
+[push-image]: https://github.com/fdc-viktor-luft/brocolito/actions/workflows/push.yml/badge.svg
+[push-url]: https://github.com/fdc-viktor-luft/brocolito/actions/workflows/push.yml
+[npm-image]: https://img.shields.io/npm/v/brocolito.svg?style=flat-square
+[npm-url]: https://www.npmjs.org/package/brocolito

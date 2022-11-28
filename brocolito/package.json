@@ -1,6 +1,6 @@
 {
   "name": "brocolito",
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0-beta.4",
   "description": "Create type-safe CLIs to align local development and pipeline workflows",
   "main": "dist/brocolito.cjs",
   "module": "dist/brocolito.mjs",
@@ -46,6 +46,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.7.1",
     "typescript": "^4.9.3",
-    "vitest": "^0.25.2"
+    "vitest": "^0.25.3"
   }
 }

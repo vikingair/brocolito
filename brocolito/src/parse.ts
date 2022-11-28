@@ -13,10 +13,6 @@ const _findSubcommand = (command: Command, subcommandsOrArgs: string[]): [comman
 };
 
 export const findCommand = (commands: string[]): [command: Command, args: string[]] | string => {
-  // TODO: What about top-level command? Should we support it?
-  if (!commands.length) {
-    return 'No command was specified';
-  }
   const command = State.commands[commands[0]];
   if (!command) {
     return `Command "${commands[0]}" does not exist`;
@@ -78,9 +74,11 @@ export const parse = async (argv = process.argv): Promise<unknown> => {
   const firstArg = minimistArgs[0];
   if (firstArg === 'completion') return Completion.run();
   const wantsHelp = minimistOpts.h || minimistOpts.help;
-  if (wantsHelp && !firstArg) return Help.show();
+  if (!firstArg) {
+    if (wantsHelp) return Help.show();
+    if (minimistOpts.v || minimistOpts.version) return console.log(State.version);
+  }
   const foundCommand = findCommand(minimistArgs);
-  // TODO: Show help message instead?
   if (typeof foundCommand === 'string') return Utils.complainAndExit(foundCommand);
   const [command, args] = foundCommand;
   if (wantsHelp) return Help.show(command);
@@ -88,8 +86,7 @@ export const parse = async (argv = process.argv): Promise<unknown> => {
   const options = _parseOptions(command, minimistOpts);
   const action = command._action;
   if (!action) {
-    // TODO: Print full command specifier
-    return Utils.complainAndExit(`No action for given command specified`);
+    return Utils.complainAndExit(`Configuration error: No action for given command "${command.line}" specified`);
   }
   return action({ ...options, ...parsedArgs });
 };

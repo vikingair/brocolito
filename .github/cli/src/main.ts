@@ -6,8 +6,6 @@ import { CLI } from 'brocolito';
 import { config } from 'dotenv';
 import { getChangedFiles } from './changed_files';
 
-CLI.name('bro');
-
 // for local usage you want to set some ENV variables that are natively available in GitHub workflows
 // e.g.
 /*

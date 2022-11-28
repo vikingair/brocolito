@@ -1,5 +1,8 @@
 // Source: https://github.com/mklabs/tabtab/blob/master/lib/index.js
 
+import { State } from '../state';
+import { Utils } from '../utils';
+
 /**
  * Utility to figure out the shell used on the system.
  *
@@ -62,8 +65,14 @@ const parseEnv = (env: Record<string, string | undefined>): TabtabEnv => {
   let cword = Number(env.COMP_CWORD);
   let point = Number(env.COMP_POINT);
   const line = env.COMP_LINE || '';
-  // TODO: Add completion alias support
-  const expandedLine = line.replace(/^vg/, 'vlt git');
+  const lineParts = line.split(' ');
+  const firstArg = lineParts[0];
+  const alias = State.aliases[firstArg];
+  if (!alias && firstArg !== State.name)
+    return Utils.complainAndExit(`Completion invoked with not configured alias ${firstArg}.
+Use e.g. -> CLI.alias('${firstArg}', '${State.name} my-subcommand')
+`);
+  const expandedLine = alias ? line.replace(new RegExp(`^${firstArg}`), alias) : line;
 
   if (Number.isNaN(cword)) cword = 0;
   if (Number.isNaN(point)) point = 0;

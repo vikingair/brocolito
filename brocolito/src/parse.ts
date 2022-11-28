@@ -21,7 +21,7 @@ export const findCommand = (commands: string[]): [command: Command, args: string
 };
 
 const _parseArgs = (command: Command, args: string[]): Record<string, string | string[] | undefined> => {
-  const errorDetails = `Expected ${command.args} arguments, but was invoked with ${args.length}`;
+  const errorDetails = `Expected ${command.args.length} arguments, but was invoked with ${args.length}`;
   let usedArgs = [...args];
   const result = Object.fromEntries(
     command.args.map(({ usage, name }): [string, string | string[]] => {
@@ -49,7 +49,7 @@ const _parseOptions = (
   minimistOptions: Omit<minimist.ParsedArgs, '_'>
 ): Record<string, string | boolean | undefined> => {
   const opts: Record<string, string | boolean | undefined> = {};
-  Object.entries(command.options as Record<string, OptionMeta>).forEach(([camelName, { name, type }]) => {
+  Object.entries(command.options as Record<string, OptionMeta>).forEach(([camelName, { name, type, prefixedName }]) => {
     const value = minimistOptions[name];
     delete minimistOptions[name];
     if (typeof value === 'boolean') {
@@ -57,6 +57,8 @@ const _parseOptions = (
       opts[camelName] = value;
     }
     if (type === 'boolean') {
+      if (typeof value === 'string' && value !== 'true' && value !== 'false')
+        Utils.complainAndExit(`Invalid value "${value}" provided for flag ${prefixedName}`);
       opts[camelName] = value === true || value === 'true';
     } else {
       opts[camelName] = value;

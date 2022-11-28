@@ -16,9 +16,12 @@ const createAction =
   };
 
 const createOption =
-  <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>) =>
-  <USAGE extends `--${string}`>(usage: USAGE, description: string): Command<OPTIONS & OptionArg<USAGE>, ARGS> => {
-    const newCommand = command as Command<OPTIONS & OptionArg<USAGE>, ARGS>;
+  <OPTIONS, ARGS, WITH_ARGS>(command: Command<OPTIONS, ARGS, WITH_ARGS>) =>
+  <USAGE extends `--${string}`>(
+    usage: USAGE,
+    description: string
+  ): Command<OPTIONS & OptionArg<USAGE>, ARGS, WITH_ARGS> => {
+    const newCommand = command as Command<OPTIONS & OptionArg<USAGE>, ARGS, WITH_ARGS>;
     const { name, prefixedName, type } = Arguments.deriveOptionInfo(usage);
 
     newCommand.options[Arguments.camelize(name) as OptionToName<USAGE>] = {
@@ -33,7 +36,7 @@ const createOption =
 
 const createSubcommand =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>): Subcommand<OPTIONS, ARGS> =>
-  (name, description, cb) => {
+  (name, description, cb): Command<OPTIONS, ARGS, false> => {
     const subcommand = { ...command, name, description } as unknown as Command<OPTIONS>;
     subcommand.line = `${command.line} ${name}`;
     subcommand.args = [];
@@ -45,16 +48,20 @@ const createSubcommand =
     command.subcommands[name] = subcommand;
     cb(subcommand);
     // return parent command, sub command will be further processed in cb
-    return command;
+    const { arg: _, args: __, ...rest } = command;
+    return rest as unknown as Command<OPTIONS, ARGS, false>;
   };
 
 const createArg =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>) =>
-  <USAGE extends `<${string}>`>(usage: USAGE, description: string): Command<OPTIONS, ARGS & ArgumentArg<USAGE>> => {
-    const newCommand = command as Command<OPTIONS, ARGS & ArgumentArg<USAGE>>;
+  <USAGE extends `<${string}>`>(
+    usage: USAGE,
+    description: string
+  ): Command<OPTIONS, ARGS & ArgumentArg<USAGE>, true> => {
+    const { subcommand: _, subcommands: __, ...newCommand } = command;
     const name = Arguments.toName(usage);
     newCommand.args.push({ usage, name, description });
-    return newCommand;
+    return newCommand as unknown as Command<OPTIONS, ARGS & ArgumentArg<USAGE>, true>;
   };
 
 const command = (name: string, description: string): Command => {

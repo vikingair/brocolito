@@ -210,6 +210,13 @@ cli string trim " foo"
 cli string length "lorem ipsum"
 ```
 
+## External dependencies
+
+If you are using external dependencies, these have to be listed in your `package.json` under
+`"dependencies"`. In case of build-in NodeJS dependencies, make sure to use the prefixed package
+names, e.g. `node:fs` instead of `fs`. Otherwise, the dependencies might end up included in your
+resulting bundle or aren't correctly resolved at all.
+
 [push-image]: https://github.com/fdc-viktor-luft/brocolito/actions/workflows/push.yml/badge.svg
 [push-url]: https://github.com/fdc-viktor-luft/brocolito/actions/workflows/push.yml
 [npm-image]: https://img.shields.io/npm/v/brocolito.svg?style=flat-square

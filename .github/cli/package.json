@@ -9,7 +9,9 @@
   },
   "scripts": {
     "build": "brocolito build",
-    "lint": "tsc",
+    "lint": "pnpm lint:es && pnpm lint:ts",
+    "lint:es": "eslint --ext .ts --ignore-path ../../.gitignore .",
+    "lint:ts": "tsc",
     "test": "vitest --run"
   },
   "devDependencies": {

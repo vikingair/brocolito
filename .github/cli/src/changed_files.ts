@@ -1,9 +1,9 @@
 import * as github from '@actions/github';
 import { execSync } from 'node:child_process';
-import { Utils } from './utils';
 
 const getPRNumber = () => {
   const prNumber =
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     github.context.eventName === 'pull_request' ? github.context.payload.pull_request!.number : undefined;
   if (!prNumber && github.context.ref !== 'refs/heads/main') {
     const prNumberString = execSync('gh pr view --json number -q .number');
@@ -14,30 +14,28 @@ const getPRNumber = () => {
 };
 
 export const getChangedFiles = async (baseSha?: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN!);
 
   const prNumber = getPRNumber();
 
   // see https://octokit.github.io/rest.js/v19#pulls-list-files
   const files = prNumber
-    ? await Utils.paginate((params) => octokit.rest.pulls.listFiles(params), {
+    ? await octokit.paginate(octokit.rest.pulls.listFiles, {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         pull_number: prNumber,
         per_page: 100,
         // see https://octokit.github.io/rest.js/v19#repos-compare-commits-with-basehead
       })
-    : await Utils.paginate(
-        async (params) => ({
-          data: (await octokit.rest.repos.compareCommitsWithBasehead(params)).data.files || [],
-        }),
-        {
+    : (
+        await octokit.paginate(octokit.rest.repos.compareCommitsWithBasehead, {
           owner: github.context.repo.owner,
           repo: github.context.repo.repo,
           basehead: baseSha + '...HEAD', // or use SHAs
           per_page: 100,
-        }
-      );
+        })
+      ).files || [];
 
   return files.flatMap(({ filename, status, previous_filename }) =>
     status === 'renamed' ? [filename, previous_filename] : filename

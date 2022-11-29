@@ -40,6 +40,6 @@ export const getChangedFiles = async (baseSha?: string, currentSha = 'HEAD') => 
       );
 
   return files.flatMap(({ filename, status, previous_filename }) =>
-    status === 'renamed' ? [filename, previous_filename] : filename
+    status === 'renamed' ? [filename, previous_filename as string] : filename
   );
 };

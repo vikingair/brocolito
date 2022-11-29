@@ -115,7 +115,7 @@ cli hello --with-exclamation-mark false
 #### String Options
 
 - Specification: `--option-name <string>`
-- Parameter type: `string`
+- Parameter type: `string | undefined`
 - Completion: none
 - Code example:
 ```ts
@@ -128,7 +128,7 @@ CLI.command('hello', 'prints greeting')
 #### File Options
 
 - Specification: `--option-name <file>`
-- Parameter type: `string`
+- Parameter type: `string | undefined`
 - Completion: local file system
 - Code example:
 ```ts

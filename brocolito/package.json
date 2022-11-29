@@ -26,7 +26,7 @@
     "dist": "vite build && pnpm dist:ts",
     "dist:ts": "tsc -p tsconfig.publish.json",
     "lint": "pnpm lint:es && pnpm lint:ts",
-    "lint:es": "eslint --ext .ts --ignore-path ../.gitignore .",
+    "lint:es": "eslint . --ext .ts --ignore-path ../.gitignore --max-warnings 0",
     "lint:ts": "tsc",
     "test": "vitest --run",
     "test:update": "vitest --run -u"

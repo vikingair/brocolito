@@ -45,7 +45,7 @@ export const getChangedFiles = async (baseSha?: string, currentSha = 'HEAD') => 
   );
 };
 
-type Dir = { files: string[]; dirs: Record<string, Dir>, level: number };
+type Dir = { files: string[]; dirs: Record<string, Dir>; level: number };
 export const printFileTree = (files: string[]) => {
   const root: Dir = { files: [], dirs: {}, level: 0 };
   files.forEach((f) => {
@@ -61,7 +61,7 @@ export const printFileTree = (files: string[]) => {
       } else {
         currentDir = currentDir.dirs[part];
       }
-    })
+    });
   });
   const lines: Array<{ content: string; level: number }> = [];
 
@@ -78,8 +78,10 @@ export const printFileTree = (files: string[]) => {
 
   addToLines(root);
 
-  console.log(lines.reduce((prev, cur) => {
-    const next = '  '.repeat(cur.level) + cur.content;
-    return [prev, next].filter(Boolean).join('\n');
-  }, ''));
-}
+  console.log(
+    lines.reduce((prev, cur) => {
+      const next = '  '.repeat(cur.level) + cur.content;
+      return [prev, next].filter(Boolean).join('\n');
+    }, '')
+  );
+};

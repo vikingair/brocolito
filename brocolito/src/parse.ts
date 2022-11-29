@@ -4,6 +4,7 @@ import minimist from 'minimist';
 import { Help } from './help';
 import { Utils } from './utils';
 import { Completion } from './completion/completion';
+import { Meta } from './meta';
 
 const _findSubcommand = (command: Command, subcommandsOrArgs: string[]): [command: Command, args: string[]] => {
   if (!subcommandsOrArgs.length) return [command, subcommandsOrArgs];
@@ -78,7 +79,7 @@ export const parse = async (argv = process.argv): Promise<unknown> => {
   const wantsHelp = minimistOpts.h || minimistOpts.help;
   if (!firstArg) {
     if (wantsHelp) return Help.show();
-    if (minimistOpts.v || minimistOpts.version) return console.log(State.version);
+    if (minimistOpts.v || minimistOpts.version) return console.log(Meta.version);
   }
   const foundCommand = findCommand(minimistArgs);
   if (typeof foundCommand === 'string') return Utils.complainAndExit(foundCommand);

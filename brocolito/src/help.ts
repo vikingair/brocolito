@@ -1,5 +1,6 @@
 import { State } from './state';
 import { Command, OptionMeta } from './types';
+import { Meta } from './meta';
 
 const _getRow = (label: string, description: string, longestLabelLength: number): string =>
   `  ${label}${' '.repeat(3 + longestLabelLength - label.length)}${description}`;
@@ -20,14 +21,14 @@ export const _getHelp = (command?: Command): string => {
     const commands = Object.values(State.commands);
     const commandRows = _getRows('Commands', commands, 'name');
     return `Usage:
-  $ ${State.name} <command> [options]
+  $ ${Meta.name} <command> [options]
 ${commandRows}`;
   }
   const commands = Object.values(command.subcommands);
   const commandRows = _getRows('Commands', commands, 'name');
   const options = Object.values(command.options) as OptionMeta[];
   const optionRows = _getRows('Options', options, 'usage');
-  const commandLine = `${State.name} ${command.line}`;
+  const commandLine = `${Meta.name} ${command.line}`;
   const commandHint = commands.length ? (command._action ? '[<command>]' : '<command>') : undefined;
   const optionsHint = options.length || commands.length ? '[options]' : undefined;
   const usage = [commandLine, commandHint, optionsHint].filter(Boolean).join(' ');

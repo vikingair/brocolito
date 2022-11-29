@@ -23,7 +23,7 @@ config({ path: '.env.local' });
 CLI.command('changed_files', 'list changed files on GitHub workflows')
   .option('--base-sha <string>', 'Choose a base SHA to compare with on non-pull request events (e.g. 41a6ef03)')
   .action(async ({ baseSha = 'HEAD^1' }) => {
-    const changedFiles = getChangedFiles(baseSha);
+    const changedFiles = await getChangedFiles(baseSha);
 
     core.setOutput('changed_files', changedFiles);
   });

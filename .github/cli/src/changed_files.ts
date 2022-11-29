@@ -13,7 +13,7 @@ const getPRNumber = () => {
   return prNumber;
 };
 
-export const getChangedFiles = async (baseSha?: string) => {
+export const getChangedFiles = async (baseSha?: string, currentSha = 'HEAD') => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN!);
 
@@ -26,16 +26,18 @@ export const getChangedFiles = async (baseSha?: string) => {
         repo: github.context.repo.repo,
         pull_number: prNumber,
         per_page: 100,
-        // see https://octokit.github.io/rest.js/v19#repos-compare-commits-with-basehead
       })
-    : (
-        await octokit.paginate(octokit.rest.repos.compareCommitsWithBasehead, {
+    : // see https://octokit.github.io/rest.js/v19#repos-compare-commits-with-basehead
+      await octokit.paginate(
+        octokit.rest.repos.compareCommitsWithBasehead,
+        {
           owner: github.context.repo.owner,
           repo: github.context.repo.repo,
-          basehead: baseSha + '...HEAD', // or use SHAs
+          basehead: `${baseSha}...${currentSha}`, // or use SHAs
           per_page: 100,
-        })
-      ).files || [];
+        },
+        (r) => r.data.files || []
+      );
 
   return files.flatMap(({ filename, status, previous_filename }) =>
     status === 'renamed' ? [filename, previous_filename] : filename

@@ -4,8 +4,8 @@ import { config } from 'dotenv';
 // load GITHUB_TOKEN locally
 config({ path: '.env.local' });
 
-describe('changed_files', () => {
-  it('returns changed files of given pull_request', async () => {
+describe('pull_request changed_files', () => {
+  it('returns changed files of given pull_request event', async () => {
     // given
     process.env.GITHUB_REPOSITORY = 'fdc-viktor-luft/brocolito';
     process.env.GITHUB_EVENT_NAME = 'pull_request';

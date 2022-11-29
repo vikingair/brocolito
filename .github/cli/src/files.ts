@@ -1,5 +1,6 @@
 import * as github from '@actions/github';
 import { execSync } from 'node:child_process';
+import path from 'node:path';
 
 const getPRNumber = () => {
   const prNumber =
@@ -43,3 +44,42 @@ export const getChangedFiles = async (baseSha?: string, currentSha = 'HEAD') => 
     status === 'renamed' ? [filename, previous_filename as string] : filename
   );
 };
+
+type Dir = { files: string[]; dirs: Record<string, Dir>, level: number };
+export const printFileTree = (files: string[]) => {
+  const root: Dir = { files: [], dirs: {}, level: 0 };
+  files.forEach((f) => {
+    const parts = f.split(path.sep);
+    let currentDir = root;
+    parts.forEach((part, index) => {
+      if (index === parts.length - 1) {
+        currentDir.files.push(part);
+      } else if (!currentDir.dirs[part]) {
+        const nextDir = { files: [], dirs: {}, level: currentDir.level + 1 };
+        currentDir.dirs[part] = nextDir;
+        currentDir = nextDir;
+      } else {
+        currentDir = currentDir.dirs[part];
+      }
+    })
+  });
+  const lines: Array<{ content: string; level: number }> = [];
+
+  const addToLines = (dir: Dir) => {
+    Object.entries(dir.dirs).forEach(([name, dir]) => {
+      lines.push({ level: dir.level - 1, content: name });
+      addToLines(dir);
+    });
+
+    dir.files.forEach((name) => {
+      lines.push({ level: dir.level, content: name });
+    });
+  };
+
+  addToLines(root);
+
+  console.log(lines.reduce((prev, cur) => {
+    const next = '  '.repeat(cur.level) + cur.content;
+    return [prev, next].filter(Boolean).join('\n');
+  }, ''));
+}

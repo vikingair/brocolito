@@ -3,6 +3,7 @@ import { State } from './state';
 import { parse } from './parse';
 import { Utils } from './utils';
 import { Arguments } from './arguments';
+import { Meta } from './meta';
 
 process.on('unhandledRejection', (err) => {
   const errMsg = err instanceof Error ? (process.env.DEBUG ? err.stack : err.message) : err;
@@ -99,7 +100,7 @@ const alias = (aliasName: string, replacement: string) => {
 // TODO: Argument parser
 // TODO: Instructions for publishing
 // TODO: create-brocolito-cli
-export const CLI = { command, parse, _state: State, alias };
+export const CLI = { command, parse, _state: State, alias, meta: Meta };
 
 // Utility re-exported (no additional installation required for the peer)
 const { pc, complainAndExit } = Utils;

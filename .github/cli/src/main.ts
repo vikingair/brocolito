@@ -4,7 +4,7 @@
 import * as core from '@actions/core';
 import { CLI } from 'brocolito';
 import { config } from 'dotenv';
-import { getChangedFiles } from './changed_files';
+import { getChangedFiles, printFileTree } from './files';
 
 // for local usage you want to set some ENV variables that are natively available in GitHub workflows
 // e.g.
@@ -25,6 +25,8 @@ CLI.command('changed_files', 'list changed files on GitHub workflows')
   .action(async ({ baseSha = 'HEAD^1' }) => {
     const changedFiles = await getChangedFiles(baseSha);
 
+    // useful for debugging purpose
+    printFileTree(changedFiles);
     core.setOutput('changed_files', changedFiles);
   });
 

@@ -5,12 +5,13 @@ import { State } from '../state';
 import { findCommand } from '../parse';
 import { OptionMeta } from '../types';
 import { Arguments } from '../arguments';
+import { Meta } from '../meta';
 
 const FileCompletion = ['__files__'];
 
 export const _completion = async ({ prev, line }: TabtabEnv): Promise<string[]> => {
   // top level
-  if (prev === State.name) return Object.keys(State.commands).concat(['--help']);
+  if (prev === Meta.name) return Object.keys(State.commands).concat(['--help']);
 
   const lineArgs = line.split(' ');
   const minimistArgs = minimist(lineArgs.slice(1));

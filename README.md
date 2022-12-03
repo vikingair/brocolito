@@ -3,6 +3,8 @@
 
 # Brocolito
 
+<img src="./logo.png" alt="brocolito logo" width="105" height="112" />
+
 **Bro**ther **co**mannd **li**ne **to**ol
 
 Create type-safe CLIs to align local development and pipeline workflows.
@@ -209,6 +211,15 @@ CLI.command('string', 'do something with strings')
 cli string trim " foo"
 cli string length "lorem ipsum"
 ```
+
+## Extra features
+
+`brocolito` makes use of some utilities that are also made available for your CLI.
+
+- `complainAndExit(msg: string)`: Prints the given message in red and immediately stops the process without
+                                  printing a whole error stack.
+- `pc`: Default export of the [picocolors](https://www.npmjs.com/package/picocolors) package to add colors
+        to your printed output.
 
 ## External dependencies
 

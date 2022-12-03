@@ -14,7 +14,7 @@ const getPRNumber = () => {
   return prNumber;
 };
 
-export const getChangedFiles = async (baseSha?: string, currentSha = 'HEAD') => {
+export const getChangedFiles = async (baseSha = 'HEAD^1', currentSha = 'HEAD') => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN!);
 

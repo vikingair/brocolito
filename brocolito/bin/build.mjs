@@ -13,6 +13,7 @@ if (!VALID_NAME.test(packageJSON.name)) {
 
 // https://vitejs.dev/config/
 await build({
+  logLevel: 'error',
   build: {
     lib: {
       entry: path.resolve('src/main.ts'),

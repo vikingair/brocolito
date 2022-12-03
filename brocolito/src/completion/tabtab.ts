@@ -66,10 +66,9 @@ const parseEnv = (env: Record<string, string | undefined>): TabtabEnv => {
   let cword = Number(env.COMP_CWORD);
   let point = Number(env.COMP_POINT);
   const line = env.COMP_LINE || '';
-  const lineParts = line.split(' ');
-  const firstArg = lineParts[0];
+  const firstArg = line.split(' ')[0];
   const alias = State.aliases[firstArg];
-  if (!alias && firstArg !== Meta.name)
+  if (firstArg && !alias && firstArg !== Meta.name)
     return Utils.complainAndExit(`Completion invoked with not configured alias ${firstArg}.
 Use e.g. -> CLI.alias('${firstArg}', '${Meta.name} my-subcommand')
 `);

@@ -6,7 +6,7 @@ specifiers:
   '@types/node': ^18.11.8
   '@typescript-eslint/eslint-plugin': ^5.43.0
   '@typescript-eslint/parser': ^5.43.0
-  brocolito: 2.1.2
+  brocolito: 2.1.3
   dotenv: ^16.0.3
   eslint: ^8.28.0
   eslint-config-prettier: ^8.5.0
@@ -18,7 +18,7 @@ specifiers:
 dependencies:
   '@actions/core': 1.10.0
   '@actions/github': 5.1.1
-  brocolito: 2.1.2_@types+node@18.11.9
+  brocolito: 2.1.3_@types+node@18.11.9
   dotenv: 16.0.3
 
 devDependencies:
@@ -449,8 +449,8 @@ packages:
       fill-range: 7.0.1
     dev: true
 
-  /brocolito/2.1.2_@types+node@18.11.9:
-    resolution: {integrity: sha512-9dQ0HSwllqGDOPS8LBoGImaZPa/5DdIq8C+38jZl6Tt3yKfRHXUkSfDb4M+ZpvbnMdLvi7t5RlJ6rH+rhaA7CQ==}
+  /brocolito/2.1.3_@types+node@18.11.9:
+    resolution: {integrity: sha512-lZ2c8XWPuJTO/4OUOzSqVF+hT4tY2abErM5/XT1C9miSCykynXWAtq1E4AE79ATJH9U00gDKLZu16jjeFHqyMA==}
     hasBin: true
     dependencies:
       '@types/minimist': 1.2.2

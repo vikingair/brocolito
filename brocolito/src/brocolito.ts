@@ -103,5 +103,5 @@ const alias = (aliasName: string, replacement: string) => {
 export const CLI = { command, parse, _state: State, alias, meta: Meta };
 
 // Utility re-exported (no additional installation required for the peer)
-const { pc, complainAndExit } = Utils;
-export { pc, complainAndExit };
+const { pc, complainAndExit, prompts } = Utils;
+export { pc, complainAndExit, prompts };

@@ -1,4 +1,5 @@
 import pc from 'picocolors';
+import prompts from 'prompts';
 
 const complainAndExit = (errMsg: string, code = 1): never => {
   if (process.env.NODE_ENV === 'test') {
@@ -9,4 +10,4 @@ const complainAndExit = (errMsg: string, code = 1): never => {
   }
 };
 
-export const Utils = { complainAndExit, pc };
+export const Utils = { complainAndExit, pc, prompts };

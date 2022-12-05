@@ -220,6 +220,8 @@ cli string length "lorem ipsum"
                                   printing a whole error stack.
 - `pc`: Default export of the [picocolors](https://www.npmjs.com/package/picocolors) package to add colors
         to your printed output.
+- `prompts`: Default export of the [prompts](https://www.npmjs.com/package/prompts) package to make use
+             of interactive shell prompts.
 
 ## External dependencies
 

@@ -59,7 +59,7 @@ const run = async (): Promise<void> => {
   const env = Tabtab.parseEnv(process.env);
   if (env.complete) return completion(env);
 
-  showInstallInstruction();
+  await showInstallInstruction();
 };
 
 export const Completion = { run };

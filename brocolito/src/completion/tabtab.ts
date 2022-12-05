@@ -11,7 +11,7 @@ import { Meta } from '../meta';
  * process.env.SHELL.
  *
  */
-const systemShell = () => (process.env.SHELL || '').split('/').slice(-1)[0];
+export const systemShell = () => (process.env.SHELL || '').split('/').at(-1);
 
 /**
  * Tabtab environment data that return from "parseEnv" method

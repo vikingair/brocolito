@@ -58,7 +58,7 @@ const zshCompletion = await fs.readFile(path.join(__dirname, 'zsh_completion.sh'
 await fs.writeFile(path.resolve('./build/bash_completion.sh'), bashCompletion.replaceAll('BRO', packageJSON.name));
 await fs.writeFile(path.resolve('./build/zsh_completion.sh'), zshCompletion.replaceAll('BRO', packageJSON.name));
 
-if (!process.env.PATH.split(':').includes(binDir))
+if (!process.env.CI && !process.env.PATH.split(':').includes(binDir))
   console.log(`
 To make the CLI ${packageJSON.name} globally accessible, you have to run this:
 export PATH="${binDir}:$PATH"`);

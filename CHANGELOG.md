@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2022-12-05
+### Added
+- `brocolito completion` prompts now if automatic completion setup should be performed.
+- `prompts` package is now re-exported from this package.
+
 ## [2.1.3] - 2022-12-03
 ### Fixed
 - `brocolito completion` command is printing again completion instructions.

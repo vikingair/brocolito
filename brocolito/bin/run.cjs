@@ -6,9 +6,13 @@ const needsUpdate = process.env.CI ? undefined : require('brocolito/bin/update_h
 if (needsUpdate) {
   const notCompletion = !process.env.COMP_LINE;
   notCompletion && process.stdout.write('🥦Rebuilding ⚙️...');
-  require('child_process').execSync('./node_modules/.bin/brocolito build', { cwd: packageDir, stdio: 'inherit' });
-  notCompletion && process.stdout.clearLine();
-  notCompletion && process.stdout.cursorTo(0);
+  require('child_process').execSync('./node_modules/.bin/brocolito build', {
+    cwd: packageDir,
+    stdio: 'inherit',
+    env: { BROCOLITO_REBUILD: 'true' },
+  });
+  notCompletion && require('readline').clearLine(process.stdout);
+  notCompletion && require('readline').cursorTo(process.stdout, 0);
 }
 
 require('../cli.cjs');

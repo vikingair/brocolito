@@ -62,6 +62,8 @@ const _parseOptions = (
         Utils.complainAndExit(`Invalid value "${value}" provided for flag ${prefixedName}`);
       opts[camelName] = value === true || value === 'true';
     } else {
+      if (Array.isArray(value))
+        Utils.complainAndExit(`Invalidly multiple values "${value}" were provided for flag ${prefixedName}`);
       opts[camelName] = value;
     }
   });

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2023-01-17
+### Fixed
+- Rebuilding of CLI code without TTY.
+- Clearing of rebuilding info for not extended PATH.
+- Forwarding of array options which caused wrong type assertions. 
+
 ## [2.2.0] - 2022-12-05
 ### Added
 - `brocolito completion` prompts now if automatic completion setup should be performed.

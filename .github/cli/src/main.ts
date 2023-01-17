@@ -35,6 +35,6 @@ CLI.command('changed_files', 'list changed files on GitHub workflows')
 
 CLI.command('hello', 'test description')
   .option('--name <string>', 'name to greet')
-  .action(() => console.log('hello world'));
+  .action(({ name = 'world' }) => console.log(`hello ${name}`));
 
 CLI.parse();

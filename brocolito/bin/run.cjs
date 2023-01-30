@@ -9,7 +9,7 @@ if (needsUpdate) {
   require('child_process').execSync('./node_modules/.bin/brocolito build', {
     cwd: packageDir,
     stdio: 'inherit',
-    env: { BROCOLITO_REBUILD: 'true' },
+    env: { ...process.env, BROCOLITO_REBUILD: 'true' },
   });
   notCompletion && require('readline').clearLine(process.stdout);
   notCompletion && require('readline').cursorTo(process.stdout, 0);

@@ -5,7 +5,7 @@
 
 <img src="./logo.png" alt="brocolito logo" width="105" height="112" />
 
-**Bro**ther **co**mannd **li**ne **to**ol
+**Bro**ther **co**mmand **li**ne **to**ol
 
 Create type-safe CLIs to align local development and pipeline workflows.
 

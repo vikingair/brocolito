@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.2.3] - 2023-02-01
 ### Fixed
 - Rebuilding of CLI code works now if `brocolito` is installed as workspace dependency.
+- Updated dependencies (including vite@4)
+- Library code is not minified anymore
 
 ## [2.2.2] - 2023-01-30
 ### Fixed

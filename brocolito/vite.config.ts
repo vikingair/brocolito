@@ -15,6 +15,9 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.${format === 'cjs' ? 'cjs' : 'mjs'}`,
       formats: ['cjs', 'es'],
     },
+    // library code should not be minified according to this article
+    // https://stackoverflow.com/a/48673965/15090924
+    minify: false,
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library

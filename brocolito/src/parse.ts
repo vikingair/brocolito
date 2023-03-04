@@ -6,15 +6,20 @@ import { Utils } from './utils';
 import { Completion } from './completion/completion';
 import { Meta } from './meta';
 
+const _findByNameOrAlias = (name: string, commands: Record<string, Command>): Command | undefined => {
+  if (name in commands) return commands[name];
+  return Object.values(commands).find(({ alias }) => alias === name);
+};
+
 const _findSubcommand = (command: Command, subcommandsOrArgs: string[]): [command: Command, args: string[]] => {
   if (!subcommandsOrArgs.length) return [command, subcommandsOrArgs];
-  const subcommand = command.subcommands[subcommandsOrArgs[0]];
+  const subcommand = _findByNameOrAlias(subcommandsOrArgs[0], command.subcommands);
   if (!subcommand) return [command, subcommandsOrArgs];
   return _findSubcommand(subcommand, subcommandsOrArgs.slice(1));
 };
 
 export const findCommand = (commands: string[]): [command: Command, args: string[]] | string => {
-  const command = State.commands[commands[0]];
+  const command = _findByNameOrAlias(commands[0], State.commands);
   if (!command) {
     return `Command "${commands[0]}" does not exist`;
   }

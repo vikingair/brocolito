@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2023-03-04
+### Added
+- Alias configuration for commands and subcommands
+- Completion of options, subcommands and commands uses provided descriptions
+
+### Fixed
+- Completion of subcommands no longer lists sibling commands
+- Completion of flags no longer uses boolean specifiers
+
 ## [2.2.3] - 2023-02-01
 ### Fixed
 - Rebuilding of CLI code works now if `brocolito` is installed as workspace dependency.

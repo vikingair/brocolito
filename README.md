@@ -134,7 +134,7 @@ CLI.command('hello', 'prints greeting')
 - Completion: local file system
 - Code example:
 ```ts
-CLI.command('char-count', 'count characters')
+CLI.command('char-count', { description: 'count characters', alias: 'cc' })
    .option('--content <file>', 'what file to use?')
    .action(async ({ content }) => console.log((await fs.readFile(content, 'utf-8')).length));
 ```
@@ -202,7 +202,7 @@ CLI.command('string', 'do something with strings')
    .subcommand('trim', 'trims a string', (sub) => {
      sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.trim()));
    })
-   .subcommand('length', 'counts the chars', (sub) => {
+   .subcommand('length', { description: 'counts the chars', alias: 'l' }, (sub) => {
      sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.length));
    })
 ```
@@ -210,6 +210,16 @@ CLI.command('string', 'do something with strings')
 ```
 cli string trim " foo"
 cli string length "lorem ipsum"
+```
+
+### Aliases
+
+If you are using aliases for some commands, code completion would stop working correctly, if
+you don't register the aliases. E.g. if you have for that command `my-cli foo` an alias
+configured in your shell via `alias cf=my-cli foo`, then you need to configure it like this:
+
+```ts
+CLI.alias('cf', 'my-cli foo');
 ```
 
 ## Extra features

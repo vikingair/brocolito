@@ -1,6 +1,6 @@
 import minimist from 'minimist';
 import { showInstallInstruction } from './install.js';
-import { Tabtab, TabtabEnv } from './tabtab.js';
+import { CompleteItemOrString, Tabtab, TabtabEnv } from './tabtab.js';
 import { State } from '../state';
 import { findCommand } from '../parse';
 import { OptionMeta } from '../types';
@@ -9,9 +9,12 @@ import { Meta } from '../meta';
 
 const FileCompletion = ['__files__'];
 
-export const _completion = async ({ prev, line }: TabtabEnv): Promise<string[]> => {
+const toCompleteItems = (commands: Record<string, { description: string }>): CompleteItemOrString[] =>
+  Object.entries(commands).map(([key, { description }]) => ({ name: key, description }));
+
+export const _completion = async ({ prev, line }: TabtabEnv): Promise<CompleteItemOrString[]> => {
   // top level
-  if (prev === Meta.name) return Object.keys(State.commands).concat(['--help']);
+  if (prev === Meta.name) return toCompleteItems(State.commands).concat(['--help']);
 
   const lineArgs = line.split(' ');
   const minimistArgs = minimist(lineArgs.slice(1));
@@ -21,8 +24,9 @@ export const _completion = async ({ prev, line }: TabtabEnv): Promise<string[]> 
   const [command, args] = foundCommand;
   const commandArgs = command.args.slice(args.length); // all arguments that can still be used
   const options = Object.values(command.options) as OptionMeta[];
-  const optionNames = options.map(({ prefixedName }) => prefixedName);
+  const optionItems = options.map(({ prefixedName, description }) => ({ name: prefixedName, description }));
   const startedOption = options.find(({ prefixedName }) => prefixedName === prev);
+  const startedOptionType = startedOption ? Arguments.deriveOptionInfo(startedOption.usage).type : undefined;
 
   // debugging autocompletion
   // fs.writeFileSync(
@@ -30,23 +34,20 @@ export const _completion = async ({ prev, line }: TabtabEnv): Promise<string[]> 
   //   JSON.stringify({ foundCommand, line, prev, optionNames, options }, null, 2)
   // );
 
-  if (startedOption) {
+  if (startedOptionType && startedOptionType !== 'boolean') {
     // TODO: Custom parsers and options
-    const { type } = Arguments.deriveOptionInfo(startedOption.usage);
-    if (type === 'boolean') return ['true', 'false'];
-    if (type === 'file') return FileCompletion;
+    if (startedOptionType === 'file') return FileCompletion;
     return [];
   } else if (commandArgs.length) {
     // TODO: Custom parsers and options
     const { type } = Arguments.deriveInfo(commandArgs[0].usage);
     if (type === 'file') return FileCompletion;
     return [];
-  } else if (prev === command.name) {
+  } else if (prev === command.name || prev === command.alias) {
     // we autocomplete subcommands only as long as no option was used (even though we support writing options first)
-    // TODO: Make use of descriptions for completion by using CompletionItems instead of plain strings
-    return Object.keys(command.subcommands).concat(optionNames);
+    return toCompleteItems(command.subcommands).concat(optionItems);
   } else {
-    return optionNames.filter((o) => !line.includes(o));
+    return optionItems.filter(({ name }) => !line.includes(name));
   }
 };
 

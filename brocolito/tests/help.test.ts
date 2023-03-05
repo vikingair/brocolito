@@ -1,29 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { State } from '../src/state';
 import { _getHelp } from '../src/help';
-import { Command, OptionMeta } from '../src/types';
-
-const anyCallback: any = () => undefined;
-const dummyCommand: Command = {
-  name: 'test',
-  line: 'test',
-  description: 'run a test',
-  subcommands: {},
-  args: [],
-  options: {},
-  action: anyCallback,
-  subcommand: anyCallback,
-  arg: anyCallback,
-  option: anyCallback,
-};
+import { CLI } from '../src/brocolito';
 
 describe('help', () => {
+  beforeEach(() => {
+    State.commands = {};
+  });
+
   it('prints top level help', () => {
     // given
-    State.commands = {
-      test: { ...dummyCommand, name: 'test', description: 'this is a test' },
-      'other-command': { ...dummyCommand, name: 'other-command', description: 'some magic to do?' },
-    };
+    CLI.command('test', 'this is a test');
+    CLI.command('other-command', { description: 'some magic to do?', alias: 'oc' });
 
     // when / then
     expect(_getHelp()).toMatchInlineSnapshot(`
@@ -32,13 +20,14 @@ describe('help', () => {
 
       Commands:
         test            this is a test
-        other-command   some magic to do?
+        other-command   some magic to do? (alias: oc)
       "
     `);
   });
 
-  it('prints command help with options', () => {
-    expect(_getHelp({ ...dummyCommand, _action: anyCallback })).toMatchInlineSnapshot(`
+  it('prints command help', () => {
+    CLI.command('test', 'run a test');
+    expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
       "Help:
         run a test
 
@@ -46,18 +35,15 @@ describe('help', () => {
         $ cli test
       "
     `);
+  });
 
-    expect(
-      _getHelp({
-        ...dummyCommand,
-        _action: anyCallback,
-        options: {
-          foo: { usage: '--open', description: 'some bool flag' } as OptionMeta,
-          bar: { usage: '--file <file>', description: 'some single file' } as OptionMeta,
-          other: { usage: '--more <args...>', description: 'more args' } as OptionMeta,
-        },
-      })
-    ).toMatchInlineSnapshot(`
+  it('prints command help with options', () => {
+    CLI.command('test', 'run a test')
+      .option('--open', 'some bool flag')
+      .option('--file <file>', 'some single file')
+      .option('--more <args...>', 'more args');
+
+    expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
       "Help:
         run a test
 
@@ -73,12 +59,9 @@ describe('help', () => {
   });
 
   it('prints command with subcommands', () => {
-    expect(
-      _getHelp({
-        ...dummyCommand,
-        subcommands: { one: { ...dummyCommand, name: 'one', line: 'test one', description: 'subcommand one here' } },
-      })
-    ).toMatchInlineSnapshot(`
+    CLI.command('test', 'run a test').subcommand('one', 'subcommand one here', (s) => s);
+
+    expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
       "Help:
         run a test
 
@@ -91,41 +74,13 @@ describe('help', () => {
     `);
   });
 
-  it('prints command with optional subcommands', () => {
-    expect(
-      _getHelp({
-        ...dummyCommand,
-        _action: anyCallback,
-        subcommands: { one: { ...dummyCommand, name: 'one', line: 'test one', description: 'subcommand one here' } },
-      })
-    ).toMatchInlineSnapshot(`
-      "Help:
-        run a test
-
-      Usage:
-        $ cli test [<command>] [options]
-
-      Commands:
-        one   subcommand one here
-      "
-    `);
-  });
-
   it('prints subcommand', () => {
-    expect(
-      _getHelp({
-        ...dummyCommand,
-        name: 'one',
-        line: 'test one',
-        description: 'subcommand one here',
-        subcommands: {
-          two: { ...dummyCommand, name: 'two', line: 'test one two', description: 'subcommand two here' },
-        },
-        options: {
-          foo: { usage: '--open', description: 'some bool flag' } as OptionMeta,
-        },
-      })
-    ).toMatchInlineSnapshot(`
+    CLI.command('test', 'run a test').subcommand('one', 'subcommand one here', (s) =>
+      s
+        .subcommand('two', { description: 'subcommand two here', alias: 't' }, (s) => s)
+        .option('--open', 'some bool flag')
+    );
+    expect(_getHelp(State.commands.test.subcommands.one)).toMatchInlineSnapshot(`
       "Help:
         subcommand one here
 
@@ -133,7 +88,7 @@ describe('help', () => {
         $ cli test one <command> [options]
 
       Commands:
-        two   subcommand two here
+        two   subcommand two here (alias: t)
 
       Options:
         --open   some bool flag

@@ -30,9 +30,12 @@ export type OptionMeta = {
   description: string;
   type: 'boolean' | 'string' | 'file';
 };
+
+export type DescriptionOrOpts = string | { description: string; alias?: string };
+
 export type Subcommand<OPTIONS, ARGS> = (
   name: string,
-  description: string,
+  description: DescriptionOrOpts,
   sub: (subcommand: Command<OPTIONS>) => void
 ) => Command<OPTIONS, ARGS, false>;
 export type ArgumentArg<USAGE extends `<${string}>`> = {
@@ -62,5 +65,6 @@ export type Command<OPTIONS = object, ARGS = object, WITH_ARGS = undefined> = {
   _action?: Action<OPTIONS & ARGS>;
   option: Option<OPTIONS, ARGS, WITH_ARGS>;
   options: Record<keyof OPTIONS, OptionMeta>;
+  alias?: string;
 } & (WITH_ARGS extends false ? object : Arguments<OPTIONS, ARGS>) &
   (WITH_ARGS extends true ? object : Subcommands<OPTIONS, ARGS>);

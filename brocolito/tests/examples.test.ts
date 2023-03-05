@@ -1,9 +1,14 @@
-import { describe, it, vi, expect } from 'vitest';
+import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { CLI } from '../src/brocolito';
+import { State } from '../src/state';
 
 const call = (line: string) => CLI.parse(['nodeFile', 'scriptFile'].concat(line.split(' ')));
 
 describe('Example commands', () => {
+  beforeEach(() => {
+    State.commands = {};
+  });
+
   it('Simple command without options', () => {
     // given
     const spy = vi.fn();
@@ -11,6 +16,18 @@ describe('Example commands', () => {
 
     // when
     call('example-1');
+
+    // then
+    expect(spy).toHaveBeenCalledOnce();
+  });
+
+  it('command with alias', () => {
+    // given
+    const spy = vi.fn();
+    CLI.command('foo', { description: 'foo', alias: 'f' }).action(spy);
+
+    // when
+    call('f');
 
     // then
     expect(spy).toHaveBeenCalledOnce();
@@ -42,7 +59,7 @@ describe('Example commands', () => {
     const fooSpy = vi.fn();
     const barSpy = vi.fn();
     CLI.command('example-3', 'example-3-description')
-      .subcommand('foo', 'foo-desc', (foo) => {
+      .subcommand('foo', { description: 'foo-desc', alias: 'f' }, (foo) => {
         foo
           .subcommand('bar', 'bar-desc', (bar) => {
             bar.action(barSpy);
@@ -61,7 +78,7 @@ describe('Example commands', () => {
 
     // when
     vi.resetAllMocks();
-    call('example-3 foo');
+    call('example-3 f');
 
     // then
     expect(spy).not.toHaveBeenCalled();

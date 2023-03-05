@@ -1,4 +1,4 @@
-import { Action, ArgumentArg, Command, OptionArg, OptionToName, Subcommand } from './types';
+import { Action, ArgumentArg, Command, DescriptionOrOpts, OptionArg, OptionToName, Subcommand } from './types';
 import { State } from './state';
 import { parse } from './parse';
 import { Utils } from './utils';
@@ -37,15 +37,22 @@ const createOption =
 
 const createSubcommand =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>): Subcommand<OPTIONS, ARGS> =>
-  (name, description, cb): Command<OPTIONS, ARGS, false> => {
-    const subcommand = { ...command, name, description } as unknown as Command<OPTIONS>;
-    subcommand.line = `${command.line} ${name}`;
-    subcommand.args = [];
-    subcommand.action = createAction(subcommand);
+  (name, options, cb): Command<OPTIONS, ARGS, false> => {
+    const opts = typeof options === 'string' ? { description: options } : options;
+    const subcommand = {
+      ...command,
+      name,
+      line: `${command.line} ${name}`,
+      args: [],
+      description: opts.description,
+      alias: opts.alias,
+      options: { ...command.options },
+    } as unknown as Command<OPTIONS>;
     subcommand.arg = createArg(subcommand);
+    subcommand.action = createAction(subcommand);
     subcommand.option = createOption(subcommand);
-    subcommand.options = { ...command.options };
     subcommand.subcommand = createSubcommand(subcommand);
+    subcommand.subcommands = {};
     command.subcommands[name] = subcommand;
     cb(subcommand);
     // return parent command, sub command will be further processed in cb
@@ -65,11 +72,12 @@ const createArg =
     return newCommand as unknown as Command<OPTIONS, ARGS & ArgumentArg<USAGE>, true>;
   };
 
-const command = (name: string, description: string): Command => {
+const command = (name: string, options: DescriptionOrOpts): Command => {
+  const opts = typeof options === 'string' ? { description: options } : options;
   const command: Command = {
     name,
     line: name,
-    description,
+    description: opts.description,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     action: null!,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -81,6 +89,7 @@ const command = (name: string, description: string): Command => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     subcommand: null!,
     subcommands: {},
+    alias: opts.alias,
   };
   command.action = createAction(command);
   command.arg = createArg(command);

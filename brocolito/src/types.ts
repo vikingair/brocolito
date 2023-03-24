@@ -1,6 +1,7 @@
-export type SnakeToCamelCase<S extends string> = S extends `${infer T}-${infer U}`
-  ? `${Lowercase<T>}${Capitalize<SnakeToCamelCase<U>>}`
-  : S;
+export type SnakeToCamelCase<S extends string> =
+  S extends `${infer T}-${infer U}`
+    ? `${Lowercase<T>}${Capitalize<SnakeToCamelCase<U>>}`
+    : S;
 
 export type OptionToName<S extends string> = S extends `--${infer T} ${string}`
   ? SnakeToCamelCase<T>
@@ -8,8 +9,12 @@ export type OptionToName<S extends string> = S extends `--${infer T} ${string}`
   ? SnakeToCamelCase<T>
   : never;
 
-type RemoveArgumentBrackets<S extends string> = S extends `<${infer T}>` ? T : never;
-type RemoveArgumentFilePrefix<S extends string> = S extends `file:${infer T}` ? T : S;
+type RemoveArgumentBrackets<S extends string> = S extends `<${infer T}>`
+  ? T
+  : never;
+type RemoveArgumentFilePrefix<S extends string> = S extends `file:${infer T}`
+  ? T
+  : S;
 type RemoveArgumentDots<S extends string> = S extends `${infer T}...` ? T : S;
 export type ArgumentToName<S extends string> = SnakeToCamelCase<
   RemoveArgumentFilePrefix<RemoveArgumentDots<RemoveArgumentBrackets<S>>>
@@ -17,7 +22,9 @@ export type ArgumentToName<S extends string> = SnakeToCamelCase<
 
 export type Action<ARGS> = (args: ARGS) => unknown; // take whatever return value and ignore it anyway
 export type OptionArg<USAGE extends `--${string}`> = {
-  [arg in OptionToName<USAGE>]: USAGE extends `--${string} ${string}` ? string | undefined : boolean;
+  [arg in OptionToName<USAGE>]: USAGE extends `--${string} ${string}`
+    ? string | undefined
+    : boolean;
 };
 type Option<OPTIONS, ARGS, WITH_ARGS> = <USAGE extends `--${string}`>(
   usage: USAGE,
@@ -28,10 +35,12 @@ export type OptionMeta = {
   name: string;
   prefixedName: string;
   description: string;
-  type: 'boolean' | 'string' | 'file';
+  type: "boolean" | "string" | "file";
 };
 
-export type DescriptionOrOpts = string | { description: string; alias?: string };
+export type DescriptionOrOpts =
+  | string
+  | { description: string; alias?: string };
 
 export type Subcommand<OPTIONS, ARGS> = (
   name: string,
@@ -39,7 +48,9 @@ export type Subcommand<OPTIONS, ARGS> = (
   sub: (subcommand: Command<OPTIONS>) => void
 ) => Command<OPTIONS, ARGS, false>;
 export type ArgumentArg<USAGE extends `<${string}>`> = {
-  [arg in ArgumentToName<USAGE>]: USAGE extends `<${string}...>` ? string[] : string;
+  [arg in ArgumentToName<USAGE>]: USAGE extends `<${string}...>`
+    ? string[]
+    : string;
 };
 
 type Argument<OPTIONS, ARGS> = <USAGE extends `<${string}>`>(

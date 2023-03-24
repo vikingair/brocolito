@@ -1,17 +1,20 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { State } from '../src/state';
-import { _getHelp } from '../src/help';
-import { CLI } from '../src/brocolito';
+import { describe, it, expect, beforeEach } from "vitest";
+import { State } from "../src/state";
+import { _getHelp } from "../src/help";
+import { CLI } from "../src/brocolito";
 
-describe('help', () => {
+describe("help", () => {
   beforeEach(() => {
     State.commands = {};
   });
 
-  it('prints top level help', () => {
+  it("prints top level help", () => {
     // given
-    CLI.command('test', 'this is a test');
-    CLI.command('other-command', { description: 'some magic to do?', alias: 'oc' });
+    CLI.command("test", "this is a test");
+    CLI.command("other-command", {
+      description: "some magic to do?",
+      alias: "oc",
+    });
 
     // when / then
     expect(_getHelp()).toMatchInlineSnapshot(`
@@ -25,8 +28,8 @@ describe('help', () => {
     `);
   });
 
-  it('prints command help', () => {
-    CLI.command('test', 'run a test');
+  it("prints command help", () => {
+    CLI.command("test", "run a test");
     expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
       "Help:
         run a test
@@ -37,11 +40,11 @@ describe('help', () => {
     `);
   });
 
-  it('prints command help with options', () => {
-    CLI.command('test', 'run a test')
-      .option('--open', 'some bool flag')
-      .option('--file <file>', 'some single file')
-      .option('--more <args...>', 'more args');
+  it("prints command help with options", () => {
+    CLI.command("test", "run a test")
+      .option("--open", "some bool flag")
+      .option("--file <file>", "some single file")
+      .option("--more <args...>", "more args");
 
     expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
       "Help:
@@ -58,8 +61,12 @@ describe('help', () => {
     `);
   });
 
-  it('prints command with subcommands', () => {
-    CLI.command('test', 'run a test').subcommand('one', 'subcommand one here', (s) => s);
+  it("prints command with subcommands", () => {
+    CLI.command("test", "run a test").subcommand(
+      "one",
+      "subcommand one here",
+      (s) => s
+    );
 
     expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
       "Help:
@@ -74,13 +81,21 @@ describe('help', () => {
     `);
   });
 
-  it('prints subcommand', () => {
-    CLI.command('test', 'run a test').subcommand('one', 'subcommand one here', (s) =>
-      s
-        .subcommand('two', { description: 'subcommand two here', alias: 't' }, (s) => s)
-        .option('--open', 'some bool flag')
+  it("prints subcommand", () => {
+    CLI.command("test", "run a test").subcommand(
+      "one",
+      "subcommand one here",
+      (s) =>
+        s
+          .subcommand(
+            "two",
+            { description: "subcommand two here", alias: "t" },
+            (s) => s
+          )
+          .option("--open", "some bool flag")
     );
-    expect(_getHelp(State.commands.test.subcommands.one)).toMatchInlineSnapshot(`
+    expect(_getHelp(State.commands.test.subcommands.one))
+      .toMatchInlineSnapshot(`
       "Help:
         subcommand one here
 

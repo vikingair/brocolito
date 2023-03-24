@@ -1,4 +1,4 @@
-import { Command } from './types';
+import { Command } from "./types";
 
 const commands: Record<string, Command> = {};
 const aliases: Record<string, string> = {};

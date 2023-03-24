@@ -1,20 +1,27 @@
-import * as github from '@actions/github';
-import { execSync } from 'node:child_process';
-import path from 'node:path';
+import * as github from "@actions/github";
+import { execSync } from "node:child_process";
+import path from "node:path";
 
 const getPRNumber = () => {
   const prNumber =
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    github.context.eventName === 'pull_request' ? github.context.payload.pull_request!.number : undefined;
-  if (!prNumber && github.context.ref !== 'refs/heads/main') {
-    const prNumberString = execSync('gh pr view --json number -q .number');
-    console.log(`Detected PR number on branch ${github.context.ref}: #${prNumberString}`);
+    github.context.eventName === "pull_request"
+      ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        github.context.payload.pull_request!.number
+      : undefined;
+  if (!prNumber && github.context.ref !== "refs/heads/main") {
+    const prNumberString = execSync("gh pr view --json number -q .number");
+    console.log(
+      `Detected PR number on branch ${github.context.ref}: #${prNumberString}`
+    );
     return Number(prNumberString);
   }
   return prNumber;
 };
 
-export const getChangedFiles = async (baseSha = 'HEAD^1', currentSha = 'HEAD') => {
+export const getChangedFiles = async (
+  baseSha = "HEAD^1",
+  currentSha = "HEAD"
+) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN!);
 
@@ -41,7 +48,7 @@ export const getChangedFiles = async (baseSha = 'HEAD^1', currentSha = 'HEAD') =
       );
 
   return files.flatMap(({ filename, status, previous_filename }) =>
-    status === 'renamed' ? [filename, previous_filename as string] : filename
+    status === "renamed" ? [filename, previous_filename as string] : filename
   );
 };
 
@@ -80,8 +87,8 @@ export const printFileTree = (files: string[]) => {
 
   console.log(
     lines.reduce((prev, cur) => {
-      const next = '  '.repeat(cur.level) + cur.content;
-      return [prev, next].filter(Boolean).join('\n');
-    }, '')
+      const next = "  ".repeat(cur.level) + cur.content;
+      return [prev, next].filter(Boolean).join("\n");
+    }, "")
   );
 };

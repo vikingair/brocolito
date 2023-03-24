@@ -8,6 +8,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.github/cli/build" />
       <excludeFolder url="file://$MODULE_DIR$/brocolito/build" />
       <excludeFolder url="file://$MODULE_DIR$/brocolito/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/create-brocolito-cli/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

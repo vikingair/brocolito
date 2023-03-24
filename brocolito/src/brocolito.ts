@@ -1,12 +1,21 @@
-import { Action, ArgumentArg, Command, DescriptionOrOpts, OptionArg, OptionToName, Subcommand } from './types';
-import { State } from './state';
-import { parse } from './parse';
-import { Utils } from './utils';
-import { Arguments } from './arguments';
-import { Meta } from './meta';
+import {
+  Action,
+  ArgumentArg,
+  Command,
+  DescriptionOrOpts,
+  OptionArg,
+  OptionToName,
+  Subcommand,
+} from "./types";
+import { State } from "./state";
+import { parse } from "./parse";
+import { Utils } from "./utils";
+import { Arguments } from "./arguments";
+import { Meta } from "./meta";
 
-process.on('unhandledRejection', (err) => {
-  const errMsg = err instanceof Error ? (process.env.DEBUG ? err.stack : err.message) : err;
+process.on("unhandledRejection", (err) => {
+  const errMsg =
+    err instanceof Error ? (process.env.DEBUG ? err.stack : err.message) : err;
   complainAndExit(String(errMsg));
 });
 
@@ -22,7 +31,11 @@ const createOption =
     usage: USAGE,
     description: string
   ): Command<OPTIONS & OptionArg<USAGE>, ARGS, WITH_ARGS> => {
-    const newCommand = command as Command<OPTIONS & OptionArg<USAGE>, ARGS, WITH_ARGS>;
+    const newCommand = command as Command<
+      OPTIONS & OptionArg<USAGE>,
+      ARGS,
+      WITH_ARGS
+    >;
     const { name, prefixedName, type } = Arguments.deriveOptionInfo(usage);
 
     newCommand.options[Arguments.camelize(name) as OptionToName<USAGE>] = {
@@ -38,7 +51,8 @@ const createOption =
 const createSubcommand =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>): Subcommand<OPTIONS, ARGS> =>
   (name, options, cb): Command<OPTIONS, ARGS, false> => {
-    const opts = typeof options === 'string' ? { description: options } : options;
+    const opts =
+      typeof options === "string" ? { description: options } : options;
     const subcommand = {
       ...command,
       name,
@@ -69,11 +83,15 @@ const createArg =
     const { subcommand: _, subcommands: __, ...newCommand } = command;
     const name = Arguments.toName(usage);
     newCommand.args.push({ usage, name, description });
-    return newCommand as unknown as Command<OPTIONS, ARGS & ArgumentArg<USAGE>, true>;
+    return newCommand as unknown as Command<
+      OPTIONS,
+      ARGS & ArgumentArg<USAGE>,
+      true
+    >;
   };
 
 const command = (name: string, options: DescriptionOrOpts): Command => {
-  const opts = typeof options === 'string' ? { description: options } : options;
+  const opts = typeof options === "string" ? { description: options } : options;
   const command: Command = {
     name,
     line: name,

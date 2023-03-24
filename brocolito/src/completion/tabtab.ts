@@ -1,8 +1,8 @@
 // Source: https://github.com/mklabs/tabtab/blob/master/lib/index.js
 
-import { State } from '../state';
-import { Utils } from '../utils';
-import { Meta } from '../meta';
+import { State } from "../state";
+import { Utils } from "../utils";
+import { Meta } from "../meta";
 
 /**
  * Utility to figure out the shell used on the system.
@@ -11,7 +11,7 @@ import { Meta } from '../meta';
  * process.env.SHELL.
  *
  */
-export const systemShell = () => (process.env.SHELL || '').split('/').at(-1);
+export const systemShell = () => (process.env.SHELL || "").split("/").at(-1);
 
 /**
  * Tabtab environment data that return from "parseEnv" method
@@ -60,30 +60,32 @@ export type TabtabEnv = {
  */
 const parseEnv = (env: Record<string, string | undefined>): TabtabEnv => {
   if (!env) {
-    throw new Error('parseEnv: You must pass in an environment object.');
+    throw new Error("parseEnv: You must pass in an environment object.");
   }
 
   let cword = Number(env.COMP_CWORD);
   let point = Number(env.COMP_POINT);
-  const line = env.COMP_LINE || '';
-  const firstArg = line.split(' ')[0];
+  const line = env.COMP_LINE || "";
+  const firstArg = line.split(" ")[0];
   const alias = State.aliases[firstArg];
   if (firstArg && !alias && firstArg !== Meta.name)
     return Utils.complainAndExit(`Completion invoked with not configured alias ${firstArg}.
 Use e.g. -> CLI.alias('${firstArg}', '${Meta.name} my-subcommand')
 `);
-  const expandedLine = alias ? line.replace(new RegExp(`^${firstArg}`), alias) : line;
+  const expandedLine = alias
+    ? line.replace(new RegExp(`^${firstArg}`), alias)
+    : line;
 
   if (Number.isNaN(cword)) cword = 0;
   if (Number.isNaN(point)) point = 0;
 
   const partial = expandedLine.slice(0, point);
 
-  const parts = expandedLine.split(' ');
+  const parts = expandedLine.split(" ");
   const prev = parts.slice(0, -1).slice(-1)[0];
 
-  const last = parts.slice(-1).join('');
-  const lastPartial = partial.split(' ').slice(-1).join('');
+  const last = parts.slice(-1).join("");
+  const lastPartial = partial.split(" ").slice(-1).join("");
 
   let complete = true;
   if (!env.COMP_CWORD || !env.COMP_POINT || !env.COMP_LINE) {
@@ -116,18 +118,18 @@ export type CompleteItemOrString = string | CompleteItem;
  * Helper to normalize String and Objects with { name, description } when logging out.
  */
 const completionItem = (item: CompleteItemOrString): CompleteItem => {
-  if (typeof item !== 'string') return item;
+  if (typeof item !== "string") return item;
   const shell = systemShell();
 
   let name = item;
-  let description = '';
+  let description = "";
   const matching = /^(.*?)(\\)?:(.*)$/.exec(item);
   if (matching) {
     [, name, , description] = matching;
   }
 
-  if (shell === 'zsh' && /\\/.test(item)) {
-    name += '\\';
+  if (shell === "zsh" && /\\/.test(item)) {
+    name += "\\";
   }
 
   return {
@@ -150,25 +152,27 @@ const log = (args: Array<CompleteItemOrString>) => {
   const shell = systemShell();
 
   if (!Array.isArray(args)) {
-    throw new Error('log: Invalid arguments, must be an array');
+    throw new Error("log: Invalid arguments, must be an array");
   }
 
   // Normalize arguments if there are some Objects { name, description } in them.
   let normalizedArgs = args.map(completionItem).map((item: CompleteItem) => {
     const { name, description } = item;
     let str = name;
-    if (shell === 'zsh' && description) {
-      str = `${name.replace(/:/g, '\\:')}:${description}`;
-    } else if (shell === 'fish' && description) {
+    if (shell === "zsh" && description) {
+      str = `${name.replace(/:/g, "\\:")}:${description}`;
+    } else if (shell === "fish" && description) {
       str = `${name}\t${description}`;
     }
 
     return str;
   });
 
-  if (shell === 'bash') {
+  if (shell === "bash") {
     const env = parseEnv(process.env);
-    normalizedArgs = normalizedArgs.filter((arg) => arg.indexOf(env.last) === 0);
+    normalizedArgs = normalizedArgs.filter(
+      (arg) => arg.indexOf(env.last) === 0
+    );
   }
 
   for (const arg of normalizedArgs) {
@@ -185,7 +189,7 @@ const log = (args: Array<CompleteItemOrString>) => {
  * completion.
  */
 const logFiles = () => {
-  console.log('__tabtab_complete_files__');
+  console.log("__tabtab_complete_files__");
 };
 
 export const Tabtab = { log, parseEnv, logFiles };

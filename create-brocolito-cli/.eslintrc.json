@@ -27,11 +27,19 @@
       }
     ]
   },
-  "overrides": [{
-    "files": ["tests/**"],
-    "rules": {
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-non-null-assertion": "off"
+  "overrides": [
+    {
+      "files": ["tests/**"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
+      }
+    },
+    {
+      "files": ["*.cjs"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
     }
-  }]
+  ]
 }

@@ -1,8 +1,8 @@
-import pc from 'picocolors';
-import prompts from 'prompts';
+import pc from "picocolors";
+import prompts from "prompts";
 
 const complainAndExit = (errMsg: string, code = 1): never => {
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === "test") {
     throw new Error(errMsg);
   } else {
     console.log(pc.red(errMsg));

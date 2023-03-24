@@ -53,3 +53,20 @@ jobs:
         working-directory: .github/cli
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+  check-create-brocolito-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pnpm-install
+        with:
+          target: create-brocolito-cli
+      - name: Lint 🎨
+        run: pnpm lint
+        working-directory: create-brocolito-cli
+      - name: Test 🐛
+        run: pnpm test
+        working-directory: create-brocolito-cli
+      - name: Build 🏗️
+        run: pnpm build
+        working-directory: create-brocolito-cli

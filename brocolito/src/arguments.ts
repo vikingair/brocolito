@@ -5,11 +5,11 @@ const camelize = <S extends string>(str: S): SnakeToCamelCase<S> =>
 
 const toName = <S extends string>(str: S): ArgumentToName<S> =>
   camelize(
-    str.replace(/^<(file:)?([a-zA-Z0-9-]+)(\.{3})?>$/, "$2")
+    str.replace(/^<(file:)?([a-zA-Z0-9-]+)(\.{3})?>$/, "$2"),
   ) as ArgumentToName<S>;
 
 const deriveInfo = (
-  usage: string
+  usage: string,
 ): { type: "boolean" | "string" | "file"; multi: boolean } => {
   const match = usage.match(/^<(file:)?[a-zA-Z0-9-]+(\.{3})?>$/);
   if (!match) return { type: "boolean", multi: false };
@@ -20,7 +20,7 @@ const deriveInfo = (
 };
 
 const deriveOptionInfo = (
-  usage: string
+  usage: string,
 ): Pick<OptionMeta, "name" | "type" | "prefixedName"> => {
   const [prefixedName, arg] = usage.split(" ");
   const name = prefixedName.substring(2);

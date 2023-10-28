@@ -171,7 +171,7 @@ const log = (args: Array<CompleteItemOrString>) => {
   if (shell === "bash") {
     const env = parseEnv(process.env);
     normalizedArgs = normalizedArgs.filter(
-      (arg) => arg.indexOf(env.last) === 0
+      (arg) => arg.indexOf(env.last) === 0,
     );
   }
 

@@ -29,7 +29,7 @@ const createOption =
   <OPTIONS, ARGS, WITH_ARGS>(command: Command<OPTIONS, ARGS, WITH_ARGS>) =>
   <USAGE extends `--${string}`>(
     usage: USAGE,
-    description: string
+    description: string,
   ): Command<OPTIONS & OptionArg<USAGE>, ARGS, WITH_ARGS> => {
     const newCommand = command as Command<
       OPTIONS & OptionArg<USAGE>,
@@ -78,7 +78,7 @@ const createArg =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>) =>
   <USAGE extends `<${string}>`>(
     usage: USAGE,
-    description: string
+    description: string,
   ): Command<OPTIONS, ARGS & ArgumentArg<USAGE>, true> => {
     const { subcommand: _, subcommands: __, ...newCommand } = command;
     const name = Arguments.toName(usage);

@@ -11,7 +11,7 @@ const getPRNumber = () => {
   if (!prNumber && github.context.ref !== "refs/heads/main") {
     const prNumberString = execSync("gh pr view --json number -q .number");
     console.log(
-      `Detected PR number on branch ${github.context.ref}: #${prNumberString}`
+      `Detected PR number on branch ${github.context.ref}: #${prNumberString}`,
     );
     return Number(prNumberString);
   }
@@ -20,7 +20,7 @@ const getPRNumber = () => {
 
 export const getChangedFiles = async (
   baseSha = "HEAD^1",
-  currentSha = "HEAD"
+  currentSha = "HEAD",
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN!);
@@ -44,11 +44,11 @@ export const getChangedFiles = async (
           basehead: `${baseSha}...${currentSha}`, // or use SHAs
           per_page: 100,
         },
-        (r) => r.data.files || []
+        (r) => r.data.files || [],
       );
 
   return files.flatMap(({ filename, status, previous_filename }) =>
-    status === "renamed" ? [filename, previous_filename as string] : filename
+    status === "renamed" ? [filename, previous_filename as string] : filename,
   );
 };
 
@@ -89,6 +89,6 @@ export const printFileTree = (files: string[]) => {
     lines.reduce((prev, cur) => {
       const next = "  ".repeat(cur.level) + cur.content;
       return [prev, next].filter(Boolean).join("\n");
-    }, "")
+    }, ""),
   );
 };

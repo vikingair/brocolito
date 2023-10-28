@@ -17,7 +17,7 @@ CLI.command("run", "test description").action(async () => {
 
   await fs.writeFile(
     path.join(name, "package.json"),
-    Templates.packageJson(name)
+    Templates.packageJson(name),
   );
   await fs.writeFile(path.join(srcDir, "main.ts"), Templates.main);
   await fs.writeFile(path.join(srcDir, "main.test.ts"), Templates.testFile);

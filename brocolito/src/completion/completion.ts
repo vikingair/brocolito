@@ -10,7 +10,7 @@ import { Meta } from "../meta";
 const FileCompletion = ["__files__"];
 
 const toCompleteItems = (
-  commands: Record<string, { description: string }>
+  commands: Record<string, { description: string }>,
 ): CompleteItemOrString[] =>
   Object.entries(commands).map(([key, { description }]) => ({
     name: key,
@@ -38,7 +38,7 @@ export const _completion = async ({
     description,
   }));
   const startedOption = options.find(
-    ({ prefixedName }) => prefixedName === prev
+    ({ prefixedName }) => prefixedName === prev,
   );
   const startedOptionType = startedOption
     ? Arguments.deriveOptionInfo(startedOption.usage).type

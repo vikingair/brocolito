@@ -12,7 +12,7 @@ export const showInstallInstruction = async () => {
   if (shell !== "bash" && shell !== "zsh")
     complainAndExit(
       'Completion is only supported for "zsh" and "bash" shells. Detected: ' +
-        shell
+        shell,
     );
 
   const shellRC = `.${shell}rc`;
@@ -33,12 +33,12 @@ export const showInstallInstruction = async () => {
     if (shellRCContent.includes(command)) return; // don't write the same line twice
     fs.writeFileSync(shellRCFile, `${shellRCContent.trim()}\n\n${command}\n`);
     console.log(
-      pc.green("Completion should work now in new opened or sourced shells.")
+      pc.green("Completion should work now in new opened or sourced shells."),
     );
   } else {
     console.log(`
 To install auto-completion in ${pc.bold(
-      pc.yellow(shell)
+      pc.yellow(shell),
     )} add to your ${pc.blue(shellRC)} the following:
 
 ${command}`);

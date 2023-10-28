@@ -28,7 +28,7 @@ export type OptionArg<USAGE extends `--${string}`> = {
 };
 type Option<OPTIONS, ARGS, WITH_ARGS> = <USAGE extends `--${string}`>(
   usage: USAGE,
-  description: string
+  description: string,
 ) => Command<OPTIONS & OptionArg<USAGE>, ARGS, WITH_ARGS>;
 export type OptionMeta = {
   usage: string;
@@ -45,7 +45,7 @@ export type DescriptionOrOpts =
 export type Subcommand<OPTIONS, ARGS> = (
   name: string,
   description: DescriptionOrOpts,
-  sub: (subcommand: Command<OPTIONS>) => void
+  sub: (subcommand: Command<OPTIONS>) => void,
 ) => Command<OPTIONS, ARGS, false>;
 export type ArgumentArg<USAGE extends `<${string}>`> = {
   [arg in ArgumentToName<USAGE>]: USAGE extends `<${string}...>`
@@ -53,9 +53,9 @@ export type ArgumentArg<USAGE extends `<${string}>`> = {
     : string;
 };
 
-type Argument<OPTIONS, ARGS> = <USAGE extends `<${string}>`>(
+type Argument<OPTIONS, ARGS> = <USAGE extends `<${string}${string}>`>(
   usage: USAGE,
-  description: string
+  description: string,
 ) => Command<OPTIONS, ARGS & ArgumentArg<USAGE>, true>;
 
 type Arguments<OPTIONS, ARGS> = {

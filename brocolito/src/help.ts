@@ -5,32 +5,32 @@ import { Meta } from "./meta";
 const _getRow = (
   label: string,
   { description, alias }: { description: string; alias?: string },
-  longestLabelLength: number
+  longestLabelLength: number,
 ): string =>
   `  ${label}${" ".repeat(
-    3 + longestLabelLength - label.length
+    3 + longestLabelLength - label.length,
   )}${description}${alias ? ` (alias: ${alias})` : ""}`;
 
 const _getRows = <
   K extends string,
-  T extends { description: string; alias?: string } & { [key in K]: string }
+  T extends { description: string; alias?: string } & { [key in K]: string },
 >(
   label: string,
   values: T[],
-  key: K
+  key: K,
 ): string => {
   if (!values.length) return "";
   const longestLabelLength = values.reduce(
     (prev, cur) => Math.max(prev, cur[key].length),
-    0
+    0,
   );
   const rows = values
     .map((v) =>
       _getRow(
         v[key],
         { description: v.description, alias: v.alias },
-        longestLabelLength
-      )
+        longestLabelLength,
+      ),
     )
     .join("\n");
   return `\n${label}:\n${rows}\n`;

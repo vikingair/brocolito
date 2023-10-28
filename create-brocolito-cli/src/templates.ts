@@ -17,7 +17,7 @@ const packageJson = (name: string) =>
       ...packageJSONWithoutName,
     },
     null,
-    2
+    2,
   ) + "\n";
 const main = `import { CLI } from "brocolito";
 

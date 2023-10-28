@@ -65,7 +65,7 @@ describe("help", () => {
     CLI.command("test", "run a test").subcommand(
       "one",
       "subcommand one here",
-      (s) => s
+      (s) => s,
     );
 
     expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
@@ -90,9 +90,9 @@ describe("help", () => {
           .subcommand(
             "two",
             { description: "subcommand two here", alias: "t" },
-            (s) => s
+            (s) => s,
           )
-          .option("--open", "some bool flag")
+          .option("--open", "some bool flag"),
     );
     expect(_getHelp(State.commands.test.subcommands.one))
       .toMatchInlineSnapshot(`

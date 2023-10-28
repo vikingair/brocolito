@@ -65,7 +65,7 @@ describe("completion", () => {
     CLI.command("test", { description: dummyDescription, alias: "t" })
       .option("--flag", "some flag")
       .subcommand("one", { description: "sub cmd one", alias: "o" }, (s) =>
-        s.option("--more", "more stuff").action(anyCallback)
+        s.option("--more", "more stuff").action(anyCallback),
       )
       .option("--other-flag", "some other flag")
       .subcommand("two", "sub cmd two", (s) => s.action(anyCallback));

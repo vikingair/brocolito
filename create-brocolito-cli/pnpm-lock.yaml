@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   brocolito:
-    specifier: 2.3.0
-    version: 2.3.0(@types/node@20.8.9)
+    specifier: 2.3.1
+    version: 2.3.1(@types/node@20.8.9)
 
 devDependencies:
   '@types/node':
@@ -621,8 +621,8 @@ packages:
       fill-range: 7.0.1
     dev: true
 
-  /brocolito@2.3.0(@types/node@20.8.9):
-    resolution: {integrity: sha512-IdX+xVGkj/pvmawWaOrfS3USLY1ZQtSwPQBEAhPnaPgWAQ9f6XTLjDtqAaEufW+Ko5t7vO3ZVh+XpOCyaOt/Eg==}
+  /brocolito@2.3.1(@types/node@20.8.9):
+    resolution: {integrity: sha512-1+ZNuTpm8SF66NfCvBgIhrP1xvtpbekV53oJHL+U3WwTMMFr3K5YZl/j6rlecDWDAFRj73bYj0/DuvRbXQQKMw==}
     hasBin: true
     dependencies:
       '@types/minimist': 1.2.4

@@ -27,10 +27,10 @@ export const _completion = async ({
 
   const lineArgs = line.split(" ");
   const minimistArgs = minimist(lineArgs.slice(1));
-  const foundCommand = findCommand(minimistArgs._);
+  const { command, args, error } = findCommand(minimistArgs._);
 
-  if (typeof foundCommand === "string") return [];
-  const [command, args] = foundCommand;
+  if (typeof error === "string") return [];
+
   const commandArgs = command.args.slice(args.length); // all arguments that can still be used
   const options = Object.values(command.options) as OptionMeta[];
   const optionItems = options.map(({ prefixedName, description }) => ({

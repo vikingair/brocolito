@@ -14,11 +14,15 @@ const _findByNameOrAlias = (
   return Object.values(commands).find(({ alias }) => alias === name);
 };
 
+type FoundCommand =
+  | { command: Command; args: string[]; error?: undefined }
+  | { command?: Command; error: string; args?: undefined };
+
 const _findSubcommand = (
   command: Command,
   subcommandsOrArgs: string[],
-): [command: Command, args: string[]] => {
-  if (!subcommandsOrArgs.length) return [command, subcommandsOrArgs];
+): FoundCommand => {
+  if (!subcommandsOrArgs.length) return { command, args: [] };
   const subcommand = _findByNameOrAlias(
     subcommandsOrArgs[0],
     command.subcommands,
@@ -26,23 +30,22 @@ const _findSubcommand = (
   if (!subcommand) {
     if (Object.keys(command.subcommands).length && subcommandsOrArgs.length) {
       Help.show(command);
-      return Utils.complainAndExit(
-        `Unknown subcommand ${Utils.pc.yellow(
+      return {
+        command,
+        error: `Unknown subcommand ${Utils.pc.yellow(
           subcommandsOrArgs[0],
         )} specified.`,
-      );
+      };
     }
-    return [command, subcommandsOrArgs];
+    return { command, args: subcommandsOrArgs };
   }
   return _findSubcommand(subcommand, subcommandsOrArgs.slice(1));
 };
 
-export const findCommand = (
-  commands: string[],
-): [command: Command, args: string[]] => {
+export const findCommand = (commands: string[]): FoundCommand => {
   const command = _findByNameOrAlias(commands[0], State.commands);
   if (!command) {
-    return Utils.complainAndExit(`Command "${commands[0]}" does not exist`);
+    return { error: `Command "${commands[0]}" does not exist` };
   }
   return _findSubcommand(command, commands.slice(1));
 };
@@ -139,8 +142,12 @@ export const parse = async (argv = process.argv): Promise<unknown> => {
     if (minimistOpts.v || minimistOpts.version)
       return console.log(Meta.version);
   }
-  const [command, args] = findCommand(minimistArgs);
+  const { command, args, error } = findCommand(minimistArgs);
   if (wantsHelp) return Help.show(command);
+  if (typeof error === "string") {
+    if (command) Help.show(command);
+    return Utils.complainAndExit(error);
+  }
   const parsedArgs = _parseArgs(command, args);
   const options = _parseOptions(command, minimistOpts);
   const action = command._action;

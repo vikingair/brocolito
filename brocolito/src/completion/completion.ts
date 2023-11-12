@@ -27,9 +27,9 @@ export const _completion = async ({
 
   const lineArgs = line.split(" ");
   const minimistArgs = minimist(lineArgs.slice(1));
-  const { command, args, error } = findCommand(minimistArgs._);
+  const { command, args } = findCommand(minimistArgs._);
 
-  if (typeof error === "string") return [];
+  if (!command) return [];
 
   const commandArgs = command.args.slice(args.length); // all arguments that can still be used
   const options = Object.values(command.options) as OptionMeta[];

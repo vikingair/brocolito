@@ -16,7 +16,7 @@ const _findByNameOrAlias = (
 
 type FoundCommand =
   | { command: Command; args: string[]; error?: undefined }
-  | { command?: Command; error: string; args?: undefined };
+  | { command?: Command; error: string; args: string[] };
 
 const _findSubcommand = (
   command: Command,
@@ -29,12 +29,12 @@ const _findSubcommand = (
   );
   if (!subcommand) {
     if (Object.keys(command.subcommands).length && subcommandsOrArgs.length) {
-      Help.show(command);
       return {
         command,
         error: `Unknown subcommand ${Utils.pc.yellow(
           subcommandsOrArgs[0],
         )} specified.`,
+        args: subcommandsOrArgs,
       };
     }
     return { command, args: subcommandsOrArgs };
@@ -45,7 +45,7 @@ const _findSubcommand = (
 export const findCommand = (commands: string[]): FoundCommand => {
   const command = _findByNameOrAlias(commands[0], State.commands);
   if (!command) {
-    return { error: `Command "${commands[0]}" does not exist` };
+    return { error: `Command "${commands[0]}" does not exist`, args: commands };
   }
   return _findSubcommand(command, commands.slice(1));
 };

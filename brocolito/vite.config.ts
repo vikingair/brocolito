@@ -1,5 +1,4 @@
 /// <reference types="vitest" />
-import { resolve } from "path";
 import { readFileSync } from "fs";
 import { defineConfig } from "vite";
 
@@ -10,7 +9,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: {
-        brocolito: resolve(__dirname, "src/brocolito.ts"),
+        brocolito: "./src/brocolito.ts",
       },
       fileName: (format, entryName) =>
         `${entryName}.${format === "cjs" ? "cjs" : "mjs"}`,

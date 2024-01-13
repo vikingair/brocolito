@@ -18,28 +18,20 @@ in CI / CD workflows? Brocolito aims to support you with that.
 
 ## How to
 
-You create some directory for your CLI code and place two mandatory files in it:
+```sh
+pnpm create brocolito-cli
+# or
+npx create-brocolito-cli
+# or
+yarn create brocolito-cli
+```
 
-- `package.json`
-  - the `name` will be the name of your CLI, e.g. `cli`.
-  - the `dependencies` should contain `brocolito`
-    - you can install it e.g. via `pnpm install brocolito`
-  - the `scripts` should contain e.g. `"build": "brocolito build"`
-- the `src/main.ts` is your index file for the CLI code
-  - below you can find a minimal code sample
-
-Run the build script to set up the CLI, from the above example with `pnpm build`.
-You will get printed how to make the CLI globally available for you.
-
-Additional recommendations:
-
-- Install `devDependencies`: `typescript` and `@types/node`
-- Add `tsconfig.json`
-- Add `lint` script for your CLI
+Then cd into your CLI and run `pnpm build`.
 
 Feel free to check out the herein provided [example](.github/cli).
 
 ### Minimal code sample
+
 In your `src/main.ts` you create this code:
 
 ```ts
@@ -61,12 +53,6 @@ to install the CLI dependencies and a simple [setup](.github/actions/brocolito-s
 
 In this [workflow](.github/workflows/pr.yml) you can see it in action.
 
-### Future plans
-
-- Create an initial setup using `create-brocolito-cli` package
-  - Then you can set the above up using `pnpm create brocolito-cli`
-- Include some more examples of interesting CLI relevant features that can be adopted
-
 ## CLI features
 
 The CLI contains already many features right away. It was inspired by [commander](https://www.npmjs.com/package/commander)
@@ -83,7 +69,7 @@ automatically generated help text from your CLI configuration.
 As soon as you have locally set up the completion, you will get automatically suggestions
 based on your CLI configuration. Run `cli completion` to set up the tab completion.
 
-#### Aliases
+#### Completion for aliases
 
 If you want to use an alias for e.g. one of your subcommands like `cli get data`, you have
 to register it to make the completion work like so: `CLI.alias('cgd', 'cli get data')`.
@@ -102,17 +88,20 @@ flags and will be treated as boolean `true`.
 - Parameter type: `boolean`
 - Completion: `true` or `false`
 - Code example:
-```ts
-CLI.command('hello', 'prints hello world')
-   .option('--with-exclamation-mark', 'append exclamation mark')
-   .action(({ withExclamationMark }) => console.log(`hello world${withExclamationMark ? '!' : ''}`));
-```
+
+   ```ts
+   CLI.command('hello', 'prints hello world')
+      .option('--with-exclamation-mark', 'append exclamation mark')
+      .action(({ withExclamationMark }) => console.log(`hello world${withExclamationMark ? '!' : ''}`));
+   ```
+
 - Shell examples:
-```
-cli hello --with-exclamation-mark
-cli hello --with-exclamation-mark=true
-cli hello --with-exclamation-mark false
-```
+
+   ```sh
+   cli hello --with-exclamation-mark
+   cli hello --with-exclamation-mark=true
+   cli hello --with-exclamation-mark false
+   ```
 
 #### String Options
 
@@ -120,11 +109,13 @@ cli hello --with-exclamation-mark false
 - Parameter type: `string | undefined`
 - Completion: none
 - Code example:
-```ts
-CLI.command('hello', 'prints greeting')
-   .option('--name <string>', 'who to greet?')
-   .action(({ name }) => console.log(`hello ${name}`));
-```
+
+   ```ts
+   CLI.command('hello', 'prints greeting')
+      .option('--name <string>', 'who to greet?')
+      .action(({ name }) => console.log(`hello ${name}`));
+   ```
+
 - Shell example: `cli hello --name mark`
 
 #### File Options
@@ -133,11 +124,13 @@ CLI.command('hello', 'prints greeting')
 - Parameter type: `string | undefined`
 - Completion: local file system
 - Code example:
-```ts
-CLI.command('char-count', { description: 'count characters', alias: 'cc' })
-   .option('--content <file>', 'what file to use?')
-   .action(async ({ content }) => console.log((await fs.readFile(content, 'utf-8')).length));
-```
+
+   ```ts
+   CLI.command('char-count', { description: 'count characters', alias: 'cc' })
+      .option('--content <file>', 'what file to use?')
+      .action(async ({ content }) => console.log((await fs.readFile(content, 'utf-8')).length));
+   ```
+
 - Shell example: `cli char-count --content ./foo.txt`
 
 ### Args
@@ -153,13 +146,14 @@ on a command. If you cannot have another arg after an arg list.
 - Parameter type: `string`
 - Completion: none
 - Code example:
-```ts
-CLI.command('hello', 'prints greeting')
-   .arg('<arg-name>', 'greeting name')
-   .action(({ argName }) => console.log(`hello ${name}`));
-```
-- Shell example: `cli hello mark`
 
+   ```ts
+   CLI.command('hello', 'prints greeting')
+      .arg('<arg-name>', 'greeting name')
+      .action(({ argName }) => console.log(`hello ${name}`));
+   ```
+
+- Shell example: `cli hello mark`
 
 #### File Arg
 
@@ -167,11 +161,13 @@ CLI.command('hello', 'prints greeting')
 - Parameter type: `string`
 - Completion: local file system
 - Code example:
-```ts
-CLI.command('exists', 'checks existance')
-   .arg('<file:file-name>', 'what file to check?')
-   .action(({ fileName }) => console.log(fs.existsSync(fileName)));
-```
+
+   ```ts
+   CLI.command('exists', 'checks existance')
+      .arg('<file:file-name>', 'what file to check?')
+      .action(({ fileName }) => console.log(fs.existsSync(fileName)));
+   ```
+
 - Shell example: `cli exists /tmp/someFile.js`
 
 #### Arg lists
@@ -180,13 +176,14 @@ CLI.command('exists', 'checks existance')
 - Parameter type: `string[]`
 - Completions: none or local file system
 - Code example:
-```ts
-CLI.command('exists', 'checks existance')
-   .arg('<file:file-names...>', 'what files to check?')
-   .action(({ fileNames }) => console.log(fileNames.map((f) => fs.existsSync(f))));
-```
-- Shell example: `cli exists /tmp/someFile.js ./foo.txt`
 
+   ```ts
+   CLI.command('exists', 'checks existance')
+      .arg('<file:file-names...>', 'what files to check?')
+      .action(({ fileNames }) => console.log(fileNames.map((f) => fs.existsSync(f))));
+   ```
+
+- Shell example: `cli exists /tmp/someFile.js ./foo.txt`
 
 ### Subcommands
 
@@ -196,21 +193,24 @@ args. Options are inherited from the command to all afterwards specified subcomm
 subcommand can use further options, args or subcommands as any regular command.
 
 - Code example:
-```ts
-CLI.command('string', 'do something with strings')
-   .option('--error', 'logs as error')
-   .subcommand('trim', 'trims a string', (sub) => {
-     sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.trim()));
-   })
-   .subcommand('length', { description: 'counts the chars', alias: 'l' }, (sub) => {
-     sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.length));
-   })
-```
+
+   ```ts
+   CLI.command('string', 'do something with strings')
+      .option('--error', 'logs as error')
+      .subcommand('trim', 'trims a string', (sub) => {
+      sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.trim()));
+      })
+      .subcommand('length', { description: 'counts the chars', alias: 'l' }, (sub) => {
+      sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.length));
+      })
+   ```
+
 - Shell examples:
-```
-cli string trim " foo"
-cli string length "lorem ipsum"
-```
+
+   ```sh
+   cli string trim " foo"
+   cli string length "lorem ipsum"
+   ```
 
 ### Aliases
 

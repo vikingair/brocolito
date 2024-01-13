@@ -3,26 +3,31 @@ import eslintJSON from "../.eslintrc.json";
 import packageJSON from "../package.json";
 import gitIgnore from "../.gitignore?raw";
 
-const { name: _, version: _v, bin, ...packageJSONWithoutName } = packageJSON;
+const { name: _, version: _v, bin, ...packageJSONRest } = packageJSON;
 
-const packageJson = (name: string) =>
-  JSON.stringify(
-    {
-      // retaining the order of entries for serialization
-      name,
-      version: "0.0.1",
-      bin: {
-        [name]: bin["create-brocolito-cli"],
-      },
-      ...packageJSONWithoutName,
+const packageJson = (name: string, runtime: "node" | "bun") => {
+  const result = {
+    // retaining the order of entries for serialization
+    name,
+    version: "0.0.1",
+    bin: {
+      [name]: bin["create-brocolito-cli"],
     },
-    null,
-    2,
-  ) + "\n";
+    ...packageJSONRest,
+  };
+
+  if (runtime === "bun") {
+    result.scripts.build = "brocolito-bun";
+    result.scripts.test = "bun test";
+  }
+
+  return JSON.stringify(result, null, 2) + "\n";
+};
+
 const main = `import { CLI } from "brocolito";
 
 CLI.command("hello", "prints 'hello world'").action(() =>
-  console.log("hello world")
+  console.log("hello world"),
 );
 
 CLI.parse(); // this needs to be executed after all "commands" were set up
@@ -31,6 +36,7 @@ const testFile = `import { describe, vi, it, expect } from "vitest";
 import { CLI } from "brocolito";
 
 vi.spyOn(CLI, "parse").mockImplementationOnce(async () => undefined);
+await import("./main");
 
 const call = (line: string) =>
   CLI.parse(["nodeFile", "scriptFile"].concat(line.split(" ")));
@@ -41,7 +47,28 @@ describe("main", () => {
     const log = vi
       .spyOn(console, "log")
       .mockImplementationOnce(() => undefined);
-    await import("./main");
+
+    // when
+    await call("hello");
+
+    // then
+    expect(log).toHaveBeenCalledWith("hello world");
+  });
+});
+`;
+const testFileBun = `import { describe, spyOn, it, expect } from "bun:test";
+import { CLI } from "brocolito";
+
+spyOn(CLI, "parse").mockImplementationOnce(async () => undefined);
+await import("./main");
+
+const call = (line: string) =>
+  CLI.parse(["nodeFile", "scriptFile"].concat(line.split(" ")));
+
+describe("main", () => {
+  it("logs 'hello world'", async () => {
+    // given
+    const log = spyOn(console, "log").mockImplementationOnce(() => undefined);
 
     // when
     await call("hello");
@@ -58,6 +85,7 @@ export const Templates = {
   packageJson,
   main,
   testFile,
+  testFileBun,
   tsConfig,
   eslintConfig,
   gitIgnore,

@@ -1,6 +1,6 @@
 {
   "name": "brocolito",
-  "version": "2.3.3",
+  "version": "2.4.0-next.0",
   "description": "Create type-safe CLIs to align local development and pipeline workflows",
   "main": "dist/brocolito.cjs",
   "module": "dist/brocolito.mjs",
@@ -10,7 +10,8 @@
     "bin"
   ],
   "bin": {
-    "brocolito": "./bin/build.mjs"
+    "brocolito": "./bin/build.mjs",
+    "brocolito-bun": "./bin/build-bun.mjs"
   },
   "repository": {
     "type": "git",
@@ -32,22 +33,22 @@
     "test:update": "vitest --run -u"
   },
   "dependencies": {
-    "@types/minimist": "^1.2.4",
-    "@types/prompts": "^2.4.7",
+    "@types/minimist": "^1.2.5",
+    "@types/prompts": "^2.4.9",
     "minimist": "^1.2.8",
     "picocolors": "^1.0.0",
     "prompts": "^2.4.2",
-    "vite": "^4.5.0"
+    "vite": "^5.0.11"
   },
   "devDependencies": {
-    "@types/node": "^20.8.9",
-    "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^6.9.0",
-    "eslint": "^8.52.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "prettier": "^3.0.3",
-    "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
   }
 }

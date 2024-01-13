@@ -5,6 +5,17 @@ import { execSync } from "node:child_process";
 import { Templates } from "./templates";
 
 CLI.command("run", "test description").action(async () => {
+  const { runtime }: { runtime: "bun" | "node" } = await prompts({
+    type: "select",
+    name: "runtime",
+    message: "Choose your runtime",
+    choices: [
+      { title: "node", value: "node" },
+      { title: "bun", value: "bun" },
+    ],
+    initial: 0,
+  });
+
   const { name } = await prompts({
     type: "text",
     name: "name",
@@ -17,10 +28,13 @@ CLI.command("run", "test description").action(async () => {
 
   await fs.writeFile(
     path.join(name, "package.json"),
-    Templates.packageJson(name),
+    Templates.packageJson(name, runtime),
   );
   await fs.writeFile(path.join(srcDir, "main.ts"), Templates.main);
-  await fs.writeFile(path.join(srcDir, "main.test.ts"), Templates.testFile);
+  await fs.writeFile(
+    path.join(srcDir, "main.test.ts"),
+    runtime === "node" ? Templates.testFile : Templates.testFileBun,
+  );
   await fs.writeFile(path.join(name, "tsconfig.json"), Templates.tsConfig);
   await fs.writeFile(path.join(name, ".eslintrc"), Templates.eslintConfig);
   await fs.writeFile(path.join(name, ".gitignore"), Templates.gitIgnore);

@@ -6,8 +6,8 @@ export type SnakeToCamelCase<S extends string> =
 export type OptionToName<S extends string> = S extends `--${infer T} ${string}`
   ? SnakeToCamelCase<T>
   : S extends `--${infer T}`
-  ? SnakeToCamelCase<T>
-  : never;
+    ? SnakeToCamelCase<T>
+    : never;
 
 type RemoveArgumentBrackets<S extends string> = S extends `<${infer T}>`
   ? T

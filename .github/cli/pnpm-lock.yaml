@@ -12,8 +12,8 @@ dependencies:
     specifier: 6.0.0
     version: 6.0.0
   brocolito:
-    specifier: 2.4.0-next.0
-    version: 2.4.0-next.0(@types/node@20.11.0)
+    specifier: 2.4.0
+    version: 2.4.0(@types/node@20.11.0)
   dotenv:
     specifier: 16.3.1
     version: 16.3.1
@@ -827,8 +827,8 @@ packages:
       fill-range: 7.0.1
     dev: true
 
-  /brocolito@2.4.0-next.0(@types/node@20.11.0):
-    resolution: {integrity: sha512-VtLLO+8cds1xe2qlnXw7cnuSxU/b9IrlPWFtD+rKPg4RBbl5800P8ibQWA081JZX9gRYB2XIaq/+lWhuCT4npg==}
+  /brocolito@2.4.0(@types/node@20.11.0):
+    resolution: {integrity: sha512-IvdzfjKKPK7tEq+3pkDXQ44rTF5ipzaZylWaBO6Sf4tnlHKUwX2V+g8A6CvpZXE2iT8dHSPL9tv/IaWj1Y9YSQ==}
     hasBin: true
     dependencies:
       '@types/minimist': 1.2.5

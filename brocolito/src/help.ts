@@ -46,6 +46,7 @@ ${commandRows}`;
   }
   const commands = Object.values(command.subcommands);
   const commandRows = _getRows("Commands", commands, "name");
+  const argsRows = _getRows("Args", command.args, "usage");
   const options = Object.values(command.options) as OptionMeta[];
   const optionRows = _getRows("Options", options, "usage");
   const commandLine = `${Meta.name} ${command.line}`;
@@ -66,7 +67,7 @@ ${commandRows}`;
 
 Usage:
   $ ${usage}
-${commandRows}${optionRows}`;
+${commandRows}${argsRows}${optionRows}`;
 };
 
 const show = (command?: Command): void => console.log(_getHelp(command));

@@ -52,6 +52,11 @@ describe("help", () => {
 
       Usage:
         $ cli test <foo> <file:bar> <more...>
+
+      Args:
+        <foo>        foo arg
+        <file:bar>   bar arg
+        <more...>    more args
       "
     `);
   });
@@ -59,16 +64,17 @@ describe("help", () => {
   it("prints command help with args and options", () => {
     CLI.command("test", "run a test")
       .option("--open", "some bool flag")
-      .arg("<foo>", "foo arg")
-      .arg("<file:bar>", "bar arg")
-      .arg("<more...>", "more args");
+      .arg("<foo>", "foo arg");
 
     expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
     "Help:
       run a test
 
     Usage:
-      $ cli test <foo> <file:bar> <more...> [options]
+      $ cli test <foo> [options]
+
+    Args:
+      <foo>   foo arg
 
     Options:
       --open   some bool flag

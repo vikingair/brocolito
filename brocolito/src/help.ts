@@ -54,9 +54,10 @@ ${commandRows}`;
       ? "[<command>]"
       : "<command>"
     : undefined;
+  const argsHint = command.args.map(({ usage }) => usage).join(" ");
   const optionsHint =
     options.length || commands.length ? "[options]" : undefined;
-  const usage = [commandLine, commandHint, optionsHint]
+  const usage = [commandLine, commandHint, argsHint, optionsHint]
     .filter(Boolean)
     .join(" ");
 

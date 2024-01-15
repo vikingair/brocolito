@@ -40,6 +40,42 @@ describe("help", () => {
     `);
   });
 
+  it("prints command help with args", () => {
+    CLI.command("test", "run a test")
+      .arg("<foo>", "foo arg")
+      .arg("<file:bar>", "bar arg")
+      .arg("<more...>", "more args");
+
+    expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
+      "Help:
+        run a test
+
+      Usage:
+        $ cli test <foo> <file:bar> <more...>
+      "
+    `);
+  });
+
+  it("prints command help with args and options", () => {
+    CLI.command("test", "run a test")
+      .option("--open", "some bool flag")
+      .arg("<foo>", "foo arg")
+      .arg("<file:bar>", "bar arg")
+      .arg("<more...>", "more args");
+
+    expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
+    "Help:
+      run a test
+
+    Usage:
+      $ cli test <foo> <file:bar> <more...> [options]
+
+    Options:
+      --open   some bool flag
+    "
+  `);
+  });
+
   it("prints command help with options", () => {
     CLI.command("test", "run a test")
       .option("--open", "some bool flag")

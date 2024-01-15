@@ -14,7 +14,7 @@ await createBinFile((binFile) =>
     `#!/usr/bin/env bun
 
 global.__BROCOLITO__=${JSON.stringify(GLOBAL_STATE)};
-require('../../src/main');
+await import("../../src/main");
 `,
   ),
 );

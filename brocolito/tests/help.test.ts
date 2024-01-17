@@ -11,8 +11,12 @@ describe("help", () => {
   it("prints top level help", () => {
     // given
     CLI.command("test", "this is a test");
-    CLI.command("other-command", {
+    CLI.command("magic-command", {
       description: "some magic to do?",
+      alias: "mc",
+    });
+    CLI.command("other-command", {
+      description: "Various things\nor no things",
       alias: "oc",
     });
 
@@ -23,7 +27,9 @@ describe("help", () => {
 
       Commands:
         test            this is a test
-        other-command   some magic to do? (alias: oc)
+        magic-command   some magic to do? (alias: mc)
+        other-command   Various things
+                        or no things (alias: oc)
       "
     `);
   });
@@ -43,7 +49,7 @@ describe("help", () => {
   it("prints command help with args", () => {
     CLI.command("test", "run a test")
       .arg("<foo>", "foo arg")
-      .arg("<file:bar>", "bar arg")
+      .arg("<file:bar>", "bar arg\nanother line")
       .arg("<more...>", "more args");
 
     expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
@@ -56,6 +62,7 @@ describe("help", () => {
       Args:
         <foo>        foo arg
         <file:bar>   bar arg
+                     another line
         <more...>    more args
       "
     `);

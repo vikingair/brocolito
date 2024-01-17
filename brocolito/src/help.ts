@@ -6,10 +6,11 @@ const _getRow = (
   label: string,
   { description, alias }: { description: string; alias?: string },
   longestLabelLength: number,
-): string =>
-  `  ${label}${" ".repeat(
-    3 + longestLabelLength - label.length,
-  )}${description}${alias ? ` (alias: ${alias})` : ""}`;
+): string => {
+  const labelPart = `  ${label}${" ".repeat(3 + longestLabelLength - label.length)}`;
+  const [firstDescLine, ...otherLines] = description.split("\n");
+  return `${labelPart}${firstDescLine}${otherLines.map((l) => "\n" + " ".repeat(labelPart.length) + l).join()}${alias ? ` (alias: ${alias})` : ""}`;
+};
 
 const _getRows = <
   K extends string,

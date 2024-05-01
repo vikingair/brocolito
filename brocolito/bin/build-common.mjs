@@ -24,6 +24,9 @@ export const GLOBAL_STATE = {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const binDir = path.resolve("./build/bin");
 
+/**
+ * @param {(file: string) => Promise<void>} createCb
+ */
 export const createBinFile = async (createCb) => {
   // create execution wrapper
   const binFile = path.join(binDir, packageJSON.name);
@@ -56,7 +59,7 @@ export const showSetupHint = () => {
   if (
     !process.env.CI &&
     !process.env.BROCOLITO_REBUILD &&
-    !process.env.PATH.split(":").includes(binDir)
+    !(/** @type {string} */ (process.env.PATH).split(":").includes(binDir))
   )
     console.log(`
 To make the CLI ${packageJSON.name} globally accessible, you have to run this:

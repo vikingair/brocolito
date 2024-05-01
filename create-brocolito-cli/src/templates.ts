@@ -1,5 +1,5 @@
 import tsConfigJSON from "../tsconfig.json";
-import eslintJSON from "../.eslintrc.json";
+import eslintConfig from "../esling.config.js?raw";
 import packageJSON from "../package.json";
 import gitIgnore from "../.gitignore?raw";
 
@@ -79,7 +79,6 @@ describe("main", () => {
 });
 `;
 const tsConfig = JSON.stringify(tsConfigJSON, null, 2) + "\n";
-const eslintConfig = JSON.stringify(eslintJSON, null, 2) + "\n";
 
 export const Templates = {
   packageJson,

@@ -3,7 +3,7 @@
 const packageDir = require("path").join(__dirname, "..", "..");
 const needsUpdate = process.env.CI
   ? undefined
-  : require("brocolito/bin/update_hashes.cjs").needsUpdate(packageDir);
+  : (/** @type {import("./update_hashes.cjs")} */(require(/** @type {any} */("brocolito/bin/update_hashes.cjs"))).needsUpdate(packageDir));
 
 if (needsUpdate) {
   const notCompletion = !process.env.COMP_LINE;
@@ -16,8 +16,8 @@ if (needsUpdate) {
       env: { ...process.env, BROCOLITO_REBUILD: "true" },
     },
   );
-  notCompletion && require("readline").clearLine(process.stdout);
+  notCompletion && require("readline").clearLine(process.stdout, 0);
   notCompletion && require("readline").cursorTo(process.stdout, 0);
 }
 
-require("../cli.cjs");
+require(/** @type {any} the actual CLI code */("../cli.cjs"));

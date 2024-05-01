@@ -1,6 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 
+/**
+ * @param {string} filePath 
+ * @returns {string}
+ */
 const getShortHashForFile = (filePath) => {
   const file = fs.readFileSync(filePath);
   return require("crypto")
@@ -10,6 +14,10 @@ const getShortHashForFile = (filePath) => {
     .substring(0, 8);
 };
 
+/**
+ * @param {string} dir 
+ * @returns {[string, string][]}
+ */
 const getHashEntries = (dir) =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((fileOrDir) => {
     const fileOrDirName = path.join(dir, fileOrDir.name);
@@ -18,6 +26,10 @@ const getHashEntries = (dir) =>
     return getHashEntries(fileOrDirName);
   });
 
+  /**
+ * @param {string} dir 
+ * @returns {[string, string][]}
+ */
 const getHashes = (dir) => {
   const srcHashes = getHashEntries(path.join(dir, "src"));
   const packageJsonPath = path.join(dir, "package.json");
@@ -27,6 +39,9 @@ const getHashes = (dir) => {
   ];
 };
 
+/**
+ * @param {string} packageDir 
+ */
 module.exports.updateHashes = (packageDir) => {
   const hashes = getHashes(packageDir);
   const hashesCacheFile = path.join(packageDir, "build/hashes.json");
@@ -34,11 +49,15 @@ module.exports.updateHashes = (packageDir) => {
   fs.writeFileSync(hashesCacheFile, JSON.stringify(hashes));
 };
 
+/**
+ * @param {string} packageDir 
+ */
 module.exports.needsUpdate = (packageDir) => {
   const hashes = getHashes(packageDir);
   const hashesMap = Object.fromEntries(hashes);
 
   const hashesCacheFile = path.join(packageDir, "build/hashes.json");
+  /** @type {typeof hashes} */
   const lastHashes = fs.existsSync(hashesCacheFile)
     ? JSON.parse(fs.readFileSync(hashesCacheFile, "utf-8"))
     : undefined;

@@ -5,7 +5,7 @@
   "dependencies": {
     "@actions/core": "1.10.1",
     "@actions/github": "6.0.0",
-    "brocolito": "3.0.0-beta.6",
+    "brocolito": "3.0.0-beta.7",
     "dotenv": "16.4.5"
   },
   "scripts": {

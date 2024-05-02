@@ -2,8 +2,8 @@
 // https://octokit.github.io/rest.js/v19
 // https://github.com/octokit/app-permissions/blob/main/generated/api.github.com.json
 import * as core from "@actions/core";
+import fs from "node:fs";
 import { CLI } from "brocolito";
-import { config } from "dotenv";
 import { getChangedFiles, printFileTree } from "./files";
 
 // for local usage you want to set some ENV variables that are natively available in GitHub workflows
@@ -18,7 +18,7 @@ GITHUB_EVENT_NAME=pull_request
 # Leave empty and "github.context.payload" will be an empty object
 GITHUB_EVENT_PATH=<path_to_json_file>
 */
-config({ path: ".env.local" });
+fs.existsSync(".env.local") && process.loadEnvFile(".env.local");
 
 CLI.command("changed_files", "list changed files on GitHub workflows")
   .option(

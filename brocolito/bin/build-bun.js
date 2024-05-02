@@ -8,13 +8,15 @@ import {
   showSetupHint,
 } from "./build-common.js";
 
+// ATTENTION: While in NodeJS the order of the imports determines the execution order this is not true for Bun.
+//            Hence, we need to use await dynamic import in correct order.
 await createBinFile((binFile) =>
   fs.writeFile(
     binFile,
     `#!/usr/bin/env bun
 
-import "./meta.js";
-import "../../src/main";
+await import("../meta.js");
+await import("../../src/main");
 `,
   ),
 );

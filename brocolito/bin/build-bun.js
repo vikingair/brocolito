@@ -6,14 +6,14 @@ import {
   createCompletionFiles,
   createGlobalStateFile,
   showSetupHint,
-} from "./build-common.mjs";
+} from "./build-common.js";
 
 await createBinFile((binFile) =>
   fs.writeFile(
     binFile,
     `#!/usr/bin/env bun
 
-import "./meta.mjs";
+import "./meta.js";
 import "../../src/main";
 `,
   ),

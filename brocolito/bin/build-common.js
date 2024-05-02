@@ -27,7 +27,7 @@ const binDir = path.join(buildDir, "bin");
 
 export const createGlobalStateFile = async () => {
   // create execution wrapper
-  const file = path.join(buildDir, "meta.mjs");
+  const file = path.join(buildDir, "meta.js");
   await fs.writeFile(
     file,
     `global.__BROCOLITO__=${JSON.stringify(GLOBAL_STATE)};\n`,

@@ -9,8 +9,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const packageDir = path.join(__dirname, "..", "..");
 const needsUpdate = process.env.CI
   ? undefined
-  : /** @type {import("./update_hashes.mjs")} */ (
-      await import(/** @type {any} */ ("brocolito/bin/update_hashes.mjs"))
+  : /** @type {import("./update_hashes.js")} */ (
+      await import(/** @type {any} */ ("brocolito/bin/update_hashes.js"))
     ).needsUpdate(packageDir);
 
 if (needsUpdate) {
@@ -19,7 +19,7 @@ if (needsUpdate) {
   const notCompletion = !process.env.COMP_LINE;
   notCompletion && process.stdout.write("🥦Rebuilding ⚙️...");
   (await import("node:child_process")).execSync(
-    "node " + require.resolve("brocolito/bin/build.mjs"),
+    "node " + require.resolve("brocolito/bin/build.js"),
     {
       cwd: packageDir,
       stdio: "inherit",
@@ -33,4 +33,4 @@ if (needsUpdate) {
   }
 }
 
-await import(/** @type {any} the actual CLI code */ ("../cli.mjs"));
+await import(/** @type {any} the actual CLI code */ ("../cli.js"));

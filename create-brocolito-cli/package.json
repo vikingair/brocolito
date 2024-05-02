@@ -2,12 +2,12 @@
   "name": "create-brocolito-cli",
   "version": "1.1.0",
   "bin": {
-    "create-brocolito-cli": "./build/cli.mjs"
+    "create-brocolito-cli": "./build/cli.js"
   },
   "type": "module",
   "files": [
-    "build/cli.mjs",
-    "build/meta.mjs"
+    "build/cli.js",
+    "build/meta.js"
   ],
   "dependencies": {
     "brocolito": "2.4.4"

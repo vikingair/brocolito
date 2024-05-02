@@ -5,9 +5,9 @@ import prettier from "eslint-plugin-prettier";
 import ts from "typescript-eslint";
 
 export default ts.config(
-  { ignores: ["node_modules", "dist"] },
+  { ignores: ["node_modules", "build"] },
   {
-    files: ["**/*.{j,t}s", "**/*.{m,c}js"],
+    files: ["**/*.{t,j}s"],
     extends: [js.configs.recommended, ...ts.configs.recommended],
     plugins: {
       prettier,
@@ -31,12 +31,7 @@ export default ts.config(
     files: ["tests/**.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
-    },
-  },
-  {
-    files: ["*.cjs"],
-    rules: {
-      "@typescript-eslint/no-var-requires": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
     },
   },
 );

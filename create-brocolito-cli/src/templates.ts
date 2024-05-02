@@ -1,5 +1,5 @@
 import tsConfigJSON from "../tsconfig.json";
-import eslintConfig from "../esling.config.js?raw";
+import eslintConfig from "../eslint.config.js?raw";
 import packageJSON from "../package.json";
 import gitIgnore from "../.gitignore?raw";
 

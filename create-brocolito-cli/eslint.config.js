@@ -5,9 +5,9 @@ import prettier from "eslint-plugin-prettier";
 import ts from "typescript-eslint";
 
 export default ts.config(
-  { ignores: ["node_modules", "dist"] },
+  { ignores: ["node_modules", "build"] },
   {
-    files: ["**/*.ts"],
+    files: ["**/*.{t,j}s"],
     extends: [js.configs.recommended, ...ts.configs.recommended],
     plugins: {
       prettier,
@@ -15,10 +15,8 @@ export default ts.config(
     rules: {
       "prettier/prettier": "warn",
       "arrow-body-style": ["warn", "as-needed"],
-      "no-console": "warn",
       eqeqeq: ["error", "always"],
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-non-null-assertion": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
@@ -33,6 +31,13 @@ export default ts.config(
     files: ["**/*.d.ts"],
     rules: {
       "no-var": "off",
+    },
+  },
+  {
+    files: ["tests/**.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
     },
   },
 );

@@ -1,6 +1,6 @@
 {
   "name": "brocolito",
-  "version": "2.4.5-beta.0",
+  "version": "3.0.0-beta.6",
   "description": "Create type-safe CLIs to align local development and pipeline workflows",
   "main": "dist/brocolito.cjs",
   "module": "dist/brocolito.mjs",

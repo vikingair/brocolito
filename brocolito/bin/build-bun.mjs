@@ -2,9 +2,9 @@
 
 import fs from "fs/promises";
 import {
-  GLOBAL_STATE,
   createBinFile,
   createCompletionFiles,
+  createGlobalStateFile,
   showSetupHint,
 } from "./build-common.mjs";
 
@@ -13,11 +13,13 @@ await createBinFile((binFile) =>
     binFile,
     `#!/usr/bin/env bun
 
-global.__BROCOLITO__=${JSON.stringify(GLOBAL_STATE)};
-await import("../../src/main");
+import "./meta.mjs";
+import "../../src/main";
 `,
   ),
 );
+
+await createGlobalStateFile();
 
 await createCompletionFiles();
 showSetupHint();

@@ -32,10 +32,4 @@ export default ts.config(
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
-  {
-    files: ["**/*.cjs"],
-    rules: {
-      "@typescript-eslint/no-var-requires": "off",
-    },
-  },
 );

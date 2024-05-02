@@ -15,14 +15,24 @@ if (!VALID_NAME.test(packageJSON.name)) {
   );
 }
 
-export const GLOBAL_STATE = {
+const GLOBAL_STATE = {
   name: packageJSON.name,
   dir: path.resolve("."),
   version: packageJSON.version,
 };
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const binDir = path.resolve("./build/bin");
+const buildDir = path.resolve("./build/");
+const binDir = path.join(buildDir, "bin");
+
+export const createGlobalStateFile = async () => {
+  // create execution wrapper
+  const file = path.join(buildDir, "meta.mjs");
+  await fs.writeFile(
+    file,
+    `global.__BROCOLITO__=${JSON.stringify(GLOBAL_STATE)};\n`,
+  );
+};
 
 /**
  * @param {(file: string) => Promise<void>} createCb

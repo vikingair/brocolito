@@ -4,7 +4,6 @@ import js from "@eslint/js";
 import prettier from "eslint-plugin-prettier";
 import ts from "typescript-eslint";
 
-
 export default ts.config(
   { ignores: ["node_modules", "dist"] },
   {

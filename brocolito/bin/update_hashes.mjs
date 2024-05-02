@@ -1,21 +1,18 @@
-const fs = require("fs");
-const path = require("path");
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 
 /**
- * @param {string} filePath 
+ * @param {string} filePath
  * @returns {string}
  */
 const getShortHashForFile = (filePath) => {
   const file = fs.readFileSync(filePath);
-  return require("crypto")
-    .createHash("md5")
-    .update(file)
-    .digest("hex")
-    .substring(0, 8);
+  return crypto.createHash("md5").update(file).digest("hex").substring(0, 8);
 };
 
 /**
- * @param {string} dir 
+ * @param {string} dir
  * @returns {[string, string][]}
  */
 const getHashEntries = (dir) =>
@@ -26,8 +23,8 @@ const getHashEntries = (dir) =>
     return getHashEntries(fileOrDirName);
   });
 
-  /**
- * @param {string} dir 
+/**
+ * @param {string} dir
  * @returns {[string, string][]}
  */
 const getHashes = (dir) => {
@@ -40,9 +37,9 @@ const getHashes = (dir) => {
 };
 
 /**
- * @param {string} packageDir 
+ * @param {string} packageDir
  */
-module.exports.updateHashes = (packageDir) => {
+export const updateHashes = (packageDir) => {
   const hashes = getHashes(packageDir);
   const hashesCacheFile = path.join(packageDir, "build/hashes.json");
 
@@ -50,9 +47,9 @@ module.exports.updateHashes = (packageDir) => {
 };
 
 /**
- * @param {string} packageDir 
+ * @param {string} packageDir
  */
-module.exports.needsUpdate = (packageDir) => {
+export const needsUpdate = (packageDir) => {
   const hashes = getHashes(packageDir);
   const hashesMap = Object.fromEntries(hashes);
 

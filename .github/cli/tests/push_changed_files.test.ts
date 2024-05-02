@@ -1,8 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
-import { config } from "dotenv";
+import { initEnv } from "../src/env";
 
-// load GITHUB_TOKEN locally
-config({ path: ".env.local" });
+initEnv();
 
 describe("push changed_files", () => {
   it("returns changed files of given push event", async () => {

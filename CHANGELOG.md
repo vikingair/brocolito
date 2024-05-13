@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Migrated to pute ESM build. Stopped using Common JS. You need to add `"type": "module"` to your `package.json` file to make everything work again.
+- Migrated to pute ESM build. Stopped using Common JS. You need to add `"type": "module"` to your `package.json`
+  file and rerun the build to make everything work again.
   - As of now the package `brocolito` can still be included in CommonJS CLIs, but `brocolito build` does not support it any longer.
 - Migration to Eslint v9 when generating a new CLI template.
 

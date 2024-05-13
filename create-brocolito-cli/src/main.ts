@@ -36,7 +36,10 @@ CLI.command("run", "test description").action(async () => {
     runtime === "node" ? Templates.testFile : Templates.testFileBun,
   );
   await fs.writeFile(path.join(name, "tsconfig.json"), Templates.tsConfig);
-  await fs.writeFile(path.join(name, ".eslintrc"), Templates.eslintConfig);
+  await fs.writeFile(
+    path.join(name, "eslint.config.js"),
+    Templates.eslintConfig,
+  );
   await fs.writeFile(path.join(name, ".gitignore"), Templates.gitIgnore);
 
   const { packageManagerCmd } = await prompts({

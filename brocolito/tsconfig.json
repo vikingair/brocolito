@@ -20,7 +20,8 @@
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "preserve",
-    "noEmit": true
+    "noEmit": true,
+    "checkJs": true
   },
-  "include": ["src", "tests"]
+  "include": ["src", "tests", "bin", "eslint.config.js", "vite.config.ts"]
 }

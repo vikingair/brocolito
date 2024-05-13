@@ -6,7 +6,7 @@ describe("templates", () => {
     expect(JSON.parse(Templates.packageJson("foo", "node"))).toEqual(
       expect.objectContaining({
         name: "foo",
-        bin: { foo: "./build/cli.cjs" },
+        bin: { foo: "./build/cli.js" },
         scripts: expect.objectContaining({ build: "brocolito" }),
       }),
     );
@@ -16,7 +16,7 @@ describe("templates", () => {
     expect(JSON.parse(Templates.packageJson("foo", "bun"))).toEqual(
       expect.objectContaining({
         name: "foo",
-        bin: { foo: "./build/cli.cjs" },
+        bin: { foo: "./build/cli.js" },
         scripts: expect.objectContaining({
           build: "brocolito-bun",
           test: "bun test",

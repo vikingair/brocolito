@@ -10,7 +10,7 @@
     "build/meta.js"
   ],
   "dependencies": {
-    "brocolito": "3.0.0-beta.10"
+    "brocolito": "3.0.0"
   },
   "scripts": {
     "build": "brocolito",

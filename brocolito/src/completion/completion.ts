@@ -31,7 +31,8 @@ export const _completion = async ({
 
   if (!command) return [];
 
-  const commandArgs = command.args.slice(args.length); // all arguments that can still be used
+  // -1 because we only count args when there is a space separating them and don't count "" from the "lineArgs" as last arg
+  const commandArgs = command.args.slice(args.length - 1); // all arguments that can still be used
   const options = Object.values(command.options) as OptionMeta[];
   const optionItems = options.map(({ prefixedName, description }) => ({
     name: prefixedName,

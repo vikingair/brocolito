@@ -54,9 +54,12 @@ describe("completion", () => {
       .arg("<arg2>", dummyDescription)
       .option("--flag", "some flag");
 
-    expect(await _completion(getTabEnv("cli test"))).toEqual(["__files__"]);
-    expect(await _completion(getTabEnv("cli test foo"))).toEqual([]);
-    expect(await _completion(getTabEnv("cli test foo bar"))).toEqual([
+    expect(await _completion(getTabEnv("cli test"))).toEqual([]);
+    expect(await _completion(getTabEnv("cli test "))).toEqual(["__files__"]);
+    expect(await _completion(getTabEnv("cli test foo"))).toEqual(["__files__"]); // still returning files to navigate the file tree
+    expect(await _completion(getTabEnv("cli test foo "))).toEqual([]);
+    expect(await _completion(getTabEnv("cli test foo bar"))).toEqual([]); // still auto-completing the arg itself
+    expect(await _completion(getTabEnv("cli test foo bar "))).toEqual([
       { name: "--flag", description: "some flag" },
     ]);
   });

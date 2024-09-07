@@ -93,29 +93,50 @@ The following arguments could not be processed: ${Utils.pc.yellow(
 const _parseOptions = (
   command: Command,
   minimistOptions: Omit<minimist.ParsedArgs, "_">,
-): Record<string, string | boolean | undefined> => {
-  const opts: Record<string, string | boolean | undefined> = {};
+): Record<string, string[] | string | boolean | undefined> => {
+  const opts: Record<string, string[] | string | boolean | undefined> = {};
   Object.entries(command.options as Record<string, OptionMeta>).forEach(
-    ([camelName, { name, type, prefixedName }]) => {
+    ([camelName, { name, type, prefixedName, mandatory, multi }]) => {
       const value = minimistOptions[name];
       delete minimistOptions[name];
+      if (mandatory && value === undefined)
+        Utils.complainAndExit(`Mandatory options was not provided: --${name}`);
+
       if (typeof value === "boolean") {
         if (type !== "boolean")
           Utils.complainAndExit(`Parameter missing for option --${name}`);
         opts[camelName] = value;
-      }
-      if (type === "boolean") {
+      } else if (type === "boolean") {
         if (typeof value === "string" && value !== "true" && value !== "false")
           Utils.complainAndExit(
             `Invalid value "${value}" provided for flag ${prefixedName}`,
           );
-        opts[camelName] = value === true || value === "true";
-      } else {
-        if (Array.isArray(value))
-          Utils.complainAndExit(
-            `Invalidly multiple values "${value}" were provided for flag ${prefixedName}`,
-          );
-        opts[camelName] = value;
+        // undefined value also results into false
+        opts[camelName] = value === "true";
+      } else if (value !== undefined) {
+        const checkValiditiy = (v: string) => {
+          if (Array.isArray(type) && !type.includes(v))
+            Utils.complainAndExit(
+              `Invalid value "${v}" provided for flag ${prefixedName}. Must be one of: ${type.join(" | ")}`,
+            );
+        };
+        if (Array.isArray(value)) {
+          if (multi) {
+            value.forEach(checkValiditiy);
+            opts[camelName] = value;
+          } else {
+            Utils.complainAndExit(
+              `Invalidly multiple values [${value.map((v) => `"${v}"`).join(", ")}] were provided for flag ${prefixedName}`,
+            );
+          }
+        } else {
+          checkValiditiy(value);
+          if (multi) {
+            opts[camelName] = [value];
+          } else {
+            opts[camelName] = value;
+          }
+        }
       }
     },
   );

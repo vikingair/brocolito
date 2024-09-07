@@ -49,21 +49,33 @@ describe("help", () => {
   it("prints command help with args", () => {
     CLI.command("test", "run a test")
       .arg("<foo>", "foo arg")
-      .arg("<file:bar>", "bar arg\nanother line")
-      .arg("<more...>", "more args");
+      .arg("<bar:file>", "bar arg with file\nanother line")
+      .arg("<test:one|two>", "test arg with fixed values")
+      .arg("<test-two:single>", "test arg with single possible value")
+      .arg("<more...>", "more args")
+      .action(({ foo, bar, test, testTwo, more }) => {
+        const a1: string = foo;
+        const a2: string = bar;
+        const a3: "one" | "two" = test;
+        const a4: "single" = testTwo;
+        const a5: string[] = more;
+        return a1 || a2 || a3 || a4 || a5;
+      });
 
     expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
       "Help:
         run a test
 
       Usage:
-        $ cli test <foo> <file:bar> <more...>
+        $ cli test <foo> <bar:file> <test:one|two> <test-two:single> <more...>
 
       Args:
-        <foo>        foo arg
-        <file:bar>   bar arg
-                     another line
-        <more...>    more args
+        <foo>               foo arg
+        <bar:file>          bar arg with file
+                            another line
+        <test:one|two>      test arg with fixed values
+        <test-two:single>   test arg with single possible value
+        <more...>           more args
       "
     `);
   });
@@ -93,7 +105,17 @@ describe("help", () => {
     CLI.command("test", "run a test")
       .option("--open", "some bool flag")
       .option("--file <file>", "some single file")
-      .option("--more <args...>", "more args");
+      .option("--file-two! <file>", "some single mandatory file")
+      .option("--more <string...>", "more args")
+      .option("--more-two! <string...>", "more mandatory args")
+      .action(({ open, file, fileTwo, more, moreTwo }) => {
+        const a1: boolean = open;
+        const a2: string | undefined = file;
+        const a3: string = fileTwo;
+        const a4: string[] | undefined = more;
+        const a5: string[] = moreTwo;
+        return a1 || a2 || a3 || a4 || a5;
+      });
 
     expect(_getHelp(State.commands.test)).toMatchInlineSnapshot(`
       "Help:
@@ -103,9 +125,11 @@ describe("help", () => {
         $ cli test [options]
 
       Options:
-        --open             some bool flag
-        --file <file>      some single file
-        --more <args...>   more args
+        --open                    some bool flag
+        --file <file>             some single file
+        --file-two! <file>        some single mandatory file
+        --more <string...>        more args
+        --more-two! <string...>   more mandatory args
       "
     `);
   });

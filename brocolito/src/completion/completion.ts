@@ -1,9 +1,14 @@
 import minimist from "minimist";
 import { showInstallInstruction } from "./install.js";
-import { CompleteItemOrString, Tabtab, TabtabEnv } from "./tabtab.js";
+import {
+  type CompleteItem,
+  type CompleteItemOrString,
+  Tabtab,
+  type TabtabEnv,
+} from "./tabtab.js";
 import { State } from "../state";
 import { findCommand } from "../parse";
-import { OptionMeta } from "../types";
+import type { OptionMeta, ArgType } from "../types";
 import { Arguments } from "../arguments";
 import { Meta } from "../meta";
 
@@ -17,6 +22,12 @@ const toCompleteItems = (
     description,
   }));
 
+const completeArgType = (type: ArgType["type"]): CompleteItemOrString[] => {
+  if (type === "file") return FileCompletion;
+  if (Array.isArray(type)) return type;
+  return [];
+};
+
 export const _completion = async ({
   prev,
   line,
@@ -26,24 +37,35 @@ export const _completion = async ({
     return toCompleteItems(State.commands).concat(["--help"]);
 
   const lineArgs = line.split(" ");
+  // returns lastArg which wasn't completed yet,
+  // could be e.g. used to invoke some custom option resolver with additional information
+  lineArgs.pop();
   const minimistArgs = minimist(lineArgs.slice(1));
   const { command, args } = findCommand(minimistArgs._);
 
   if (!command) return [];
 
-  // -1 because we only count args when there is a space separating them and don't count "" from the "lineArgs" as last arg
-  const commandArgs = command.args.slice(args.length - 1); // all arguments that can still be used
+  const commandArgs = command.args.slice(args.length); // all arguments that can still be used
+  const lastArgSpec = command.args.at(-1);
+  const lastArgInfo = lastArgSpec && Arguments.deriveInfo(lastArgSpec.usage);
   const options = Object.values(command.options) as OptionMeta[];
-  const optionItems = options.map(({ prefixedName, description }) => ({
-    name: prefixedName,
-    description,
-  }));
   const startedOption = options.find(
     ({ prefixedName }) => prefixedName === prev,
   );
   const startedOptionType = startedOption
     ? Arguments.deriveOptionInfo(startedOption.usage).type
     : undefined;
+
+  const availableOptionItems = options
+    .filter(
+      ({ prefixedName, multi }) => multi || !lineArgs.includes(prefixedName),
+    )
+    .map(
+      ({ prefixedName, description }: OptionMeta): CompleteItem => ({
+        name: prefixedName,
+        description,
+      }),
+    );
 
   // debugging autocompletion
   // fs.writeFileSync(
@@ -53,18 +75,17 @@ export const _completion = async ({
 
   if (startedOptionType && startedOptionType !== "boolean") {
     // TODO: Custom parsers and options
-    if (startedOptionType === "file") return FileCompletion;
-    return [];
+    return completeArgType(startedOptionType);
   } else if (commandArgs.length) {
     // TODO: Custom parsers and options
-    const { type } = Arguments.deriveInfo(commandArgs[0].usage);
-    if (type === "file") return FileCompletion;
-    return [];
+    return completeArgType(Arguments.deriveInfo(commandArgs[0].usage).type);
+  } else if (lastArgInfo?.multi) {
+    return completeArgType(lastArgInfo.type);
   } else if (prev === command.name || prev === command.alias) {
     // we autocomplete subcommands only as long as no option was used (even though we support writing options first)
-    return toCompleteItems(command.subcommands).concat(optionItems);
+    return toCompleteItems(command.subcommands).concat(availableOptionItems);
   } else {
-    return optionItems.filter(({ name }) => !line.includes(name));
+    return availableOptionItems;
   }
 };
 

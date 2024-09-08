@@ -39,7 +39,6 @@ describe("completion", () => {
       { name: "--union", description: "some mandatory union" },
       { name: "--inf", description: "some infinite string" },
     ];
-    State.commands = {};
     CLI.command("test", dummyDescription)
       .option("--flag", dummyDescription)
       .option("--file <file>", "some file")
@@ -69,6 +68,59 @@ describe("completion", () => {
       "two",
     ]);
     expect(await _completion(getTabEnv("cli test --str "))).toEqual([]);
+  });
+
+  it("started option with custom completion", async () => {
+    const results = [
+      "test",
+      "two",
+      { name: "three", description: "with description" },
+    ];
+    CLI.command("test", dummyDescription)
+      .option("--foo <string>", dummyDescription, {
+        completion: async () => results,
+      })
+      .option("--file <file>", dummyDescription, {
+        // if returning no results fallback to file completion
+        completion: () => [],
+      });
+
+    // when custom completion for string with returned results
+    expect(await _completion(getTabEnv("cli test --foo "))).toEqual(results);
+
+    // when custom completion
+    expect(await _completion(getTabEnv("cli test --file "))).toEqual([
+      "__files__",
+    ]);
+  });
+
+  it("arg with custom completion", async () => {
+    const results = [
+      "test",
+      "two",
+      { name: "three", description: "with description" },
+    ];
+    CLI.command("test", dummyDescription)
+      .arg("<file:file>", dummyDescription, {
+        // if returning no results fallback to file completion
+        completion: () => [],
+      })
+      .arg("<string...>", dummyDescription, {
+        completion: async () => results,
+      });
+
+    // when custom completion for file with no results
+    expect(await _completion(getTabEnv("cli test "))).toEqual(["__files__"]);
+
+    // when custom completion for multi arg
+    expect(await _completion(getTabEnv("cli test ./my/file "))).toEqual(
+      results,
+    );
+
+    // when custom completion for multi arg second time
+    expect(await _completion(getTabEnv("cli test ./my/file test "))).toEqual(
+      results,
+    );
   });
 
   it("filling args", async () => {

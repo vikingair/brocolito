@@ -74,6 +74,21 @@ based on your CLI configuration. Run `cli completion` to set up the tab completi
 If you want to use an alias for e.g. one of your subcommands like `cli get data`, you have
 to register it to make the completion work like so: `CLI.alias('cgd', 'cli get data')`.
 
+#### Completion for options and args
+
+You can run (async) functions to return the completion results for options and args of type string
+or file by passing it as third argument when specifiying the option/arg. E.g.,
+
+```ts
+CLI.command("do", "...")
+   .option("--service <string>", "name of the service", {
+      // "filter" is the string the user has already typed when running the completion
+      // ATTENTION: Filtering will work even if you would display all options, but
+      //            it can improve performance to reduce the amount of processed data.
+      completion: async (filter) => (await getAllServices({ filter })).map(({ name }) => name),
+   });
+```
+
 ### Options
 
 Options are basically named parameters for your command. The specified option names are

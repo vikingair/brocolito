@@ -7,6 +7,7 @@ import {
   type OptionToName,
   type Subcommand,
   type ArgStates,
+  CompletionOpt,
 } from "./types";
 import { State } from "./state";
 import { parse } from "./parse";
@@ -33,6 +34,7 @@ const createOption =
   <USAGE extends `--${string}`>(
     usage: USAGE,
     description: string,
+    opts?: CompletionOpt,
   ): Command<OPTIONS & OptionArg<USAGE>, ARGS, TArgState> => {
     const newCommand = command as Command<
       OPTIONS & OptionArg<USAGE>,
@@ -44,6 +46,7 @@ const createOption =
       usage,
       description,
       ...info,
+      ...opts,
     };
     return newCommand;
   };
@@ -79,6 +82,7 @@ const createArg =
   <USAGE extends `<${string}>`>(
     usage: USAGE,
     description: string,
+    opts?: CompletionOpt,
   ): Command<
     OPTIONS,
     ARGS & ArgumentArg<USAGE>,
@@ -86,7 +90,7 @@ const createArg =
   > => {
     const { subcommand: _, subcommands: __, ...newCommand } = command;
     const info = Arguments.deriveInfo(usage);
-    newCommand.args.push({ usage, description, ...info });
+    newCommand.args.push({ usage, description, ...info, ...opts });
     return newCommand as unknown as Command<
       OPTIONS,
       ARGS & ArgumentArg<USAGE>,

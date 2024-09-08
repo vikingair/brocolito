@@ -91,7 +91,7 @@ export const _completion = async ({
 
 const completion = async (env: TabtabEnv) => {
   const result = await _completion(env);
-  result === FileCompletion ? Tabtab.logFiles() : Tabtab.log(result);
+  return result === FileCompletion ? Tabtab.logFiles() : Tabtab.log(result);
 };
 
 const run = async (): Promise<void> => {

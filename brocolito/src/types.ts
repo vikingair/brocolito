@@ -120,9 +120,9 @@ type Subcommands<OPTIONS, ARGS> = {
 // 3: uses subcommands
 
 export type Command<
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   OPTIONS = {},
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   ARGS = {},
   TArgState extends 0 | 1 | 2 | 3 = 0,
 > = {
@@ -134,7 +134,7 @@ export type Command<
   option: Option<OPTIONS, ARGS, TArgState>;
   options: Record<keyof OPTIONS, OptionMeta>;
   alias?: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 } & (TArgState extends 2 | 3 ? {} : Arguments<OPTIONS, ARGS>) &
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   (TArgState extends 1 | 2 ? {} : Subcommands<OPTIONS, ARGS>);

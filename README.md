@@ -113,7 +113,7 @@ flags and will be treated as boolean `true`.
    ```ts
    CLI.command('hello', 'prints greeting')
       .option('--name <string>', 'who to greet?')
-      .action(({ name }) => console.log(`hello ${name}`));
+      .action(({ name }) => console.log(name ? `hello ${name}` : "Too shy to give me a name?"));
    ```
 
 - Shell example: `cli hello --name mark`
@@ -132,6 +132,51 @@ flags and will be treated as boolean `true`.
    ```
 
 - Shell example: `cli char-count --content ./foo.txt`
+
+#### Union Options
+
+- Specification: `--option-name <one|two>`
+- Parameter type: `"one" | "two" | undefined`
+- Completion: `one` or `two`
+- Code example:
+
+   ```ts
+   CLI.command('fancy-stuff', "do fancy stuff")
+      .option('--log-level <debug|info|warn|error>', 'what debug level to use (default: error)')
+      .action(({ logLevel = "error" }) => doFancyStuff({ logLevel }));
+   ```
+
+- Shell example: `cli fancy-stuff --log-level debug`
+
+#### Multi Options
+
+- Specification: `--option-name <string...>` or `--option-name <one|two...>`
+- Parameter type: `string[] | undefined` or `("one" | "two")[] | undefined`
+- Completion: like for single options
+- Code example:
+
+   ```ts
+   CLI.command('char-count', { description: 'count characters', alias: 'cc' })
+      .option('--files <file...>', 'what files to use?')
+      .action(async ({ files }) => files.forEach((f) => console.log((await fs.readFile(f, 'utf-8')).length)));
+   ```
+
+- Shell example: `cli char-count --files ./foo.txt --files ./bar.json`
+
+#### Mandatory Options
+
+- Specification: `--option-name! <string>`
+- Parameter type: `string`
+- Completion: like the non mandatory options
+- Code example:
+
+   ```ts
+   CLI.command('hello', 'prints greeting')
+      .option('--name! <string>', 'who to greet?')
+      .action(({ name }) => console.log(`hello ${name}`));
+   ```
+
+- Shell example: `cli hello --name mark`
 
 ### Args
 
@@ -157,29 +202,44 @@ on a command. If you cannot have another arg after an arg list.
 
 #### File Arg
 
-- Specification: `<file:arg-name>`
+- Specification: `<arg-name:file>`
 - Parameter type: `string`
 - Completion: local file system
 - Code example:
 
    ```ts
    CLI.command('exists', 'checks existance')
-      .arg('<file:file-name>', 'what file to check?')
+      .arg('<file-name:file>', 'what file to check?')
       .action(({ fileName }) => console.log(fs.existsSync(fileName)));
    ```
 
 - Shell example: `cli exists /tmp/someFile.js`
 
+#### Union Arg
+
+- Specification: `<arg-name:one|two>`
+- Parameter type: `"one" | "two"`
+- Completion: `one` or `two`
+- Code example:
+
+   ```ts
+   CLI.command('configure', 'configure settings')
+      .arg('<env:dev|test>', 'chosen env')
+      .action(configureEnv);
+   ```
+
+- Shell example: `cli configure dev`
+
 #### Arg lists
 
-- Specifications: `<arg-name...>` or `<file:arg-name...>`
+- Specifications: `<arg-name...>` or `<arg-name:file...>`
 - Parameter type: `string[]`
 - Completions: none or local file system
 - Code example:
 
    ```ts
    CLI.command('exists', 'checks existance')
-      .arg('<file:file-names...>', 'what files to check?')
+      .arg('<file-names:file...>', 'what files to check?')
       .action(({ fileNames }) => console.log(fileNames.map((f) => fs.existsSync(f))));
    ```
 

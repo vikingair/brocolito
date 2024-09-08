@@ -13,5 +13,5 @@ GITHUB_EVENT_NAME=pull_request
 GITHUB_EVENT_PATH=<path_to_json_file>
 */
 export const initEnv = () => {
-  fs.existsSync(".env.local") && process.loadEnvFile(".env.local");
+  if (fs.existsSync(".env.local")) process.loadEnvFile(".env.local");
 };

@@ -1,37 +1,54 @@
-import { ArgumentToName, OptionMeta, SnakeToCamelCase } from "./types";
+import type {
+  ArgType,
+  ArgumentToName,
+  OptionMeta,
+  SnakeToCamelCase,
+} from "./types";
+import { Utils } from "./utils";
 
 const camelize = <S extends string>(str: S): SnakeToCamelCase<S> =>
   str.replace(/(-[a-zA-Z])/g, (w) => w[1].toUpperCase()) as SnakeToCamelCase<S>;
 
-const toName = <S extends string>(str: S): ArgumentToName<S> =>
-  camelize(
-    str.replace(/^<(file:)?([a-zA-Z0-9-]+)(\.{3})?>$/, "$2"),
-  ) as ArgumentToName<S>;
-
-const deriveInfo = (
-  usage: string,
-): { type: "boolean" | "string" | "file"; multi: boolean } => {
-  const match = usage.match(/^<(file:)?[a-zA-Z0-9-]+(\.{3})?>$/);
-  if (!match) return { type: "boolean", multi: false };
+const deriveInfo = <S extends `<${string}${string}>`>(
+  usage: S,
+): ArgType & { name: ArgumentToName<S> } => {
+  const match = usage.match(/^<([a-zA-Z0-9-]+)(:.+?)?(\.{3})?>$/);
+  if (!match)
+    return Utils.complainAndExit(
+      'Invalid usage specified for arg "usage". Param name needs to consist of these character only [a-z0-9-]',
+    );
+  const m = match[2]?.substring(1) ?? "string"; // without the collon
   return {
-    type: match[1] ? "file" : "string",
-    multi: !!match[2],
+    name: camelize(match[1]) as ArgumentToName<S>,
+    type: m === "string" || m === "file" ? m : m.split("|"),
+    multi: !!match[3],
   };
 };
 
 const deriveOptionInfo = (
   usage: string,
-): Pick<OptionMeta, "name" | "type" | "prefixedName"> => {
-  const [prefixedName, arg] = usage.split(" ");
+): Pick<
+  OptionMeta,
+  "name" | "type" | "prefixedName" | "multi" | "mandatory"
+> => {
+  const [_prefixedName, arg] = usage.split(" ");
+  const mandatory = _prefixedName.endsWith("!");
+  const prefixedName = mandatory ? _prefixedName.slice(0, -1) : _prefixedName;
   const name = prefixedName.substring(2);
-  if (!arg) return { name, prefixedName, type: "boolean" };
-  const match = arg && arg.match(/^<([a-zA-Z0-9-]+)>$/);
-  if (!match) return { name, prefixedName, type: "string" };
+  // even though mandatory boolean doesn't make sense
+  if (!arg)
+    return { name, prefixedName, type: "boolean", mandatory, multi: false };
+  const match = arg && arg.match(/^<(.+?)(\.{3})?>$/);
+  if (!match)
+    return { name, prefixedName, type: "string", mandatory, multi: false };
+  const m = match[1] ?? "string"; // without the collon
   return {
     name,
     prefixedName,
-    type: match[1] === "file" ? "file" : "string",
+    type: m === "string" || m === "file" ? m : m.split("|"),
+    mandatory,
+    multi: !!match[2],
   };
 };
 
-export const Arguments = { camelize, toName, deriveInfo, deriveOptionInfo };
+export const Arguments = { camelize, deriveInfo, deriveOptionInfo };

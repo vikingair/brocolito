@@ -15,10 +15,10 @@ describe("Example commands", () => {
   it("Simple command without options", async () => {
     // given
     const spy = vi.fn();
-    CLI.command("example-1", "example-1-description").action(spy);
+    CLI.command("example", "example-description").action(spy);
 
     // when
-    await call("example-1");
+    await call("example");
 
     // then
     expect(spy).toHaveBeenCalledOnce();
@@ -40,7 +40,7 @@ describe("Example commands", () => {
     // given
     const fooSpy = vi.fn();
     const barSpy = vi.fn();
-    CLI.command("example-2", "example-2-description")
+    CLI.command("example", "example-description")
       .subcommand("foo", "foo-desc", (foo) => {
         foo.action(fooSpy);
       })
@@ -49,7 +49,7 @@ describe("Example commands", () => {
       });
 
     // when
-    await call("example-2 bar");
+    await call("example bar");
 
     // then
     expect(fooSpy).not.toHaveBeenCalled();
@@ -61,7 +61,7 @@ describe("Example commands", () => {
     const spy = vi.fn();
     const fooSpy = vi.fn();
     const barSpy = vi.fn();
-    CLI.command("example-3", "example-3-description")
+    CLI.command("example", "example-description")
       .subcommand("foo", { description: "foo-desc", alias: "f" }, (foo) => {
         foo
           .subcommand("bar", "bar-desc", (bar) => {
@@ -72,7 +72,7 @@ describe("Example commands", () => {
       .action(spy);
 
     // when
-    await call("example-3");
+    await call("example");
 
     // then
     expect(spy).toHaveBeenCalledOnce();
@@ -81,7 +81,7 @@ describe("Example commands", () => {
 
     // when
     vi.resetAllMocks();
-    call("example-3 f");
+    call("example f");
 
     // then
     expect(spy).not.toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe("Example commands", () => {
 
     // when
     vi.resetAllMocks();
-    call("example-3 foo bar");
+    call("example foo bar");
 
     // then
     expect(spy).not.toHaveBeenCalled();
@@ -101,56 +101,178 @@ describe("Example commands", () => {
   it("parses options", async () => {
     // given
     const spy = vi.fn();
-    CLI.command("example-4", "example-4-description")
-      .option("--test <test_arg>", "test option")
+    CLI.command("example", "example-description")
+      .option("--test <string>", "test option")
       .option("--some-more", "some-more option")
       .action(({ test, someMore, ...rest }) =>
         spy({ test, someMore, ...rest }),
       );
 
     // when - called with no options
-    await call("example-4");
+    await call("example");
 
     // then
     expect(spy).toHaveBeenCalledWith({ someMore: false });
 
     // when
     spy.mockReset();
-    await call("example-4 --test foo --some-more=false");
+    await call("example --test foo --some-more=false");
 
     // then
     expect(spy).toHaveBeenCalledWith({ test: "foo", someMore: false });
 
     // when - called with invalid options
-    await expect(() => call("example-4 --invalid=foo")).rejects.toThrow(
+    await expect(() => call("example --invalid=foo")).rejects.toThrow(
       "Unrecognized options were used: --invalid",
     );
 
     // when - called with invalid flag value
-    await expect(() => call("example-4 --some-more=foo")).rejects.toThrow(
+    await expect(() => call("example --some-more=foo")).rejects.toThrow(
       'Invalid value "foo" provided for flag --some-more',
     );
 
     // when - called with invalid options and valid options
     await expect(() =>
-      call("example-4 --invalid=foo --test foo --what else"),
+      call("example --invalid=foo --test foo --what else"),
     ).rejects.toThrow("Unrecognized options were used: --invalid, --what");
+  });
+
+  it("using mandatory options", async () => {
+    // given
+    const spy = vi.fn();
+    CLI.command("example", "example-description")
+      .option("--test! <string>", "test option")
+      .action(({ test, ...rest }) => spy({ test, ...rest }));
+
+    // when - called without the mandatory option
+    await expect(() => call("example")).rejects.toThrow(
+      "Mandatory options was not provided: --test",
+    );
+
+    // when - called with option
+    await call("example --test foo");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ test: "foo" });
+  });
+
+  it("using multi options", async () => {
+    // given
+    const spy = vi.fn();
+    CLI.command("example", "example-description")
+      .option("--test <file...>", "test option")
+      .action(({ test, ...rest }) => spy({ test, ...rest }));
+
+    // when - called with no options
+    await call("example");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ test: undefined });
+
+    // when - called with single entry
+    await call("example --test foo");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ test: ["foo"] });
+
+    // when - called with multiple entries
+    await call("example --test foo --test bar");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ test: ["foo", "bar"] });
+  });
+
+  it("using union options", async () => {
+    // given
+    const spy = vi.fn();
+    CLI.command("example", "example-description")
+      .option("--test <foo>", "test option with single allowed value")
+      .option("--test-multi <one|two...>", "test option with multi")
+      .action(({ test, testMulti, ...rest }) =>
+        spy({ test, testMulti, ...rest }),
+      );
+
+    // when - called with no options
+    await call("example");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({});
+
+    // when - called with string not matching union constraints
+    await expect(() => call("example --test bar")).rejects.toThrow(
+      'Invalid value "bar" provided for flag --test. Must be one of: foo',
+    );
+
+    // when - called with single matching option
+    await call("example --test foo");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ test: "foo" });
+
+    // when - called with string not matching union constraints
+    await expect(() =>
+      call("example --test-multi one --test-multi ups"),
+    ).rejects.toThrow(
+      'Invalid value "ups" provided for flag --test-multi. Must be one of: one | two',
+    );
+
+    // when - called with valid multiple entries
+    await call("example --test-multi one --test-multi two");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ testMulti: ["one", "two"] });
+  });
+
+  it("using union args", async () => {
+    // given
+    const spy = vi.fn();
+    CLI.command("example", "example-description")
+      .arg("<test:foo>", "test arg")
+      .arg("<test-multi:one|two...>", "test multi arg")
+      .action(({ test, testMulti, ...rest }) =>
+        spy({ test, testMulti, ...rest }),
+      );
+
+    // when - called with string not matching union constraints
+    await expect(() => call("example bar one")).rejects.toThrow(
+      'Invalid value "bar" provided for arg <test:foo>.',
+    );
+
+    // when - called with single matching option allowing empty multi args
+    await call("example foo one");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ test: "foo", testMulti: ["one"] });
+
+    // when - called with string not matching union constraints
+    await expect(() => call("example foo one ups")).rejects.toThrow(
+      'Invalid value "ups" provided for arg <test-multi:one|two...>',
+    );
+
+    // when - called with valid multiple entries
+    await call("example foo one two");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({
+      test: "foo",
+      testMulti: ["one", "two"],
+    });
   });
 
   it("parses args and options", async () => {
     // given
     const spy = vi.fn();
-    CLI.command("example-5", "example-5-description")
+    CLI.command("example", "example-description")
       .option("--open", "test option")
       .arg("<test-arg>", "some-more option")
-      .option("--test <param>", "test option")
+      .option("--test <string>", "test option")
       .arg("<test-multi...>", "some-more option")
       .action(({ test, testArg, open, testMulti, ...rest }) => {
         spy({ test, testArg, open, testMulti, ...rest });
       });
 
     // when
-    await call("example-5 ./some/path hot hotter lotta --test=ups --open");
+    await call("example ./some/path hot hotter lotta --test=ups --open");
 
     // then
     expect(spy).toHaveBeenCalledWith({
@@ -161,7 +283,7 @@ describe("Example commands", () => {
     });
 
     // when
-    await call("example-5 --open=false foo bar");
+    await call("example --open=false foo bar");
 
     // then
     expect(spy).toHaveBeenCalledWith({
@@ -175,7 +297,7 @@ describe("Example commands", () => {
     // given
     const spy = vi.fn();
     const subcommandSpy = vi.fn();
-    CLI.command("example-6", "example-6-description")
+    CLI.command("example", "example-description")
       .option("--open", "test option")
       .subcommand("foo", "foo-desc", (foo) => {
         foo
@@ -184,13 +306,13 @@ describe("Example commands", () => {
             subcommandSpy({ open, nice, ...rest }),
           );
       })
-      .option("--test <param>", "test option")
+      .option("--test <string>", "test option")
       .action(({ test, open, ...rest }) => {
         spy({ test, open, ...rest });
       });
 
     // when
-    await call("example-6 --open --test ups");
+    await call("example --open --test ups");
 
     // then
     expect(spy).toHaveBeenCalledWith({
@@ -199,7 +321,7 @@ describe("Example commands", () => {
     });
 
     // when - calling the sub command
-    await call("example-6 foo --open=false --nice ups");
+    await call("example foo --open=false --nice ups");
 
     // then
     expect(subcommandSpy).toHaveBeenCalledWith({ nice: "ups", open: false });
@@ -208,7 +330,7 @@ describe("Example commands", () => {
   it("parses subcommands, args and options", async () => {
     // given
     const subcommandSpy = vi.fn();
-    CLI.command("example-7", "example-7-description")
+    CLI.command("example", "example-description")
       .option("--open", "test option")
       .subcommand("foo", "foo-desc", (foo) => {
         foo
@@ -220,7 +342,7 @@ describe("Example commands", () => {
       });
 
     // when
-    await call("example-7 --nice try foo hot --open=false");
+    await call("example --nice try foo hot --open=false");
 
     // then
     expect(subcommandSpy).toHaveBeenCalledWith({
@@ -235,12 +357,12 @@ describe("Example commands", () => {
     const commandSpy = vi.fn();
     const subcommandSpy = vi.fn();
     const helpSpy = vi.spyOn(Help, "show").mockReturnValue();
-    CLI.command("example-8", "example-8-description")
-      .arg("<$>", "any")
+    CLI.command("example", "example-description")
+      .arg("<a>", "any")
       .action(commandSpy);
 
     // when
-    await expect(() => call("example-8 soemthing invalid")).rejects.toThrow(
+    await expect(() => call("example soemthing invalid")).rejects.toThrow(
       `Too many arguments given: Expected 1 arguments, but was invoked with 2.
 The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
     );
@@ -251,18 +373,18 @@ The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
     expect(helpSpy).toBeCalled();
   });
 
-  it("complains when being called with wrong amount of arguments", async () => {
+  it("complains when being called with invalid subcommand", async () => {
     // given
     const commandSpy = vi.fn();
     const subcommandSpy = vi.fn();
     const helpSpy = vi.spyOn(Help, "show").mockReturnValue();
-    CLI.command("example-9", "example-9-description")
+    CLI.command("example", "example-description")
       .subcommand("foo", "foo-desc", (foo) => foo.action(subcommandSpy))
       .subcommand("bar", "foo-desc", (foo) => foo.action(subcommandSpy))
       .action(commandSpy);
 
     // when
-    await expect(() => call("example-9 invalid")).rejects.toThrow(
+    await expect(() => call("example invalid")).rejects.toThrow(
       `Unknown subcommand ${Utils.pc.yellow("invalid")} specified.`,
     );
 

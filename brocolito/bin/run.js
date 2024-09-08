@@ -17,7 +17,7 @@ if (needsUpdate) {
   // sadly "import.meta.resolve" resolves wrongly in some situations. Hence, we need "require.resolve"
   const require = createRequire(import.meta.url);
   const notCompletion = !process.env.COMP_LINE;
-  notCompletion && process.stdout.write("🥦Rebuilding ⚙️...");
+  if (notCompletion) process.stdout.write("🥦Rebuilding ⚙️...");
   (await import("node:child_process")).execSync(
     "node " + require.resolve("brocolito/bin/build.js"),
     {

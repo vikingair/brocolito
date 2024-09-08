@@ -1,11 +1,12 @@
 import {
-  Action,
-  ArgumentArg,
-  Command,
-  DescriptionOrOpts,
-  OptionArg,
-  OptionToName,
-  Subcommand,
+  type Action,
+  type ArgumentArg,
+  type Command,
+  type DescriptionOrOpts,
+  type OptionArg,
+  type OptionToName,
+  type Subcommand,
+  type ArgStates,
 } from "./types";
 import { State } from "./state";
 import { parse } from "./parse";
@@ -26,31 +27,30 @@ const createAction =
   };
 
 const createOption =
-  <OPTIONS, ARGS, WITH_ARGS>(command: Command<OPTIONS, ARGS, WITH_ARGS>) =>
+  <OPTIONS, ARGS, TArgState extends ArgStates>(
+    command: Command<OPTIONS, ARGS, TArgState>,
+  ) =>
   <USAGE extends `--${string}`>(
     usage: USAGE,
     description: string,
-  ): Command<OPTIONS & OptionArg<USAGE>, ARGS, WITH_ARGS> => {
+  ): Command<OPTIONS & OptionArg<USAGE>, ARGS, TArgState> => {
     const newCommand = command as Command<
       OPTIONS & OptionArg<USAGE>,
       ARGS,
-      WITH_ARGS
+      TArgState
     >;
-    const { name, prefixedName, type } = Arguments.deriveOptionInfo(usage);
-
-    newCommand.options[Arguments.camelize(name) as OptionToName<USAGE>] = {
+    const info = Arguments.deriveOptionInfo(usage);
+    newCommand.options[Arguments.camelize(info.name) as OptionToName<USAGE>] = {
       usage,
-      name,
-      prefixedName,
       description,
-      type,
+      ...info,
     };
     return newCommand;
   };
 
 const createSubcommand =
   <OPTIONS, ARGS>(command: Command<OPTIONS, ARGS>): Subcommand<OPTIONS, ARGS> =>
-  (name, options, cb): Command<OPTIONS, ARGS, false> => {
+  (name, options, cb): Command<OPTIONS, ARGS, 3> => {
     const opts =
       typeof options === "string" ? { description: options } : options;
     const subcommand = {
@@ -71,7 +71,7 @@ const createSubcommand =
     cb(subcommand);
     // return parent command, sub command will be further processed in cb
     const { arg: _, args: __, ...rest } = command;
-    return rest as unknown as Command<OPTIONS, ARGS, false>;
+    return rest as unknown as Command<OPTIONS, ARGS, 3>;
   };
 
 const createArg =
@@ -79,14 +79,18 @@ const createArg =
   <USAGE extends `<${string}>`>(
     usage: USAGE,
     description: string,
-  ): Command<OPTIONS, ARGS & ArgumentArg<USAGE>, true> => {
+  ): Command<
+    OPTIONS,
+    ARGS & ArgumentArg<USAGE>,
+    USAGE extends `<${string}...>` ? 2 : 1
+  > => {
     const { subcommand: _, subcommands: __, ...newCommand } = command;
-    const name = Arguments.toName(usage);
-    newCommand.args.push({ usage, name, description });
+    const info = Arguments.deriveInfo(usage);
+    newCommand.args.push({ usage, description, ...info });
     return newCommand as unknown as Command<
       OPTIONS,
       ARGS & ArgumentArg<USAGE>,
-      true
+      USAGE extends `<${string}...>` ? 2 : 1
     >;
   };
 

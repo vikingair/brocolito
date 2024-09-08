@@ -1,3 +1,5 @@
+import { CompleteItemOrString } from "./completion/tabtab";
+
 export type SnakeToCamelCase<S extends string> =
   S extends `${infer T}-${infer U}`
     ? `${Lowercase<T>}${Capitalize<SnakeToCamelCase<U>>}`
@@ -56,14 +58,24 @@ export type OptionArg<USAGE extends `--${string}`> = {
 // 3: uses subcommands
 export type ArgStates = 0 | 1 | 2 | 3;
 
+export type CompletionOpt = {
+  completion?: (
+    filter: string,
+  ) => CompleteItemOrString[] | Promise<CompleteItemOrString[]>;
+};
+
 type Option<OPTIONS, ARGS, TArgState extends ArgStates> = <
   USAGE extends `--${string}`,
 >(
   usage: USAGE,
   description: string,
+  opts?: CompletionOpt,
 ) => Command<OPTIONS & OptionArg<USAGE>, ARGS, TArgState>;
 
-export type ArgType = { type: "string" | "file" | string[]; multi: boolean };
+export type ArgType = {
+  type: "string" | "file" | string[];
+  multi: boolean;
+} & CompletionOpt;
 
 export type OptionMeta = {
   usage: string;
@@ -73,7 +85,7 @@ export type OptionMeta = {
   type: "boolean" | ArgType["type"];
   multi: ArgType["multi"];
   mandatory: boolean;
-};
+} & CompletionOpt;
 
 export type DescriptionOrOpts =
   | string
@@ -98,6 +110,7 @@ export type ArgumentArg<USAGE extends `<${string}>`> = {
 type Argument<OPTIONS, ARGS> = <USAGE extends `<${string}${string}>`>(
   usage: USAGE,
   description: string,
+  opts?: CompletionOpt,
 ) => Command<
   OPTIONS,
   ARGS & ArgumentArg<USAGE>,

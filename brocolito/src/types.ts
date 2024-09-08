@@ -48,7 +48,14 @@ export type OptionArg<USAGE extends `--${string}`> = {
       : string | undefined
     : boolean;
 };
+
+// ArgStates:
+// 0: has no args nor subcommands
+// 1: uses args
+// 2: uses spread args
+// 3: uses subcommands
 export type ArgStates = 0 | 1 | 2 | 3;
+
 type Option<OPTIONS, ARGS, TArgState extends ArgStates> = <
   USAGE extends `--${string}`,
 >(
@@ -113,18 +120,12 @@ type Subcommands<OPTIONS, ARGS> = {
   subcommands: Record<string, Command<OPTIONS>>;
 };
 
-// TArgState:
-// 0: has no args nor subcommands
-// 1: uses args
-// 2: uses spread args
-// 3: uses subcommands
-
 export type Command<
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   OPTIONS = {},
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   ARGS = {},
-  TArgState extends 0 | 1 | 2 | 3 = 0,
+  TArgState extends ArgStates = 0,
 > = {
   name: string;
   line: string;

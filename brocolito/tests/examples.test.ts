@@ -233,26 +233,20 @@ describe("Example commands", () => {
         spy({ test, testMulti, ...rest }),
       );
 
-    // when - called with no options
-    await call("example");
-
-    // then
-    expect(spy).toHaveBeenCalledWith({});
-
     // when - called with string not matching union constraints
-    await expect(() => call("example bar")).rejects.toThrow(
-      'Invalid value "bar" provided for arg <test>. Must be one of: foo',
+    await expect(() => call("example bar one")).rejects.toThrow(
+      'Invalid value "bar" provided for arg <test:foo>.',
     );
 
     // when - called with single matching option allowing empty multi args
-    await call("example foo");
+    await call("example foo one");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ test: "foo", testMulti: [] });
+    expect(spy).toHaveBeenCalledWith({ test: "foo", testMulti: ["one"] });
 
     // when - called with string not matching union constraints
     await expect(() => call("example foo one ups")).rejects.toThrow(
-      'Invalid value "ups" provided for arg <test-multi>. Must be one of: one | two',
+      'Invalid value "ups" provided for arg <test-multi:one|two...>',
     );
 
     // when - called with valid multiple entries
@@ -364,7 +358,7 @@ describe("Example commands", () => {
     const subcommandSpy = vi.fn();
     const helpSpy = vi.spyOn(Help, "show").mockReturnValue();
     CLI.command("example", "example-description")
-      .arg("<$>", "any")
+      .arg("<a>", "any")
       .action(commandSpy);
 
     // when
@@ -379,7 +373,7 @@ The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
     expect(helpSpy).toBeCalled();
   });
 
-  it("complains when being called with wrong amount of arguments", async () => {
+  it("complains when being called with invalid subcommand", async () => {
     // given
     const commandSpy = vi.fn();
     const subcommandSpy = vi.fn();

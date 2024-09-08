@@ -99,7 +99,13 @@ type Argument<OPTIONS, ARGS> = <USAGE extends `<${string}${string}>`>(
 
 type Arguments<OPTIONS, ARGS> = {
   arg: Argument<OPTIONS, ARGS>;
-  args: Array<{ name: string; usage: string; description: string } & ArgType>;
+  args: Array<
+    {
+      name: string;
+      usage: `<${string}${string}>`;
+      description: string;
+    } & ArgType
+  >;
 };
 
 type Subcommands<OPTIONS, ARGS> = {

@@ -72,19 +72,29 @@ The following arguments could not be processed: ${Utils.pc.yellow(
 
   let usedArgs = [...args];
   const result = Object.fromEntries(
-    command.args.map(({ usage, name }): [string, string | string[]] => {
-      const multi = /\.{3}>$/.test(usage);
-      if (!usedArgs.length) {
-        return throwError("Too few arguments given");
-      } else if (!multi) {
-        const arg = usedArgs.shift();
-        return [name, arg as string];
-      } else {
-        const copy = [...usedArgs];
-        usedArgs = [];
-        return [name, copy];
-      }
-    }),
+    command.args.map(
+      ({ usage, name, type, multi }): [string, string | string[]] => {
+        const checkValiditiy = (v: string) => {
+          if (Array.isArray(type) && !type.includes(v))
+            Utils.complainAndExit(
+              `Invalid value "${v}" provided for arg ${usage}.`,
+            );
+        };
+        if (!usedArgs.length) {
+          return throwError("Too few arguments given");
+        } else if (!multi) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const arg = usedArgs.shift()!;
+          checkValiditiy(arg);
+          return [name, arg];
+        } else {
+          const copy = [...usedArgs];
+          copy.forEach(checkValiditiy);
+          usedArgs = [];
+          return [name, copy];
+        }
+      },
+    ),
   );
   if (usedArgs.length) return throwError("Too many arguments given", usedArgs);
   return result;

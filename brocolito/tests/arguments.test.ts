@@ -38,7 +38,7 @@ describe("arguments", () => {
   );
 
   it.each<{
-    usage: string;
+    usage: `<${string}${string}>`;
     multi?: boolean;
     type: ArgType["type"] | "boolean";
   }>([
@@ -48,7 +48,6 @@ describe("arguments", () => {
     { usage: "<foo:string...>", type: "string", multi: true },
     { usage: "<foo:one|two>", type: ["one", "two"] },
     { usage: "<foo:one|two...>", type: ["one", "two"], multi: true },
-    { usage: "something", type: "string" },
     { usage: "<foo:file>", type: "file" },
     { usage: "<foo:file...>", type: "file", multi: true },
   ])(
@@ -57,6 +56,7 @@ describe("arguments", () => {
       expect(Arguments.deriveInfo(usage)).toEqual({
         multi,
         type,
+        name: "foo",
       });
     },
   );

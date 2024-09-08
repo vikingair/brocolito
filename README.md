@@ -83,8 +83,9 @@ or file by passing it as third argument when specifiying the option/arg. E.g.,
 CLI.command("do", "...")
    .option("--service <string>", "name of the service", {
       // "filter" is the string the user has already typed when running the completion
-      completion: async (filter) =>
-         (await getAllServiceNames()).filter((name) => name.startsWith(filter))
+      // ATTENTION: Filtering will work even if you would display all options, but
+      //            it can improve performance to reduce the amount of processed data.
+      completion: async (filter) => (await getAllServices({ filter })).map(({ name }) => name),
    });
 ```
 

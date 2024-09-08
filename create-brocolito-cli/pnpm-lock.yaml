@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       brocolito:
-        specifier: 3.0.1
-        version: 3.0.1(@types/node@20.16.5)
+        specifier: 4.0.0
+        version: 4.0.0(@types/node@20.16.5)
     devDependencies:
       '@types/node':
         specifier: 20.16.5
@@ -339,9 +339,6 @@ packages:
   '@types/node@20.16.5':
     resolution: {integrity: sha512-VwYCweNo3ERajwy0IUlqqcyZ8/A7Zwa9ZP3MnENWcB11AejO+tLy3pu850goUW2FC/IJMdZUfKpX/yxL1gymCA==}
 
-  '@types/node@22.5.4':
-    resolution: {integrity: sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==}
-
   '@types/prompts@2.4.9':
     resolution: {integrity: sha512-qTxFi6Buiu8+50/+3DGIWLHM6QuWsEKugJnnP6iv2Mc4ncxE4A/OJkjuVOA+5X0X1S/nq5VJRa8Lu+nwcvbrKA==}
 
@@ -461,8 +458,8 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
-  brocolito@3.0.1:
-    resolution: {integrity: sha512-vtQNy9U0dv6ObZiVRdEkpcNRyuN3c5coKNSdG9MsXAEpFw5MaG5zPZu+p+UGHAuQvYUS/MdnWqmh8XITn9aDkw==}
+  brocolito@4.0.0:
+    resolution: {integrity: sha512-UY3JJO9aJHBTzsdCIEm7cUW16FgSjmYB9H+BQJri957WjmYipTPFfVCd5ai+9i/MQKjCcis6IQs9Bd/odszHVQ==}
     hasBin: true
 
   cac@6.7.14:
@@ -1259,13 +1256,9 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
-  '@types/node@22.5.4':
-    dependencies:
-      undici-types: 6.19.8
-
   '@types/prompts@2.4.9':
     dependencies:
-      '@types/node': 22.5.4
+      '@types/node': 20.16.5
       kleur: 3.0.3
 
   '@typescript-eslint/eslint-plugin@8.4.0(@typescript-eslint/parser@8.4.0(eslint@9.10.0)(typescript@5.5.4))(eslint@9.10.0)(typescript@5.5.4)':
@@ -1420,7 +1413,7 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
-  brocolito@3.0.1(@types/node@20.16.5):
+  brocolito@4.0.0(@types/node@20.16.5):
     dependencies:
       '@types/minimist': 1.2.5
       '@types/prompts': 2.4.9

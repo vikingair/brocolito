@@ -1,6 +1,6 @@
 {
   "name": "create-brocolito-cli",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "bin": {
     "create-brocolito-cli": "./build/cli.js"
   },
@@ -10,7 +10,7 @@
     "build/meta.js"
   ],
   "dependencies": {
-    "brocolito": "3.0.1"
+    "brocolito": "4.0.0"
   },
   "scripts": {
     "build": "brocolito",

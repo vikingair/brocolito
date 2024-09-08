@@ -15,8 +15,8 @@ importers:
         specifier: 6.0.0
         version: 6.0.0
       brocolito:
-        specifier: 3.0.1
-        version: 3.0.1(@types/node@22.5.4)
+        specifier: 4.0.0-beta.1
+        version: 4.0.0-beta.1(@types/node@22.5.4)
     devDependencies:
       '@types/node':
         specifier: 22.5.4
@@ -528,8 +528,8 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
-  brocolito@3.0.1:
-    resolution: {integrity: sha512-vtQNy9U0dv6ObZiVRdEkpcNRyuN3c5coKNSdG9MsXAEpFw5MaG5zPZu+p+UGHAuQvYUS/MdnWqmh8XITn9aDkw==}
+  brocolito@4.0.0-beta.1:
+    resolution: {integrity: sha512-rY6+vJXLofNCRidfl6TxP5UhpD+rgSFKXeOaImRMzpNw96krr+JI3Dp3XlL6aSvyEBIzbDTTJiniCqoDGLn2NA==}
     hasBin: true
 
   cac@6.7.14:
@@ -1586,7 +1586,7 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
-  brocolito@3.0.1(@types/node@22.5.4):
+  brocolito@4.0.0-beta.1(@types/node@22.5.4):
     dependencies:
       '@types/minimist': 1.2.5
       '@types/prompts': 2.4.9

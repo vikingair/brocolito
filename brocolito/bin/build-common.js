@@ -30,7 +30,7 @@ export const createGlobalStateFile = async () => {
   const file = path.join(buildDir, "meta.js");
   await fs.writeFile(
     file,
-    `global.__BROCOLITO__=${JSON.stringify(GLOBAL_STATE)};\n`,
+    `globalThis.__BROCOLITO__=${JSON.stringify(GLOBAL_STATE)};\n`,
   );
 };
 

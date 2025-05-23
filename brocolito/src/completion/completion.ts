@@ -30,6 +30,8 @@ const completeArgType = async (
   } & CompletionOpt,
   lastArg: string,
 ): Promise<CompleteItemOrString[]> => {
+  // TODO: Add existing matched options and args to possibly derive faster/better autocompletion results
+  //       from the custom completion.
   const customCompletion = await completion?.(lastArg);
   if (customCompletion?.length) return customCompletion;
   if (type === "file") return FileCompletion;

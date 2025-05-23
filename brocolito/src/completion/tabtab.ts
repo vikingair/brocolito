@@ -69,7 +69,7 @@ const parseEnv = (env: Record<string, string | undefined>): TabtabEnv => {
   const firstArg = line.split(" ")[0];
   const alias = State.aliases[firstArg];
   if (firstArg && !alias && firstArg !== Meta.name)
-    return Utils.complainAndExit(`Completion invoked with not configured alias ${firstArg}.
+    throw new Error(`Completion invoked with not configured alias ${firstArg}.
 Use e.g. -> CLI.alias('${firstArg}', '${Meta.name} my-subcommand')
 `);
   const expandedLine = alias

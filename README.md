@@ -301,8 +301,6 @@ CLI.alias('cf', 'my-cli foo');
 
 `brocolito` makes use of some utilities that are also made available for your CLI.
 
-- `complainAndExit(msg: string)`: Prints the given message in red and immediately stops the process without
-                                  printing a whole error stack.
 - `pc`: Default export of the [picocolors](https://www.npmjs.com/package/picocolors) package to add colors
         to your printed output.
 - `prompts`: Default export of the [prompts](https://www.npmjs.com/package/prompts) package to make use

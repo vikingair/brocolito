@@ -5,12 +5,11 @@ import path from "node:path";
 import prompts from "prompts";
 import { Meta } from "../meta";
 import { systemShell } from "./tabtab";
-import { complainAndExit } from "../brocolito";
 
 export const showInstallInstruction = async () => {
   const shell = systemShell();
   if (shell !== "bash" && shell !== "zsh")
-    complainAndExit(
+    throw new Error(
       'Completion is only supported for "zsh" and "bash" shells. Detected: ' +
         shell,
     );
@@ -28,7 +27,7 @@ export const showInstallInstruction = async () => {
   if (wantsWrite) {
     const shellRCFile = path.resolve(os.homedir(), shellRC);
     if (!fs.existsSync(shellRCFile))
-      complainAndExit("Config file does not exist: " + shellRCFile);
+      throw new Error("Config file does not exist: " + shellRCFile);
     const shellRCContent = fs.readFileSync(shellRCFile, "utf-8");
     if (shellRCContent.includes(command)) return; // don't write the same line twice
     fs.writeFileSync(shellRCFile, `${shellRCContent.trim()}\n\n${command}\n`);

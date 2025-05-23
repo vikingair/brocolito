@@ -56,7 +56,7 @@ const _parseArgs = (
 ): Record<string, string | string[] | undefined> => {
   const throwError = (reason: string, remainingArgs?: string[]) => {
     Help.show(command);
-    return Utils.complainAndExit(
+    throw new Error(
       `${reason}: Expected ${
         command.args.length
       } arguments, but was invoked with ${args.length}.${
@@ -76,9 +76,7 @@ The following arguments could not be processed: ${Utils.pc.yellow(
       ({ usage, name, type, multi }): [string, string | string[]] => {
         const checkValiditiy = (v: string) => {
           if (Array.isArray(type) && !type.includes(v))
-            Utils.complainAndExit(
-              `Invalid value "${v}" provided for arg ${usage}.`,
-            );
+            throw new Error(`Invalid value "${v}" provided for arg ${usage}.`);
         };
         if (!usedArgs.length) {
           return throwError("Too few arguments given");
@@ -110,15 +108,15 @@ const _parseOptions = (
       const value = minimistOptions[name];
       delete minimistOptions[name];
       if (mandatory && value === undefined)
-        Utils.complainAndExit(`Mandatory options was not provided: --${name}`);
+        throw new Error(`Mandatory options was not provided: --${name}`);
 
       if (typeof value === "boolean") {
         if (type !== "boolean")
-          Utils.complainAndExit(`Parameter missing for option --${name}`);
+          throw new Error(`Parameter missing for option --${name}`);
         opts[camelName] = value;
       } else if (type === "boolean") {
         if (typeof value === "string" && value !== "true" && value !== "false")
-          Utils.complainAndExit(
+          throw new Error(
             `Invalid value "${value}" provided for flag ${prefixedName}`,
           );
         // undefined value also results into false
@@ -126,7 +124,7 @@ const _parseOptions = (
       } else if (value !== undefined) {
         const checkValiditiy = (v: string) => {
           if (Array.isArray(type) && !type.includes(v))
-            Utils.complainAndExit(
+            throw new Error(
               `Invalid value "${v}" provided for flag ${prefixedName}. Must be one of: ${type.join(" | ")}`,
             );
         };
@@ -135,7 +133,7 @@ const _parseOptions = (
             value.forEach(checkValiditiy);
             opts[camelName] = value;
           } else {
-            Utils.complainAndExit(
+            throw new Error(
               `Invalidly multiple values [${value.map((v) => `"${v}"`).join(", ")}] were provided for flag ${prefixedName}`,
             );
           }
@@ -152,7 +150,7 @@ const _parseOptions = (
   );
   const remainingArgs = Object.keys(minimistOptions);
   if (remainingArgs.length) {
-    Utils.complainAndExit(
+    throw new Error(
       `Unrecognized options were used: ${remainingArgs
         .map((name) => "--" + name)
         .join(", ")}`,
@@ -177,13 +175,13 @@ export const parse = async (argv = process.argv): Promise<unknown> => {
   if (wantsHelp) return Help.show(command);
   if (typeof error === "string") {
     if (command) Help.show(command);
-    return Utils.complainAndExit(error);
+    throw new Error(error);
   }
   const parsedArgs = _parseArgs(command, args);
   const options = _parseOptions(command, minimistOpts);
   const action = command._action;
   if (!action) {
-    return Utils.complainAndExit(
+    throw new Error(
       `Configuration error: No action for given command "${command.line}" specified`,
     );
   }

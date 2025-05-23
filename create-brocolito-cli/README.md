@@ -10,4 +10,4 @@ npx create-brocolito-cli
 yarn create brocolito-cli
 ```
 
-See latest documentation of `brocolito` on [GitHub](https://github.com/fdc-viktor-luft/brocolito/blob/main/README.md).
+See latest documentation of `brocolito` on [GitHub](https://github.com/vikingair/brocolito/blob/main/README.md).

@@ -17,13 +17,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fdc-viktor-luft/brocolito"
+    "url": "https://github.com/vikingair/brocolito"
   },
   "keywords": [
     "CLI",
     "GitHub Actions"
   ],
-  "author": "Viktor Luft <viktor.luft@freiheit.com> (https://github.com/fdc-viktor-luft)",
+  "author": "Viktor Luft <viktor.luft@freiheit.com> (https://github.com/vikingair)",
   "license": "MIT",
   "scripts": {
     "dist": "vite build && pnpm dist:ts",
@@ -50,6 +50,5 @@
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.4.0",
     "vitest": "^2.0.5"
-  },
-  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
+  }
 }

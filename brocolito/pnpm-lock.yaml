@@ -27,26 +27,29 @@ importers:
         specifier: ^5.4.3
         version: 5.4.3(@types/node@22.5.4)
     devDependencies:
+      '@eslint/js':
+        specifier: 9.27.0
+        version: 9.27.0
       '@types/node':
-        specifier: ^22.5.4
+        specifier: 22.5.4
         version: 22.5.4
       eslint:
-        specifier: ^9.10.0
+        specifier: 9.10.0
         version: 9.10.0
       eslint-plugin-prettier:
-        specifier: ^5.2.1
+        specifier: 5.2.1
         version: 5.2.1(eslint-config-prettier@9.1.0(eslint@9.10.0))(eslint@9.10.0)(prettier@3.3.3)
       prettier:
-        specifier: ^3.3.3
+        specifier: 3.3.3
         version: 3.3.3
       typescript:
-        specifier: ^5.5.4
+        specifier: 5.5.4
         version: 5.5.4
       typescript-eslint:
-        specifier: ^8.4.0
+        specifier: 8.4.0
         version: 8.4.0(eslint@9.10.0)(typescript@5.5.4)
       vitest:
-        specifier: ^2.0.5
+        specifier: 2.0.5
         version: 2.0.5(@types/node@22.5.4)
 
 packages:
@@ -213,6 +216,10 @@ packages:
 
   '@eslint/js@9.10.0':
     resolution: {integrity: sha512-fuXtbiP5GWIn8Fz+LWoOMVf/Jxm+aajZYkhi6CuEm4SxymFM+eUWzbO9qXT+L0iCkL5+KGYMCSGxo686H19S1g==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/js@9.27.0':
+    resolution: {integrity: sha512-G5JD9Tu5HJEu4z2Uo4aHY2sLV64B7CDMXxFzqzjl3NKd6RVzSXNoE80jk7Y0lJkTTkjiIhBAqmlYwjuBY3tvpA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/object-schema@2.1.4':
@@ -1169,6 +1176,8 @@ snapshots:
       - supports-color
 
   '@eslint/js@9.10.0': {}
+
+  '@eslint/js@9.27.0': {}
 
   '@eslint/object-schema@2.1.4': {}
 

@@ -1,4 +1,3 @@
-// @ts-expect-error import not directly included
 import js from "@eslint/js";
 import prettier from "eslint-plugin-prettier";
 import ts from "typescript-eslint";

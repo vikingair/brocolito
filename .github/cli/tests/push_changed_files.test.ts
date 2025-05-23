@@ -6,7 +6,7 @@ initEnv();
 describe("push changed_files", () => {
   it("returns changed files of given push event", async () => {
     // given
-    process.env.GITHUB_REPOSITORY = "fdc-viktor-luft/brocolito";
+    process.env.GITHUB_REPOSITORY = "vikingair/brocolito";
     process.env.GITHUB_EVENT_NAME = "push";
     process.env.GITHUB_REF = "refs/heads/main";
 

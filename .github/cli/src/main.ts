@@ -3,8 +3,8 @@
 // https://github.com/octokit/app-permissions/blob/main/generated/api.github.com.json
 import * as core from "@actions/core";
 import { CLI } from "brocolito";
-import { initEnv } from "./env";
-import { getChangedFiles, printFileTree } from "./files";
+import { initEnv } from "./env.ts";
+import { getChangedFiles, printFileTree } from "./files.ts";
 
 initEnv();
 

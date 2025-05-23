@@ -12,17 +12,18 @@
   "type": "module",
   "bin": {
     "brocolito": "./bin/build.js",
-    "brocolito-bun": "./bin/build-bun.js"
+    "brocolito-bun": "./bin/build-bun.js",
+    "brocolito-deno": "./bin/build-deno.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fdc-viktor-luft/brocolito"
+    "url": "https://github.com/vikingair/brocolito"
   },
   "keywords": [
     "CLI",
     "GitHub Actions"
   ],
-  "author": "Viktor Luft <viktor.luft@freiheit.com> (https://github.com/fdc-viktor-luft)",
+  "author": "Viktor Luft <viktor.luft@freiheit.com> (https://github.com/vikingair)",
   "license": "MIT",
   "scripts": {
     "dist": "vite build && pnpm dist:ts",
@@ -42,12 +43,13 @@
     "vite": "^5.4.3"
   },
   "devDependencies": {
-    "@types/node": "^22.5.4",
-    "eslint": "^9.10.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.3.3",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^8.4.0",
-    "vitest": "^2.0.5"
+    "@eslint/js": "9.27.0",
+    "@types/node": "22.5.4",
+    "eslint": "9.10.0",
+    "eslint-plugin-prettier": "5.2.1",
+    "prettier": "3.3.3",
+    "typescript": "5.5.4",
+    "typescript-eslint": "8.4.0",
+    "vitest": "2.0.5"
   }
 }

@@ -167,12 +167,12 @@ export const parse = async (argv = process.argv): Promise<unknown> => {
   );
   const firstArg = minimistArgs[0];
   if (firstArg === "completion") return Completion.run();
-  const wantsHelp = minimistOpts.h || minimistOpts.help;
   if (!firstArg) {
-    if (wantsHelp) return Help.show();
     if (minimistOpts.v || minimistOpts.version)
       return console.log(Meta.version);
+    return Help.show();
   }
+  const wantsHelp = minimistOpts.h || minimistOpts.help;
   const { command, args, error } = findCommand(minimistArgs);
   if (wantsHelp) return Help.show(command);
   if (typeof error === "string") {

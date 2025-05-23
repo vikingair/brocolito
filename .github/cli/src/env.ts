@@ -4,7 +4,7 @@ import fs from "node:fs";
 // e.g.
 /*
 # github.context.repo.owner/github.context.repo.repo
-GITHUB_REPOSITORY=fdc-viktor-luft/brocolito
+GITHUB_REPOSITORY=vikingair/brocolito
 GITHUB_TOKEN=ghp_***
 # github.context.eventName (e.g. "pull_request" or "push")
 GITHUB_EVENT_NAME=pull_request

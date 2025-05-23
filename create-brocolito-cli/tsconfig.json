@@ -2,6 +2,7 @@
   "compilerOptions": {
     "useDefineForClassFields": true,
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
     "sourceMap": false,
     "removeComments": true,
     "resolveJsonModule": true,
@@ -18,7 +19,7 @@
     "target": "esnext",
     "lib": ["dom", "esnext"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "jsx": "preserve",
     "noEmit": true
   },

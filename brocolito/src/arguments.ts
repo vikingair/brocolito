@@ -4,7 +4,6 @@ import type {
   OptionMeta,
   SnakeToCamelCase,
 } from "./types";
-import { Utils } from "./utils";
 
 const camelize = <S extends string>(str: S): SnakeToCamelCase<S> =>
   str.replace(/(-[a-zA-Z])/g, (w) => w[1].toUpperCase()) as SnakeToCamelCase<S>;
@@ -14,7 +13,7 @@ const deriveInfo = <S extends `<${string}${string}>`>(
 ): ArgType & { name: ArgumentToName<S> } => {
   const match = usage.match(/^<([a-zA-Z0-9-]+)(:.+?)?(\.{3})?>$/);
   if (!match)
-    return Utils.complainAndExit(
+    throw new Error(
       'Invalid usage specified for arg "usage". Param name needs to consist of these character only [a-z0-9-]',
     );
   const m = match[2]?.substring(1) ?? "string"; // without the collon

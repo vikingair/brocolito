@@ -1,7 +1,6 @@
 // Source: https://github.com/mklabs/tabtab/blob/master/lib/index.js
 
 import { State } from "../state";
-import { Utils } from "../utils";
 import { Meta } from "../meta";
 
 /**
@@ -69,7 +68,7 @@ const parseEnv = (env: Record<string, string | undefined>): TabtabEnv => {
   const firstArg = line.split(" ")[0];
   const alias = State.aliases[firstArg];
   if (firstArg && !alias && firstArg !== Meta.name)
-    return Utils.complainAndExit(`Completion invoked with not configured alias ${firstArg}.
+    throw new Error(`Completion invoked with not configured alias ${firstArg}.
 Use e.g. -> CLI.alias('${firstArg}', '${Meta.name} my-subcommand')
 `);
   const expandedLine = alias

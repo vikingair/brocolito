@@ -16,9 +16,7 @@ import { Arguments } from "./arguments";
 import { Meta } from "./meta";
 
 process.on("unhandledRejection", (err) => {
-  const errMsg =
-    err instanceof Error ? (process.env.DEBUG ? err.stack : err.message) : err;
-  complainAndExit(String(errMsg));
+  throw err instanceof Error ? err : new Error(String(err));
 });
 
 const createAction =
@@ -138,5 +136,5 @@ const alias = (aliasName: string, replacement: string) => {
 export const CLI = { command, parse, _state: State, alias, meta: Meta };
 
 // Utility re-exported (no additional installation required for the peer)
-const { pc, complainAndExit, prompts } = Utils;
-export { pc, complainAndExit, prompts };
+const { pc, prompts } = Utils;
+export { pc, prompts };

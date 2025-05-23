@@ -1,7 +1,6 @@
 // Source: https://github.com/mklabs/tabtab/blob/master/lib/index.js
 
 import { State } from "../state";
-import { Utils } from "../utils";
 import { Meta } from "../meta";
 
 /**

@@ -32,7 +32,6 @@ describe("arguments", () => {
         multi,
         type,
         name,
-        prefixedName: "--" + name,
       });
     },
   );

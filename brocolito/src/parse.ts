@@ -104,7 +104,7 @@ const _parseOptions = (
 ): Record<string, string[] | string | boolean | undefined> => {
   const opts: Record<string, string[] | string | boolean | undefined> = {};
   Object.entries(command.options as Record<string, OptionMeta>).forEach(
-    ([camelName, { name, type, prefixedName, mandatory, multi }]) => {
+    ([camelName, { name, type, mandatory, multi }]) => {
       const value = minimistOptions[name];
       delete minimistOptions[name];
       if (mandatory && value === undefined) {
@@ -123,7 +123,7 @@ const _parseOptions = (
           value !== "false"
         ) {
           throw new Error(
-            `Invalid value "${value}" provided for flag ${prefixedName}`,
+            `Invalid value "${value}" provided for flag --${name}`,
           );
         }
         // undefined value also results into false
@@ -132,7 +132,7 @@ const _parseOptions = (
         const checkValiditiy = (v: string) => {
           if (Array.isArray(type) && !type.includes(v)) {
             throw new Error(
-              `Invalid value "${v}" provided for flag ${prefixedName}. Must be one of: ${type.join(
+              `Invalid value "${v}" provided for flag --${name}. Must be one of: ${type.join(
                 " | ",
               )}`,
             );
@@ -146,7 +146,7 @@ const _parseOptions = (
             throw new Error(
               `Invalidly multiple values [${value
                 .map((v) => `"${v}"`)
-                .join(", ")}] were provided for flag ${prefixedName}`,
+                .join(", ")}] were provided for flag --${name}`,
             );
           }
         } else {

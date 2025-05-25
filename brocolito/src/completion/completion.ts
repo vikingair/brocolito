@@ -62,17 +62,13 @@ export const _completion = async ({
   const commandArgs = command.args.slice(args.length); // all arguments that can still be used
   const lastArgInfo = command.args.at(-1);
   const options = Object.values(command.options) as OptionMeta[];
-  const startedOption = options.find(
-    ({ prefixedName }) => prefixedName === prev,
-  );
+  const startedOption = options.find(({ name }) => "--" + name === prev);
 
   const availableOptionItems = options
-    .filter(
-      ({ prefixedName, multi }) => multi || !lineArgs.includes(prefixedName),
-    )
+    .filter(({ name, multi }) => multi || !lineArgs.includes("--" + name))
     .map(
-      ({ prefixedName, description }: OptionMeta): CompleteItem => ({
-        name: prefixedName,
+      ({ name, description }: OptionMeta): CompleteItem => ({
+        name: "--" + name,
         description,
       }),
     );

@@ -80,7 +80,6 @@ export type ArgType = {
 export type OptionMeta = {
   usage: string;
   name: string;
-  prefixedName: string;
   description: string;
   type: "boolean" | ArgType["type"];
   multi: ArgType["multi"];
@@ -134,8 +133,10 @@ type Subcommands<OPTIONS, ARGS> = {
 };
 
 export type Command<
-  OPTIONS = Record<PropertyKey, unknown>,
-  ARGS = Record<PropertyKey, unknown>,
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  OPTIONS = {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  ARGS = {},
   TArgState extends ArgStates = 0,
 > = {
   name: string;
@@ -146,9 +147,7 @@ export type Command<
   option: Option<OPTIONS, ARGS, TArgState>;
   options: Record<keyof OPTIONS, OptionMeta>;
   alias?: string;
-} & (TArgState extends 2 | 3
-  ? Record<PropertyKey, never>
-  : Arguments<OPTIONS, ARGS>) &
-  (TArgState extends 1 | 2
-    ? Record<PropertyKey, never>
-    : Subcommands<OPTIONS, ARGS>);
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+} & (TArgState extends 2 | 3 ? {} : Arguments<OPTIONS, ARGS>) &
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  (TArgState extends 1 | 2 ? {} : Subcommands<OPTIONS, ARGS>);

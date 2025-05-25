@@ -3,9 +3,11 @@ import eslintConfig from "../eslint.config.js?raw";
 import packageJSON from "../package.json";
 import gitIgnore from "../.gitignore?raw";
 
+export type SupportedRuntime = "node" | "bun" | "deno";
+
 const { name: _, version: _v, bin, ...packageJSONRest } = packageJSON;
 
-const packageJson = (name: string, runtime: "node" | "bun") => {
+const packageJson = (name: string, runtime: SupportedRuntime) => {
   const result = {
     // retaining the order of entries for serialization
     name,
@@ -19,6 +21,11 @@ const packageJson = (name: string, runtime: "node" | "bun") => {
   if (runtime === "bun") {
     result.scripts.build = "brocolito-bun";
     result.scripts.test = "bun test";
+  }
+
+  if (runtime === "deno") {
+    result.scripts.build = "brocolito-deno";
+    result.scripts.test = "deno test";
   }
 
   return JSON.stringify(result, null, 2) + "\n";
@@ -78,7 +85,18 @@ describe("main", () => {
   });
 });
 `;
-const tsConfig = JSON.stringify(tsConfigJSON, null, 2) + "\n";
+
+// "allowImportingTsExtensions": true, <- node + deno
+// "erasableSyntaxOnly": true <- node
+const tsConfig = (runtime: SupportedRuntime) => {
+  const config = { ...tsConfigJSON };
+
+  if (runtime === "deno") {
+    config.compilerOptions.allowImportingTsExtensions = true;
+  }
+
+  return JSON.stringify(config, null, 2) + "\n";
+};
 
 export const Templates = {
   packageJson,

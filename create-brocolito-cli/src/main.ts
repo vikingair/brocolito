@@ -2,16 +2,17 @@ import { CLI, prompts } from "brocolito";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { execSync } from "node:child_process";
-import { Templates } from "./templates";
+import { SupportedRuntime, Templates } from "./templates";
 
 CLI.command("run", "test description").action(async () => {
-  const { runtime }: { runtime: "bun" | "node" } = await prompts({
+  const { runtime }: { runtime: SupportedRuntime } = await prompts({
     type: "select",
     name: "runtime",
     message: "Choose your runtime",
     choices: [
       { title: "node", value: "node" },
       { title: "bun", value: "bun" },
+      { title: "deno", value: "deno" },
     ],
     initial: 0,
   });
@@ -35,7 +36,10 @@ CLI.command("run", "test description").action(async () => {
     path.join(srcDir, "main.test.ts"),
     runtime === "node" ? Templates.testFile : Templates.testFileBun,
   );
-  await fs.writeFile(path.join(name, "tsconfig.json"), Templates.tsConfig);
+  await fs.writeFile(
+    path.join(name, "tsconfig.json"),
+    Templates.tsConfig(runtime),
+  );
   await fs.writeFile(
     path.join(name, "eslint.config.js"),
     Templates.eslintConfig,

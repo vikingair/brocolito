@@ -1,19 +1,20 @@
 import {
   type Action,
+  type ArgStates,
   type ArgumentArg,
   type Command,
+  CompletionOpt,
   type DescriptionOrOpts,
   type OptionArg,
   type OptionToName,
   type Subcommand,
-  type ArgStates,
-  CompletionOpt,
-} from "./types";
-import { State } from "./state";
-import { parse } from "./parse";
-import { Utils } from "./utils";
-import { Arguments } from "./arguments";
-import { Meta } from "./meta";
+} from "./types.ts";
+import { State } from "./state.ts";
+import { parse } from "./parse.ts";
+import { Utils } from "./utils.ts";
+import { Arguments } from "./arguments.ts";
+import { Meta } from "./meta.ts";
+import process from "node:process";
 
 process.on("unhandledRejection", (err) => {
   throw err instanceof Error ? err : new Error(String(err));
@@ -109,7 +110,7 @@ const command = (name: string, options: DescriptionOrOpts): Command => {
     args: [],
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     option: null!,
-    options: [],
+    options: {},
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     subcommand: null!,
     subcommands: {},

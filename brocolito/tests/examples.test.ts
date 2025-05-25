@@ -1,8 +1,8 @@
-import { describe, it, vi, expect, beforeEach } from "vitest";
-import { CLI } from "../src/brocolito";
-import { State } from "../src/state";
-import { Utils } from "../src/utils";
-import { Help } from "../src/help";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { CLI } from "../src/brocolito.ts";
+import { State } from "../src/state.ts";
+import { Utils } from "../src/utils.ts";
+import { Help } from "../src/help.ts";
 
 const call = (line: string) =>
   CLI.parse(["nodeFile", "scriptFile"].concat(line.split(" ")));

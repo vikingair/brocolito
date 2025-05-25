@@ -3,7 +3,7 @@ import type {
   ArgumentToName,
   OptionMeta,
   SnakeToCamelCase,
-} from "./types";
+} from "./types.ts";
 
 const camelize = <S extends string>(str: S): SnakeToCamelCase<S> =>
   str.replace(/(-[a-zA-Z])/g, (w) => w[1].toUpperCase()) as SnakeToCamelCase<S>;
@@ -12,10 +12,11 @@ const deriveInfo = <S extends `<${string}${string}>`>(
   usage: S,
 ): ArgType & { name: ArgumentToName<S> } => {
   const match = usage.match(/^<([a-zA-Z0-9-]+)(:.+?)?(\.{3})?>$/);
-  if (!match)
+  if (!match) {
     throw new Error(
       'Invalid usage specified for arg "usage". Param name needs to consist of these character only [a-z0-9-]',
     );
+  }
   const m = match[2]?.substring(1) ?? "string"; // without the collon
   return {
     name: camelize(match[1]) as ArgumentToName<S>,
@@ -35,11 +36,13 @@ const deriveOptionInfo = (
   const prefixedName = mandatory ? _prefixedName.slice(0, -1) : _prefixedName;
   const name = prefixedName.substring(2);
   // even though mandatory boolean doesn't make sense
-  if (!arg)
+  if (!arg) {
     return { name, prefixedName, type: "boolean", mandatory, multi: false };
+  }
   const match = arg && arg.match(/^<(.+?)(\.{3})?>$/);
-  if (!match)
+  if (!match) {
     return { name, prefixedName, type: "string", mandatory, multi: false };
+  }
   const m = match[1] ?? "string"; // without the collon
   return {
     name,

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "useDefineForClassFields": true,
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
     "sourceMap": false,
@@ -11,7 +10,6 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "noImplicitThis": true,
-    "alwaysStrict": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

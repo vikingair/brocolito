@@ -1,14 +1,14 @@
 // Source: https://github.com/mklabs/tabtab/blob/master/lib/index.js
 
-import { State } from "../state";
-import { Meta } from "../meta";
+import { State } from "../state.ts";
+import { Meta } from "../meta.ts";
+import process from "node:process";
 
 /**
  * Utility to figure out the shell used on the system.
  *
  * Sadly, we can't use `echo $0` in node, maybe with more work. So we rely on
  * process.env.SHELL.
- *
  */
 export const systemShell = () => (process.env.SHELL || "").split("/").at(-1);
 
@@ -67,10 +67,11 @@ const parseEnv = (env: Record<string, string | undefined>): TabtabEnv => {
   const line = env.COMP_LINE || "";
   const firstArg = line.split(" ")[0];
   const alias = State.aliases[firstArg];
-  if (firstArg && !alias && firstArg !== Meta.name)
+  if (firstArg && !alias && firstArg !== Meta.name) {
     throw new Error(`Completion invoked with not configured alias ${firstArg}.
 Use e.g. -> CLI.alias('${firstArg}', '${Meta.name} my-subcommand')
 `);
+  }
   const expandedLine = alias
     ? line.replace(new RegExp(`^${firstArg}`), alias)
     : line;
@@ -145,7 +146,6 @@ const completionItem = (item: CompleteItemOrString): CompleteItem => {
  *
  * Bash needs in addition to filter out the args for the completion to work
  * (zsh, fish don't need this).
- *
  */
 const log = (args: Array<CompleteItemOrString>) => {
   const shell = systemShell();

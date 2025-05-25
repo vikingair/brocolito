@@ -18,8 +18,9 @@ const getShortHashForFile = (filePath) => {
 const getHashEntries = (dir) =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((fileOrDir) => {
     const fileOrDirName = path.join(dir, fileOrDir.name);
-    if (fileOrDir.isFile())
+    if (fileOrDir.isFile()) {
       return [[fileOrDirName, getShortHashForFile(fileOrDirName)]];
+    }
     return getHashEntries(fileOrDirName);
   });
 

@@ -3,6 +3,7 @@
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import process from "node:process";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

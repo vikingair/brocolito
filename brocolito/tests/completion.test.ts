@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { _completion } from "../src/completion/completion";
-import { State } from "../src/state";
-import { CLI } from "../src/brocolito";
+import { beforeEach, describe, expect, it } from "vitest";
+import { _completion } from "../src/completion/completion.ts";
+import { State } from "../src/state.ts";
+import { CLI } from "../src/brocolito.ts";
 
 const anyCallback: any = () => undefined;
 const dummyDescription = "dummyDescription";
@@ -78,7 +78,7 @@ describe("completion", () => {
     ];
     CLI.command("test", dummyDescription)
       .option("--foo <string>", dummyDescription, {
-        completion: async () => results,
+        completion: () => Promise.resolve(results),
       })
       .option("--file <file>", dummyDescription, {
         // if returning no results fallback to file completion
@@ -106,7 +106,7 @@ describe("completion", () => {
         completion: () => [],
       })
       .arg("<string...>", dummyDescription, {
-        completion: async () => results,
+        completion: () => Promise.resolve(results),
       });
 
     // when custom completion for file with no results

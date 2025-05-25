@@ -1,4 +1,4 @@
-import { CompleteItemOrString } from "./completion/tabtab";
+import { type CompleteItemOrString } from "./completion/tabtab.ts";
 
 export type SnakeToCamelCase<S extends string> =
   S extends `${infer T}-${infer U}`
@@ -80,7 +80,6 @@ export type ArgType = {
 export type OptionMeta = {
   usage: string;
   name: string;
-  prefixedName: string;
   description: string;
   type: "boolean" | ArgType["type"];
   multi: ArgType["multi"];

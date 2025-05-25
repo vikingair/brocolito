@@ -3,16 +3,17 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import prompts from "prompts";
-import { Meta } from "../meta";
-import { systemShell } from "./tabtab";
+import { Meta } from "../meta.ts";
+import { systemShell } from "./tabtab.ts";
 
 export const showInstallInstruction = async () => {
   const shell = systemShell();
-  if (shell !== "bash" && shell !== "zsh")
+  if (shell !== "bash" && shell !== "zsh") {
     throw new Error(
       'Completion is only supported for "zsh" and "bash" shells. Detected: ' +
         shell,
     );
+  }
 
   const shellRC = `.${shell}rc`;
   const command = `. ${Meta.dir}/build/${shell}_completion.sh`;
@@ -26,8 +27,9 @@ export const showInstallInstruction = async () => {
 
   if (wantsWrite) {
     const shellRCFile = path.resolve(os.homedir(), shellRC);
-    if (!fs.existsSync(shellRCFile))
+    if (!fs.existsSync(shellRCFile)) {
       throw new Error("Config file does not exist: " + shellRCFile);
+    }
     const shellRCContent = fs.readFileSync(shellRCFile, "utf-8");
     if (shellRCContent.includes(command)) return; // don't write the same line twice
     fs.writeFileSync(shellRCFile, `${shellRCContent.trim()}\n\n${command}\n`);

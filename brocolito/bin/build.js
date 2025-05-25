@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
-import path from "path";
+import path from "node:path";
 import { build } from "vite";
-import fs from "fs/promises";
-import { fileURLToPath } from "url";
+import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import process from "node:process";
 import {
-  packageJSON,
   createBinFile,
-  createGlobalStateFile,
   createCompletionFiles,
+  createGlobalStateFile,
+  packageJSON,
   showSetupHint,
 } from "./build-common.js";
 
@@ -40,8 +41,9 @@ const cliContent = await fs.readFile(cliFile, "utf-8");
 await fs.writeFile(cliFile, 'import "./meta.js";\n' + cliContent);
 
 // update file hashes for hot reload before next execution
-if (!process.env.CI)
+if (!process.env.CI) {
   (await import("./update_hashes.js")).updateHashes(path.resolve("."));
+}
 
 // create execution wrapper
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

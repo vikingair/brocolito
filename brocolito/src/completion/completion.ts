@@ -1,15 +1,16 @@
 import minimist from "minimist";
-import { showInstallInstruction } from "./install.js";
+import { showInstallInstruction } from "./install.ts";
 import {
   type CompleteItem,
   type CompleteItemOrString,
   Tabtab,
   type TabtabEnv,
-} from "./tabtab.js";
-import { State } from "../state";
-import { findCommand } from "../parse";
-import type { OptionMeta, ArgType, CompletionOpt } from "../types";
-import { Meta } from "../meta";
+} from "./tabtab.ts";
+import { State } from "../state.ts";
+import { findCommand } from "../parse.ts";
+import type { ArgType, CompletionOpt, OptionMeta } from "../types.ts";
+import { Meta } from "../meta.ts";
+import process from "node:process";
 
 const FileCompletion = ["__files__"];
 
@@ -44,8 +45,9 @@ export const _completion = async ({
   line,
 }: TabtabEnv): Promise<CompleteItemOrString[]> => {
   // top level
-  if (prev === Meta.name)
+  if (prev === Meta.name) {
     return toCompleteItems(State.commands).concat(["--help"]);
+  }
 
   const lineArgs = line.split(" ");
   // returns lastArg which wasn't completed yet,
@@ -60,17 +62,13 @@ export const _completion = async ({
   const commandArgs = command.args.slice(args.length); // all arguments that can still be used
   const lastArgInfo = command.args.at(-1);
   const options = Object.values(command.options) as OptionMeta[];
-  const startedOption = options.find(
-    ({ prefixedName }) => prefixedName === prev,
-  );
+  const startedOption = options.find(({ name }) => "--" + name === prev);
 
   const availableOptionItems = options
-    .filter(
-      ({ prefixedName, multi }) => multi || !lineArgs.includes(prefixedName),
-    )
+    .filter(({ name, multi }) => multi || !lineArgs.includes("--" + name))
     .map(
-      ({ prefixedName, description }: OptionMeta): CompleteItem => ({
-        name: prefixedName,
+      ({ name, description }: OptionMeta): CompleteItem => ({
+        name: "--" + name,
         description,
       }),
     );
@@ -82,15 +80,15 @@ export const _completion = async ({
   // );
 
   if (startedOption && startedOption.type !== "boolean") {
-    return completeArgType(
+    return await completeArgType(
       // TS cannot correctly infer that "boolean" case was filtered
       startedOption as { type: ArgType["type"] } & CompletionOpt,
       lastArg,
     );
   } else if (commandArgs.length) {
-    return completeArgType(commandArgs[0], lastArg);
+    return await completeArgType(commandArgs[0], lastArg);
   } else if (lastArgInfo?.multi) {
-    return completeArgType(lastArgInfo, lastArg);
+    return await completeArgType(lastArgInfo, lastArg);
   } else if (prev === command.name || prev === command.alias) {
     // we autocomplete subcommands only as long as no option was used (even though we support writing options first)
     return toCompleteItems(command.subcommands).concat(availableOptionItems);

@@ -34,7 +34,7 @@ CLI.command("run", "test description").action(async () => {
   await fs.writeFile(path.join(srcDir, "main.ts"), Templates.main);
   await fs.writeFile(
     path.join(srcDir, "main.test.ts"),
-    runtime === "node" ? Templates.testFile : Templates.testFileBun,
+    runtime === "bun" ? Templates.testFileBun : Templates.testFile,
   );
   await fs.writeFile(
     path.join(name, "tsconfig.json"),

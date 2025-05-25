@@ -26,6 +26,8 @@ const packageJson = (name: string, runtime: SupportedRuntime) => {
   if (runtime === "deno") {
     result.scripts.build = "brocolito-deno";
     result.scripts.test = "deno test";
+    result.scripts["lint:ts"] = "deno check";
+    // TODO: Opt-in to "deno fmt" + "deno lint"?
   }
 
   return JSON.stringify(result, null, 2) + "\n";
@@ -39,6 +41,8 @@ CLI.command("hello", "prints 'hello world'").action(() =>
 
 CLI.parse(); // this needs to be executed after all "commands" were set up
 `;
+
+// when getting rid of vite(st), also opt-in to runtime specific test cases
 const testFile = `import { describe, vi, it, expect } from "vitest";
 import { CLI } from "brocolito";
 
@@ -89,10 +93,26 @@ describe("main", () => {
 // "allowImportingTsExtensions": true, <- node + deno
 // "erasableSyntaxOnly": true <- node
 const tsConfig = (runtime: SupportedRuntime) => {
-  const config = { ...tsConfigJSON };
+  const config = { ...tsConfigJSON } as Omit<
+    typeof tsConfigJSON,
+    "compilerOptions"
+  > & {
+    compilerOptions: Partial<(typeof tsConfigJSON)["compilerOptions"]>;
+  };
 
   if (runtime === "deno") {
     config.compilerOptions.allowImportingTsExtensions = true;
+
+    // the following options are ignored by deno and raise a warning otherwise
+    delete config.compilerOptions.allowSyntheticDefaultImports;
+    delete config.compilerOptions.module;
+    delete config.compilerOptions.moduleResolution;
+    delete config.compilerOptions.noEmit;
+    delete config.compilerOptions.removeComments;
+    delete config.compilerOptions.resolveJsonModule;
+    delete config.compilerOptions.skipLibCheck;
+    delete config.compilerOptions.sourceMap;
+    delete config.compilerOptions.target;
   }
 
   return JSON.stringify(config, null, 2) + "\n";

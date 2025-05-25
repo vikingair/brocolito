@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { State } from "../src/state";
-import { _getHelp } from "../src/help";
-import { CLI } from "../src/brocolito";
+import { beforeEach, describe, expect, it } from "vitest";
+import { State } from "../src/state.ts";
+import { _getHelp } from "../src/help.ts";
+import { CLI } from "../src/brocolito.ts";
 
 describe("help", () => {
   beforeEach(() => {
@@ -163,7 +163,7 @@ describe("help", () => {
           .subcommand(
             "two",
             { description: "subcommand two here", alias: "t" },
-            (s) => s,
+            (s) => s.action(() => undefined),
           )
           .option("--open", "some bool flag"),
     );

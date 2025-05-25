@@ -1,10 +1,11 @@
-import { Command, OptionMeta } from "./types";
-import { State } from "./state";
+import { Command, OptionMeta } from "./types.ts";
+import { State } from "./state.ts";
 import minimist from "minimist";
-import { Help } from "./help";
-import { Utils } from "./utils";
-import { Completion } from "./completion/completion";
-import { Meta } from "./meta";
+import { Help } from "./help.ts";
+import { Utils } from "./utils.ts";
+import { Completion } from "./completion/completion.ts";
+import { Meta } from "./meta.ts";
+import process from "node:process";
 
 const _findByNameOrAlias = (
   name: string,
@@ -57,9 +58,7 @@ const _parseArgs = (
   const throwError = (reason: string, remainingArgs?: string[]) => {
     Help.show(command);
     throw new Error(
-      `${reason}: Expected ${
-        command.args.length
-      } arguments, but was invoked with ${args.length}.${
+      `${reason}: Expected ${command.args.length} arguments, but was invoked with ${args.length}.${
         remainingArgs
           ? `
 The following arguments could not be processed: ${Utils.pc.yellow(
@@ -75,8 +74,9 @@ The following arguments could not be processed: ${Utils.pc.yellow(
     command.args.map(
       ({ usage, name, type, multi }): [string, string | string[]] => {
         const checkValiditiy = (v: string) => {
-          if (Array.isArray(type) && !type.includes(v))
+          if (Array.isArray(type) && !type.includes(v)) {
             throw new Error(`Invalid value "${v}" provided for arg ${usage}.`);
+          }
         };
         if (!usedArgs.length) {
           return throwError("Too few arguments given");
@@ -104,29 +104,39 @@ const _parseOptions = (
 ): Record<string, string[] | string | boolean | undefined> => {
   const opts: Record<string, string[] | string | boolean | undefined> = {};
   Object.entries(command.options as Record<string, OptionMeta>).forEach(
-    ([camelName, { name, type, prefixedName, mandatory, multi }]) => {
+    ([camelName, { name, type, mandatory, multi }]) => {
       const value = minimistOptions[name];
       delete minimistOptions[name];
-      if (mandatory && value === undefined)
+      if (mandatory && value === undefined) {
         throw new Error(`Mandatory options was not provided: --${name}`);
+      }
 
       if (typeof value === "boolean") {
-        if (type !== "boolean")
+        if (type !== "boolean") {
           throw new Error(`Parameter missing for option --${name}`);
+        }
         opts[camelName] = value;
       } else if (type === "boolean") {
-        if (typeof value === "string" && value !== "true" && value !== "false")
+        if (
+          typeof value === "string" &&
+          value !== "true" &&
+          value !== "false"
+        ) {
           throw new Error(
-            `Invalid value "${value}" provided for flag ${prefixedName}`,
+            `Invalid value "${value}" provided for flag --${name}`,
           );
+        }
         // undefined value also results into false
         opts[camelName] = value === "true";
       } else if (value !== undefined) {
         const checkValiditiy = (v: string) => {
-          if (Array.isArray(type) && !type.includes(v))
+          if (Array.isArray(type) && !type.includes(v)) {
             throw new Error(
-              `Invalid value "${v}" provided for flag ${prefixedName}. Must be one of: ${type.join(" | ")}`,
+              `Invalid value "${v}" provided for flag --${name}. Must be one of: ${type.join(
+                " | ",
+              )}`,
             );
+          }
         };
         if (Array.isArray(value)) {
           if (multi) {
@@ -134,7 +144,9 @@ const _parseOptions = (
             opts[camelName] = value;
           } else {
             throw new Error(
-              `Invalidly multiple values [${value.map((v) => `"${v}"`).join(", ")}] were provided for flag ${prefixedName}`,
+              `Invalidly multiple values [${value
+                .map((v) => `"${v}"`)
+                .join(", ")}] were provided for flag --${name}`,
             );
           }
         } else {
@@ -166,8 +178,9 @@ export const parse = async (argv = process.argv): Promise<unknown> => {
   const firstArg = minimistArgs[0];
   if (firstArg === "completion") return Completion.run();
   if (!firstArg) {
-    if (minimistOpts.v || minimistOpts.version)
+    if (minimistOpts.v || minimistOpts.version) {
       return console.log(Meta.version);
+    }
     return Help.show();
   }
   const wantsHelp = minimistOpts.h || minimistOpts.help;
@@ -185,5 +198,5 @@ export const parse = async (argv = process.argv): Promise<unknown> => {
       `Configuration error: No action for given command "${command.line}" specified`,
     );
   }
-  return action({ ...options, ...parsedArgs });
+  return await action({ ...options, ...parsedArgs });
 };

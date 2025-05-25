@@ -1,15 +1,19 @@
-import { State } from "./state";
-import { Command, OptionMeta } from "./types";
-import { Meta } from "./meta";
+import { State } from "./state.ts";
+import { type Command, type OptionMeta } from "./types.ts";
+import { Meta } from "./meta.ts";
 
 const _getRow = (
   label: string,
   { description, alias }: { description: string; alias?: string },
   longestLabelLength: number,
 ): string => {
-  const labelPart = `  ${label}${" ".repeat(3 + longestLabelLength - label.length)}`;
+  const labelPart = `  ${label}${" ".repeat(
+    3 + longestLabelLength - label.length,
+  )}`;
   const [firstDescLine, ...otherLines] = description.split("\n");
-  return `${labelPart}${firstDescLine}${otherLines.map((l) => "\n" + " ".repeat(labelPart.length) + l).join()}${alias ? ` (alias: ${alias})` : ""}`;
+  return `${labelPart}${firstDescLine}${otherLines
+    .map((l) => "\n" + " ".repeat(labelPart.length) + l)
+    .join()}${alias ? ` (alias: ${alias})` : ""}`;
 };
 
 const _getRows = <

@@ -1,8 +1,8 @@
-import { describe, it, vi, expect, beforeEach } from "vitest";
-import { CLI } from "../src/brocolito";
-import { State } from "../src/state";
-import { Utils } from "../src/utils";
-import { Help } from "../src/help";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { CLI } from "../src/brocolito.ts";
+import { State } from "../src/state.ts";
+import { Utils } from "../src/utils.ts";
+import { Help } from "../src/help.ts";
 
 const call = (line: string) =>
   CLI.parse(["nodeFile", "scriptFile"].concat(line.split(" ")));
@@ -392,5 +392,31 @@ The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
     expect(commandSpy).not.toBeCalled();
     expect(subcommandSpy).not.toBeCalled();
     expect(helpSpy).toBeCalled();
+  });
+
+  it("complains when accessing unspecifed options or args", async () => {
+    CLI.command("example", "example-description")
+      // @ts-expect-error using param that doesn't exist.
+      .action(({ foo }) => {
+        if (foo) {
+          // do nothing
+        }
+      });
+
+    expect(() => {
+      CLI.command("example", "example-description")
+        // @ts-expect-error option doesn't start with "--"
+        .option("-f", "does not matter");
+    }).toThrow(
+      "Invalid usage specified for option '-f'. Required pattern: --[a-z0-9-]+( .+)?",
+    );
+
+    expect(() => {
+      CLI.command("example", "example-description")
+        // @ts-expect-error arg is not wrapped with "<>"
+        .arg("ups", "does not matter");
+    }).toThrow(
+      "Invalid usage specified for arg 'ups'. Required pattern: <[a-z0-9-]+(\\.{3})?>",
+    );
   });
 });

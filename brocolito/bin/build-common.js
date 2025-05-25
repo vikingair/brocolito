@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-import path from "path";
-import fs from "fs/promises";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import process from "node:process";
 
 export const packageJSON = JSON.parse(
   await fs.readFile("package.json", "utf-8"),
@@ -70,8 +71,9 @@ export const showSetupHint = () => {
     !process.env.CI &&
     !process.env.BROCOLITO_REBUILD &&
     !(/** @type {string} */ (process.env.PATH).split(":").includes(binDir))
-  )
+  ) {
     console.log(`
 To make the CLI ${packageJSON.name} globally accessible, you have to run this:
 export PATH="${binDir}:$PATH"`);
+  }
 };

@@ -1,6 +1,8 @@
+import { parseArgs, type ParseArgsOptionsConfig } from "node:util";
 import type {
   ArgType,
   ArgumentToName,
+  Command,
   OptionMeta,
   SnakeToCamelCase,
 } from "./types.ts";
@@ -56,4 +58,66 @@ const deriveOptionInfo = (
   };
 };
 
-export const Arguments = { camelize, deriveInfo, deriveOptionInfo };
+export type ParseResult = {
+  positionals: string[];
+  values: Record<string, string | boolean | (string | boolean)[]>;
+};
+
+const parse = (
+  command: Command<Record<string, unknown>>,
+  args: string[],
+): ParseResult => {
+  const options = Object.values(command.options).reduce<ParseArgsOptionsConfig>(
+    (red, meta) => {
+      red[meta.name] = {
+        type: meta.type === "boolean" ? "boolean" : "string",
+        multiple: meta.multi,
+      };
+      if (meta.short) red[meta.name].short = meta.short;
+      return red;
+    },
+    {},
+  );
+
+  // We wrap the core functionality and then process the tokens.
+  const { values, positionals } = parseArgs({
+    args,
+    options,
+    tokens: true,
+    allowPositionals: true,
+    strict: false,
+    allowNegative: true,
+  });
+
+  return { values: values as ParseResult["values"], positionals };
+};
+
+const parseGlobalOptions = (
+  args: string[],
+): { wantsHelp: boolean; wantsVersion: boolean } => {
+  const { values } = parseArgs({
+    args,
+    options: {
+      help: {
+        type: "boolean",
+        short: "h",
+      },
+      version: {
+        type: "boolean",
+        short: "v",
+      },
+    },
+    allowPositionals: true,
+    strict: false,
+  });
+
+  return { wantsHelp: !!values.help, wantsVersion: !!values.version };
+};
+
+export const Arguments = {
+  camelize,
+  deriveInfo,
+  deriveOptionInfo,
+  parse,
+  parseGlobalOptions,
+};

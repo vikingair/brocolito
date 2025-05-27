@@ -1,4 +1,3 @@
-import minimist from "minimist";
 import { showInstallInstruction } from "./install.ts";
 import {
   type CompleteItem,
@@ -41,31 +40,36 @@ const completeArgType = async (
 };
 
 export const _completion = async ({
-  prev,
-  line,
+  partial,
 }: TabtabEnv): Promise<CompleteItemOrString[]> => {
   // top level
-  if (prev === Meta.name) {
+  if (partial.prev === Meta.name) {
     return toCompleteItems(State.commands).concat(["--help"]);
   }
 
-  const lineArgs = line.split(" ");
+  const relevantArgs = partial.parts.slice(1);
   // returns lastArg which wasn't completed yet,
   // could be e.g. used to invoke some custom option resolver with additional information
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const lastArg = lineArgs.pop()!;
-  const minimistArgs = minimist(lineArgs.slice(1));
-  const { command, args } = findCommand(minimistArgs._);
+  const lastArg = relevantArgs.pop()!;
 
-  if (!command) return [];
+  const cmd = findCommand(relevantArgs);
 
-  const commandArgs = command.args.slice(args.length); // all arguments that can still be used
-  const lastArgInfo = command.args.at(-1);
-  const options = Object.values(command.options) as OptionMeta[];
-  const startedOption = options.find(({ name }) => "--" + name === prev);
+  if ("error" in cmd)
+    return cmd.completionSubcommands
+      ? toCompleteItems(cmd.completionSubcommands)
+      : [];
+
+  const commandArgs = cmd.command.args.slice(cmd.positionals.length); // all arguments that can still be used
+  const lastArgInfo = cmd.command.args.at(-1);
+  const options = Object.values(cmd.command.options) as OptionMeta[];
+  const startedOption = options.find(
+    ({ name }) => "--" + name === partial.prev,
+  );
 
   const availableOptionItems = options
-    .filter(({ name, multi }) => multi || !lineArgs.includes("--" + name))
+    // TODO: repsect already used options from "full.parts"
+    .filter(({ name, multi }) => multi || !relevantArgs.includes("--" + name))
     .map(
       ({ name, description }: OptionMeta): CompleteItem => ({
         name: "--" + name,
@@ -89,9 +93,6 @@ export const _completion = async ({
     return await completeArgType(commandArgs[0], lastArg);
   } else if (lastArgInfo?.multi) {
     return await completeArgType(lastArgInfo, lastArg);
-  } else if (prev === command.name || prev === command.alias) {
-    // we autocomplete subcommands only as long as no option was used (even though we support writing options first)
-    return toCompleteItems(command.subcommands).concat(availableOptionItems);
   } else {
     return availableOptionItems;
   }

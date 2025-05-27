@@ -2,8 +2,6 @@
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": false,
-    "removeComments": true,
     "resolveJsonModule": true,
     "strict": true,
     "noImplicitAny": true,
@@ -20,7 +18,8 @@
     "moduleResolution": "node",
     "jsx": "preserve",
     "noEmit": true,
-    "checkJs": true
+    "checkJs": true,
+    "verbatimModuleSyntax": true
   },
   "include": ["src", "tests", "bin", "eslint.config.js", "vite.config.ts"]
 }

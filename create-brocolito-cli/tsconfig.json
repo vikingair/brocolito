@@ -19,7 +19,8 @@
     "module": "esnext",
     "moduleResolution": "Bundler",
     "jsx": "preserve",
-    "noEmit": true
+    "noEmit": true,
+    "verbatimModuleSyntax": true
   },
   "include": ["src", "tests"]
 }

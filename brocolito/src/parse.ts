@@ -1,11 +1,11 @@
-import { Command, OptionMeta } from "./types.ts";
+import type { Command, OptionMeta } from "./types.ts";
 import { State } from "./state.ts";
-import minimist from "minimist";
 import { Help } from "./help.ts";
 import { Utils } from "./utils.ts";
 import { Completion } from "./completion/completion.ts";
 import { Meta } from "./meta.ts";
 import process from "node:process";
+import { Arguments, type ParseResult } from "./arguments.ts";
 
 const _findByNameOrAlias = (
   name: string,
@@ -15,40 +15,82 @@ const _findByNameOrAlias = (
   return Object.values(commands).find(({ alias }) => alias === name);
 };
 
-type FoundCommand =
-  | { command: Command; args: string[]; error?: undefined }
-  | { command?: Command; error: string; args: string[] };
+type FoundSubcommand = {
+  command: Command;
+} & (
+  | {
+      depth: number;
+    }
+  | {
+      error: string;
+      completionSubcommands?: Record<string, { description: string }>;
+    }
+);
 
 const _findSubcommand = (
   command: Command,
-  subcommandsOrArgs: string[],
-): FoundCommand => {
-  if (!subcommandsOrArgs.length) return { command, args: [] };
-  const subcommand = _findByNameOrAlias(
-    subcommandsOrArgs[0],
-    command.subcommands,
-  );
-  if (!subcommand) {
-    if (Object.keys(command.subcommands).length && subcommandsOrArgs.length) {
-      return {
-        command,
-        error: `Unknown subcommand ${Utils.pc.yellow(
-          subcommandsOrArgs[0],
-        )} specified.`,
-        args: subcommandsOrArgs,
-      };
-    }
-    return { command, args: subcommandsOrArgs };
+  positionals: string[],
+  depth: number,
+): FoundSubcommand => {
+  if (!Object.keys(command.subcommands).length) {
+    return { command, depth };
   }
-  return _findSubcommand(subcommand, subcommandsOrArgs.slice(1));
+
+  if (!positionals.length) {
+    return {
+      command,
+      error: "Specify a subcommand to be used.",
+      completionSubcommands: command.subcommands,
+      depth,
+    };
+  }
+
+  const subcommand = positionals.length
+    ? _findByNameOrAlias(positionals[0], command.subcommands)
+    : undefined;
+
+  if (!subcommand) {
+    return {
+      command,
+      error: `Unknown subcommand ${Utils.pc.yellow(positionals[0])} specified.`,
+      depth,
+    };
+  }
+  return _findSubcommand(subcommand, positionals.slice(1), depth + 1);
 };
 
-export const findCommand = (commands: string[]): FoundCommand => {
-  const command = _findByNameOrAlias(commands[0], State.commands);
+type FoundCommand =
+  | ({
+      command: Command;
+    } & ParseResult)
+  | {
+      command?: Command;
+      error: string;
+      completionSubcommands?: Record<string, { description: string }>;
+    };
+
+export const findCommand = (args: string[]): FoundCommand => {
+  const firstNonPositionalIndex = args.findIndex((arg) => arg.startsWith("-"));
+  const commandPositionals =
+    firstNonPositionalIndex >= 0
+      ? args.slice(0, firstNonPositionalIndex)
+      : args;
+
+  const command = _findByNameOrAlias(commandPositionals[0], State.commands);
   if (!command) {
-    return { error: `Command "${commands[0]}" does not exist`, args: commands };
+    return { error: `Command "${commandPositionals[0]}" does not exist` };
   }
-  return _findSubcommand(command, commands.slice(1));
+  const cmd = _findSubcommand(command, commandPositionals.slice(1), 1);
+  if ("error" in cmd) return cmd;
+
+  const { values, positionals } = Arguments.parse(
+    cmd.command,
+    args.slice(cmd.depth),
+  );
+
+  console.log({ values });
+
+  return { ...cmd, values, positionals };
 };
 
 const _parseArgs = (
@@ -100,13 +142,13 @@ The following arguments could not be processed: ${Utils.pc.yellow(
 
 const _parseOptions = (
   command: Command,
-  minimistOptions: Omit<minimist.ParsedArgs, "_">,
+  options: ParseResult["values"],
 ): Record<string, string[] | string | boolean | undefined> => {
   const opts: Record<string, string[] | string | boolean | undefined> = {};
   Object.entries(command.options as Record<string, OptionMeta>).forEach(
     ([camelName, { name, type, mandatory, multi }]) => {
-      const value = minimistOptions[name];
-      delete minimistOptions[name];
+      const value = options[name];
+      delete options[name];
       if (mandatory && value === undefined) {
         throw new Error(`Mandatory options was not provided: --${name}`);
       }
@@ -129,7 +171,12 @@ const _parseOptions = (
         // undefined value also results into false
         opts[camelName] = value === "true";
       } else if (value !== undefined) {
-        const checkValiditiy = (v: string) => {
+        const checkValiditiy = (v: string | boolean) => {
+          if (typeof v === "boolean") {
+            throw new Error(
+              `Invalid boolean in list of values provided for flag --${name}`,
+            );
+          }
           if (Array.isArray(type) && !type.includes(v)) {
             throw new Error(
               `Invalid value "${v}" provided for flag --${name}. Must be one of: ${type.join(
@@ -141,7 +188,7 @@ const _parseOptions = (
         if (Array.isArray(value)) {
           if (multi) {
             value.forEach(checkValiditiy);
-            opts[camelName] = value;
+            opts[camelName] = value as string[];
           } else {
             throw new Error(
               `Invalidly multiple values [${value
@@ -160,7 +207,7 @@ const _parseOptions = (
       }
     },
   );
-  const remainingArgs = Object.keys(minimistOptions);
+  const remainingArgs = Object.keys(options);
   if (remainingArgs.length) {
     throw new Error(
       `Unrecognized options were used: ${remainingArgs
@@ -171,31 +218,35 @@ const _parseOptions = (
   return opts;
 };
 
+// export const getCommandPositionals;
+
 export const parse = async (argv = process.argv): Promise<unknown> => {
-  const { _: minimistArgs, ...minimistOpts } = minimist(
-    argv.slice(2).filter(Boolean),
-  );
-  const firstArg = minimistArgs[0];
+  const relevantArgs = argv.slice(2);
+
+  const { wantsHelp, wantsVersion } =
+    Arguments.parseGlobalOptions(relevantArgs);
+
+  const firstArg = relevantArgs[0];
   if (firstArg === "completion") return Completion.run();
-  if (!firstArg) {
-    if (minimistOpts.v || minimistOpts.version) {
+  if (!firstArg || firstArg[0] === "-") {
+    if (wantsVersion) {
       return console.log(Meta.version);
     }
     return Help.show();
   }
-  const wantsHelp = minimistOpts.h || minimistOpts.help;
-  const { command, args, error } = findCommand(minimistArgs);
-  if (wantsHelp) return Help.show(command);
-  if (typeof error === "string") {
-    if (command) Help.show(command);
-    throw new Error(error);
+  const cmd = findCommand(relevantArgs);
+  if (wantsHelp) return Help.show(cmd.command);
+  if ("error" in cmd) {
+    if (cmd.command) Help.show(cmd.command);
+    throw new Error(cmd.error);
   }
-  const parsedArgs = _parseArgs(command, args);
-  const options = _parseOptions(command, minimistOpts);
-  const action = command._action;
+  // first parsing options, because using unknown options can leave us with unknown positionals as a side effect
+  const options = _parseOptions(cmd.command, cmd.values);
+  const parsedArgs = _parseArgs(cmd.command, cmd.positionals);
+  const action = cmd.command._action;
   if (!action) {
     throw new Error(
-      `Configuration error: No action for given command "${command.line}" specified`,
+      `Configuration error: No action for given command "${cmd.command.line}" specified`,
     );
   }
   return await action({ ...options, ...parsedArgs });

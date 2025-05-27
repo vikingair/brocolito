@@ -157,7 +157,10 @@ describe("Example commands", () => {
     const spy = vi.fn();
     CLI.command("example", "example-description")
       .option("--test <file...>", "test option")
-      .action(({ test, ...rest }) => spy({ test, ...rest }));
+      .option("--non-multi <string>", "will consider only last")
+      .action(({ test, nonMulti, ...rest }) =>
+        spy({ test, nonMulti, ...rest }),
+      );
 
     // when - called with no options
     await call("example");
@@ -166,10 +169,10 @@ describe("Example commands", () => {
     expect(spy).toBeCalledWith({ test: undefined });
 
     // when - called with single entry
-    await call("example --test foo");
+    await call("example --test foo --non-multi one --non-multi two");
 
     // then
-    expect(spy).toBeCalledWith({ test: ["foo"] });
+    expect(spy).toBeCalledWith({ test: ["foo"], nonMulti: "two" });
 
     // when - called with multiple entries
     await call("example --test foo --test bar");

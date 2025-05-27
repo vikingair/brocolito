@@ -88,8 +88,6 @@ export const findCommand = (args: string[]): FoundCommand => {
     args.slice(cmd.depth),
   );
 
-  console.log({ values });
-
   return { ...cmd, values, positionals };
 };
 
@@ -146,7 +144,7 @@ const _parseOptions = (
 ): Record<string, string[] | string | boolean | undefined> => {
   const opts: Record<string, string[] | string | boolean | undefined> = {};
   Object.entries(command.options as Record<string, OptionMeta>).forEach(
-    ([camelName, { name, type, mandatory, multi }]) => {
+    ([camelName, { name, type, mandatory }]) => {
       const value = options[name];
       delete options[name];
       if (mandatory && value === undefined) {
@@ -186,23 +184,11 @@ const _parseOptions = (
           }
         };
         if (Array.isArray(value)) {
-          if (multi) {
-            value.forEach(checkValiditiy);
-            opts[camelName] = value as string[];
-          } else {
-            throw new Error(
-              `Invalidly multiple values [${value
-                .map((v) => `"${v}"`)
-                .join(", ")}] were provided for flag --${name}`,
-            );
-          }
+          value.forEach(checkValiditiy);
+          opts[camelName] = value as string[];
         } else {
           checkValiditiy(value);
-          if (multi) {
-            opts[camelName] = [value];
-          } else {
-            opts[camelName] = value;
-          }
+          opts[camelName] = value;
         }
       }
     },

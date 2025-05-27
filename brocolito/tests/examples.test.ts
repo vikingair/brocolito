@@ -52,50 +52,46 @@ describe("Example commands", () => {
     await call("example bar");
 
     // then
-    expect(fooSpy).not.toHaveBeenCalled();
+    expect(fooSpy).not.toBeCalled();
     expect(barSpy).toHaveBeenCalledOnce();
   });
 
   it("Two level subcommands", async () => {
     // given
     const spy = vi.fn();
-    const fooSpy = vi.fn();
-    const barSpy = vi.fn();
-    CLI.command("example", "example-description")
-      .subcommand("foo", { description: "foo-desc", alias: "f" }, (foo) => {
-        foo
-          .subcommand("bar", "bar-desc", (bar) => {
-            bar.action(barSpy);
-          })
-          .action(fooSpy);
-      })
-      .action(spy);
+    const help = vi.spyOn(Help, "show").mockReturnValue();
+    CLI.command("example", "example-description").subcommand(
+      "foo",
+      { description: "foo-desc", alias: "f" },
+      (foo) => {
+        foo.subcommand("bar", "bar-desc", (bar) => {
+          bar.action(spy);
+        });
+      },
+    );
 
     // when
-    await call("example");
+    await expect(call("example")).rejects.toThrow(
+      "Specify a subcommand to be used.",
+    );
 
     // then
-    expect(spy).toHaveBeenCalledOnce();
-    expect(fooSpy).not.toHaveBeenCalled();
-    expect(barSpy).not.toHaveBeenCalled();
+    expect(spy).not.toBeCalled();
+    expect(help).toBeCalled();
 
     // when
     vi.resetAllMocks();
-    call("example f");
+    call("example f bar");
 
     // then
-    expect(spy).not.toHaveBeenCalled();
-    expect(fooSpy).toHaveBeenCalledOnce();
-    expect(barSpy).not.toHaveBeenCalled();
+    expect(spy).toBeCalled();
 
     // when
     vi.resetAllMocks();
     call("example foo bar");
 
     // then
-    expect(spy).not.toHaveBeenCalled();
-    expect(fooSpy).not.toHaveBeenCalled();
-    expect(barSpy).toHaveBeenCalledOnce();
+    expect(spy).toBeCalled();
   });
 
   it("parses options", async () => {
@@ -112,14 +108,14 @@ describe("Example commands", () => {
     await call("example");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ someMore: false });
+    expect(spy).toBeCalledWith({ someMore: false });
 
     // when
     spy.mockReset();
     await call("example --test foo --some-more=false");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ test: "foo", someMore: false });
+    expect(spy).toBeCalledWith({ test: "foo", someMore: false });
 
     // when - called with invalid options
     await expect(() => call("example --invalid=foo")).rejects.toThrow(
@@ -153,7 +149,7 @@ describe("Example commands", () => {
     await call("example --test foo");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ test: "foo" });
+    expect(spy).toBeCalledWith({ test: "foo" });
   });
 
   it("using multi options", async () => {
@@ -167,19 +163,19 @@ describe("Example commands", () => {
     await call("example");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ test: undefined });
+    expect(spy).toBeCalledWith({ test: undefined });
 
     // when - called with single entry
     await call("example --test foo");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ test: ["foo"] });
+    expect(spy).toBeCalledWith({ test: ["foo"] });
 
     // when - called with multiple entries
     await call("example --test foo --test bar");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ test: ["foo", "bar"] });
+    expect(spy).toBeCalledWith({ test: ["foo", "bar"] });
   });
 
   it("using union options", async () => {
@@ -196,7 +192,7 @@ describe("Example commands", () => {
     await call("example");
 
     // then
-    expect(spy).toHaveBeenCalledWith({});
+    expect(spy).toBeCalledWith({});
 
     // when - called with string not matching union constraints
     await expect(() => call("example --test bar")).rejects.toThrow(
@@ -207,7 +203,7 @@ describe("Example commands", () => {
     await call("example --test foo");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ test: "foo" });
+    expect(spy).toBeCalledWith({ test: "foo" });
 
     // when - called with string not matching union constraints
     await expect(() =>
@@ -220,7 +216,7 @@ describe("Example commands", () => {
     await call("example --test-multi one --test-multi two");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ testMulti: ["one", "two"] });
+    expect(spy).toBeCalledWith({ testMulti: ["one", "two"] });
   });
 
   it("using union args", async () => {
@@ -242,7 +238,7 @@ describe("Example commands", () => {
     await call("example foo one");
 
     // then
-    expect(spy).toHaveBeenCalledWith({ test: "foo", testMulti: ["one"] });
+    expect(spy).toBeCalledWith({ test: "foo", testMulti: ["one"] });
 
     // when - called with string not matching union constraints
     await expect(() => call("example foo one ups")).rejects.toThrow(
@@ -253,7 +249,7 @@ describe("Example commands", () => {
     await call("example foo one two");
 
     // then
-    expect(spy).toHaveBeenCalledWith({
+    expect(spy).toBeCalledWith({
       test: "foo",
       testMulti: ["one", "two"],
     });
@@ -275,7 +271,7 @@ describe("Example commands", () => {
     await call("example ./some/path hot hotter lotta --test=ups --open");
 
     // then
-    expect(spy).toHaveBeenCalledWith({
+    expect(spy).toBeCalledWith({
       test: "ups",
       open: true,
       testArg: "./some/path",
@@ -286,7 +282,7 @@ describe("Example commands", () => {
     await call("example --open=false foo bar");
 
     // then
-    expect(spy).toHaveBeenCalledWith({
+    expect(spy).toBeCalledWith({
       testArg: "foo",
       testMulti: ["bar"],
       open: false,
@@ -295,36 +291,34 @@ describe("Example commands", () => {
 
   it("parses subcommands and options", async () => {
     // given
-    const spy = vi.fn();
-    const subcommandSpy = vi.fn();
+    const fooSpy = vi.fn();
+    const barSpy = vi.fn();
     CLI.command("example", "example-description")
       .option("--open", "test option")
       .subcommand("foo", "foo-desc", (foo) => {
         foo
           .option("--nice <string>", "nice option")
-          .action(({ open, nice, ...rest }) =>
-            subcommandSpy({ open, nice, ...rest }),
-          );
+          .action(({ open, nice, ...rest }) => fooSpy({ open, nice, ...rest }));
       })
-      .option("--test <string>", "test option")
-      .action(({ test, open, ...rest }) => {
-        spy({ test, open, ...rest });
+      .subcommand("bar", "bar-desc", (foo) => {
+        foo
+          .option("--test <string>", "test option")
+          .action(({ test, open, ...rest }) => {
+            barSpy({ test, open, ...rest });
+          });
       });
 
     // when
-    await call("example --open --test ups");
+    await call("example bar --open --test ups");
 
     // then
-    expect(spy).toHaveBeenCalledWith({
-      test: "ups",
-      open: true,
-    });
+    expect(barSpy).toBeCalledWith({ test: "ups", open: true });
 
     // when - calling the sub command
     await call("example foo --open=false --nice ups");
 
     // then
-    expect(subcommandSpy).toHaveBeenCalledWith({ nice: "ups", open: false });
+    expect(fooSpy).toBeCalledWith({ nice: "ups", open: false });
   });
 
   it("parses subcommands, args and options", async () => {
@@ -342,10 +336,10 @@ describe("Example commands", () => {
       });
 
     // when
-    await call("example --nice try foo hot --open=false");
+    await call("example foo hot --nice try --open=false");
 
     // then
-    expect(subcommandSpy).toHaveBeenCalledWith({
+    expect(subcommandSpy).toBeCalledWith({
       what: "hot",
       open: false,
       nice: "try",
@@ -375,13 +369,11 @@ The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
 
   it("complains when being called with invalid subcommand", async () => {
     // given
-    const commandSpy = vi.fn();
     const subcommandSpy = vi.fn();
     const helpSpy = vi.spyOn(Help, "show").mockReturnValue();
     CLI.command("example", "example-description")
       .subcommand("foo", "foo-desc", (foo) => foo.action(subcommandSpy))
-      .subcommand("bar", "foo-desc", (foo) => foo.action(subcommandSpy))
-      .action(commandSpy);
+      .subcommand("bar", "foo-desc", (foo) => foo.action(subcommandSpy));
 
     // when
     await expect(() => call("example invalid")).rejects.toThrow(
@@ -389,12 +381,11 @@ The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
     );
 
     // then
-    expect(commandSpy).not.toBeCalled();
     expect(subcommandSpy).not.toBeCalled();
     expect(helpSpy).toBeCalled();
   });
 
-  it("complains when accessing unspecifed options or args", async () => {
+  it("complains when accessing unspecifed options or args or actions", async () => {
     CLI.command("example", "example-description")
       // @ts-expect-error using param that doesn't exist.
       .action(({ foo }) => {
@@ -402,6 +393,11 @@ The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
           // do nothing
         }
       });
+
+    CLI.command("example", "example-description")
+      .subcommand("foo", "foo-desc", () => undefined)
+      // @ts-expect-error action not supported when using subcommands
+      .action(() => undefined);
 
     expect(() => {
       CLI.command("example", "example-description")

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Arguments } from "../src/arguments.ts";
-import { ArgType } from "../src/types.ts";
+import type { ArgType } from "../src/types.ts";
 
 describe("arguments", () => {
   it.each<{

@@ -20,7 +20,8 @@
     "moduleResolution": "Bundler",
     "jsx": "preserve",
     "noEmit": true,
-    "incremental": true
+    "incremental": true,
+    "verbatimModuleSyntax": true
   },
   "include": ["src", "tests"]
 }

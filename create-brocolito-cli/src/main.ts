@@ -2,7 +2,7 @@ import { CLI, prompts } from "brocolito";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { execSync } from "node:child_process";
-import { SupportedRuntime, Templates } from "./templates";
+import { type SupportedRuntime, Templates } from "./templates";
 
 CLI.command("run", "test description").action(async () => {
   const { runtime }: { runtime: SupportedRuntime } = await prompts({

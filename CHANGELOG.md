@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Removed the utility `complainAndExit(...)`. Just replace usages by `throw new Error(...)`.
+- A (sub)command can only have subcommands or an action, but not both.
+- Calling any command containging subcommands that were not targeted will fail and show the help of this command.
+- Options can only be passed after targeting the complete (sub)command.
+- Completion will show only subcommands as long any exist and show only options for completed command targets.
 
 ### Added
 
@@ -18,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Invoking the CLI without any args will show the help instead of invoking the last registered command.
+- Aliases did break the completion due to wrong cursor calculation.
+- Completion was not considering to be happen in the middle of the line, when cursor is not at the end of line.
 
 ## [4.1.0] - 2024-09-08
 

@@ -84,6 +84,7 @@ export type OptionMeta = {
   type: "boolean" | ArgType["type"];
   multi: ArgType["multi"];
   mandatory: boolean;
+  short?: string;
 } & CompletionOpt;
 
 export type DescriptionOrOpts =
@@ -127,6 +128,11 @@ type Arguments<OPTIONS, ARGS> = {
   >;
 };
 
+type CommandAction<OPTIONS, ARGS> = {
+  action: (action: Action<OPTIONS & ARGS>) => void;
+  _action?: Action<OPTIONS & ARGS>;
+};
+
 type Subcommands<OPTIONS, ARGS> = {
   subcommand: Subcommand<OPTIONS, ARGS>;
   subcommands: Record<string, Command<OPTIONS>>;
@@ -142,12 +148,12 @@ export type Command<
   name: string;
   line: string;
   description: string;
-  action: (action: Action<OPTIONS & ARGS>) => void;
-  _action?: Action<OPTIONS & ARGS>;
   option: Option<OPTIONS, ARGS, TArgState>;
   options: Record<keyof OPTIONS, OptionMeta>;
   alias?: string;
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-} & (TArgState extends 2 | 3 ? {} : Arguments<OPTIONS, ARGS>) &
+} & (TArgState extends 3 ? {} : CommandAction<OPTIONS, ARGS>) &
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  (TArgState extends 2 | 3 ? {} : Arguments<OPTIONS, ARGS>) &
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   (TArgState extends 1 | 2 ? {} : Subcommands<OPTIONS, ARGS>);

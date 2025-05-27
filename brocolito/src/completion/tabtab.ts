@@ -22,46 +22,32 @@ export type TabtabEnv = {
   words: number;
   // A Number indicating cursor position
   point: number;
-  // The String input line
-  line: string;
-  // The String part of line preceding cursor position
-  partial: string;
-  // The last String word of the line
-  last: string;
-  // The last word String of partial
-  lastPartial: string;
-  // The String word preceding last
-  prev: string;
+  full: {
+    line: string;
+    // The last String word of the line
+    last: string;
+    // The String word preceding last
+    prev: string;
+    // the args as array
+    parts: string[];
+  };
+  // considers only the line up until the current cursor position
+  partial: {
+    line: string;
+    // The last String word of the line
+    last: string;
+    // The String word preceding last
+    prev: string;
+    // the args as array
+    parts: string[];
+  };
 };
+
 /**
  * Public: Main utility to extract information from command line arguments and
  * Environment variables, namely COMP args in "plumbing" mode.
- *
- * options -  The options hash as parsed by minimist, plus an env property
- *            representing user environment (default: { env: process.env })
- *    :_      - The arguments Array parsed by minimist (positional arguments)
- *    :env    - The environment Object that holds COMP args (default: process.env)
- *
- * Examples
- *
- *   const env = tabtab.parseEnv();
- *   // env:
- *   // complete    A Boolean indicating whether we act in "plumbing mode" or not
- *   // words       The Number of words in the completed line
- *   // point       A Number indicating cursor position
- *   // line        The String input line
- *   // partial     The String part of line preceding cursor position
- *   // last        The last String word of the line
- *   // lastPartial The last word String of partial
- *   // prev        The String word preceding last
- *
- * Returns the data env object.
  */
 const parseEnv = (env: Record<string, string | undefined>): TabtabEnv => {
-  if (!env) {
-    throw new Error("parseEnv: You must pass in an environment object.");
-  }
-
   let cword = Number(env.COMP_CWORD);
   let point = Number(env.COMP_POINT);
   const line = env.COMP_LINE || "";
@@ -79,13 +65,16 @@ Use e.g. -> CLI.alias('${firstArg}', '${Meta.name} my-subcommand')
   if (Number.isNaN(cword)) cword = 0;
   if (Number.isNaN(point)) point = 0;
 
-  const partial = expandedLine.slice(0, point);
+  if (alias) point += alias.length - firstArg.length;
 
   const parts = expandedLine.split(" ");
   const prev = parts.slice(0, -1).slice(-1)[0];
-
   const last = parts.slice(-1).join("");
-  const lastPartial = partial.split(" ").slice(-1).join("");
+
+  const partial = expandedLine.slice(0, point);
+  const partialParts = partial.split(" ");
+  const prevPartial = partialParts.slice(0, -1).slice(-1)[0];
+  const lastPartial = partialParts.slice(-1).join("");
 
   let complete = true;
   if (!env.COMP_CWORD || !env.COMP_POINT || !env.COMP_LINE) {
@@ -96,11 +85,18 @@ Use e.g. -> CLI.alias('${firstArg}', '${Meta.name} my-subcommand')
     complete,
     words: cword,
     point,
-    line: expandedLine,
-    partial,
-    last,
-    lastPartial,
-    prev,
+    full: {
+      line: expandedLine,
+      last,
+      prev,
+      parts,
+    },
+    partial: {
+      line: partial,
+      last: lastPartial,
+      prev: prevPartial,
+      parts: partialParts,
+    },
   };
 };
 
@@ -170,7 +166,7 @@ const log = (args: Array<CompleteItemOrString>) => {
   if (shell === "bash") {
     const env = parseEnv(process.env);
     normalizedArgs = normalizedArgs.filter(
-      (arg) => arg.indexOf(env.last) === 0,
+      (arg) => arg.indexOf(env.full.last) === 0,
     );
   }
 

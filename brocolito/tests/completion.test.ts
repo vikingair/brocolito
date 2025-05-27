@@ -2,14 +2,17 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { _completion } from "../src/completion/completion.ts";
 import { State } from "../src/state.ts";
 import { CLI } from "../src/brocolito.ts";
+import { Tabtab } from "../src/completion/tabtab.ts";
 
 const anyCallback: any = () => undefined;
 const dummyDescription = "dummyDescription";
 
-const getTabEnv = (line: string): any => {
-  const prev = line.split(" ").at(-2) || "";
-  return { prev, line };
-};
+const getTabEnv = (line: string): any =>
+  Tabtab.parseEnv({
+    COMP_LINE: line,
+    COMP_POINT: String(line.length),
+    COMP_CWORD: String(line.split(" ").length),
+  });
 
 describe("completion", () => {
   beforeEach(() => {
@@ -178,17 +181,13 @@ describe("completion", () => {
     expect(await _completion(getTabEnv("cli test "))).toEqual([
       { name: "one", description: "sub cmd one" },
       { name: "two", description: "sub cmd two" },
-      { name: "--flag", description: "some flag" },
-      { name: "--other-flag", description: "some other flag" },
     ]);
     expect(await _completion(getTabEnv("cli t "))).toEqual([
       { name: "one", description: "sub cmd one" },
       { name: "two", description: "sub cmd two" },
-      { name: "--flag", description: "some flag" },
-      { name: "--other-flag", description: "some other flag" },
     ]);
     // stops suggesting subcommands when using options in between
-    expect(await _completion(getTabEnv("cli t --flag "))).toEqual([
+    expect(await _completion(getTabEnv("cli t two --flag "))).toEqual([
       { name: "--other-flag", description: "some other flag" },
     ]);
     expect(await _completion(getTabEnv("cli test o "))).toEqual([
@@ -199,15 +198,13 @@ describe("completion", () => {
     expect(await _completion(getTabEnv("cli test two"))).toEqual([
       { name: "one", description: "sub cmd one" },
       { name: "two", description: "sub cmd two" },
-      { name: "--flag", description: "some flag" },
-      { name: "--other-flag", description: "some other flag" },
     ]);
     expect(await _completion(getTabEnv("cli test two "))).toEqual([
       { name: "--flag", description: "some flag" },
       { name: "--other-flag", description: "some other flag" },
     ]);
     // we prevent that subcommands can be used after options have been declared
-    expect(await _completion(getTabEnv("cli test --flag "))).toEqual([
+    expect(await _completion(getTabEnv("cli test two --flag "))).toEqual([
       { name: "--other-flag", description: "some other flag" },
     ]);
     expect(await _completion(getTabEnv("cli t o --flag "))).toEqual([

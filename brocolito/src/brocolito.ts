@@ -1,13 +1,13 @@
-import {
-  type Action,
-  type ArgStates,
-  type ArgumentArg,
-  type Command,
+import type {
+  Action,
+  ArgStates,
+  ArgumentArg,
+  Command,
   CompletionOpt,
-  type DescriptionOrOpts,
-  type OptionArg,
-  type OptionToName,
-  type Subcommand,
+  DescriptionOrOpts,
+  OptionArg,
+  OptionToName,
+  Subcommand,
 } from "./types.ts";
 import { State } from "./state.ts";
 import { parse } from "./parse.ts";

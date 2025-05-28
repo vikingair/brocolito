@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CLI } from "../src/brocolito.ts";
 import { State } from "../src/state.ts";
-import { Utils } from "../src/utils.ts";
+import pc from "picocolors";
 import { Help } from "../src/help.ts";
 
 const call = (line: string) =>
@@ -361,7 +361,7 @@ describe("Example commands", () => {
     // when
     await expect(() => call("example soemthing invalid")).rejects.toThrow(
       `Too many arguments given: Expected 1 arguments, but was invoked with 2.
-The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
+The following arguments could not be processed: ${pc.yellow("invalid")}`,
     );
 
     // then
@@ -380,7 +380,7 @@ The following arguments could not be processed: ${Utils.pc.yellow("invalid")}`,
 
     // when
     await expect(() => call("example invalid")).rejects.toThrow(
-      `Unknown subcommand ${Utils.pc.yellow("invalid")} specified.`,
+      `Unknown subcommand ${pc.yellow("invalid")} specified.`,
     );
 
     // then

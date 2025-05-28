@@ -11,10 +11,10 @@ import type {
 } from "./types.ts";
 import { State } from "./state.ts";
 import { parse } from "./parse.ts";
-import { Utils } from "./utils.ts";
 import { Arguments } from "./arguments.ts";
 import { Meta } from "./meta.ts";
 import process from "node:process";
+import pc from "picocolors";
 
 process.on("unhandledRejection", (err) => {
   throw err instanceof Error ? err : new Error(String(err));
@@ -137,5 +137,4 @@ const alias = (aliasName: string, replacement: string) => {
 export const CLI = { command, parse, _state: State, alias, meta: Meta };
 
 // Utility re-exported (no additional installation required for the peer)
-const { pc, prompts } = Utils;
-export { pc, prompts };
+export { pc };

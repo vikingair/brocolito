@@ -1,4 +1,5 @@
-import { CLI, prompts } from "brocolito";
+import { CLI } from "brocolito";
+import prompts from "prompts";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { execSync } from "node:child_process";

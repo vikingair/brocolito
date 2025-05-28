@@ -1,10 +1,10 @@
 import type { Command, OptionMeta } from "./types.ts";
 import { State } from "./state.ts";
 import { Help } from "./help.ts";
-import { Utils } from "./utils.ts";
 import { Completion } from "./completion/completion.ts";
 import { Meta } from "./meta.ts";
 import process from "node:process";
+import pc from "picocolors";
 import { Arguments, type ParseResult } from "./arguments.ts";
 
 const _findByNameOrAlias = (
@@ -52,7 +52,7 @@ const _findSubcommand = (
   if (!subcommand) {
     return {
       command,
-      error: `Unknown subcommand ${Utils.pc.yellow(positionals[0])} specified.`,
+      error: `Unknown subcommand ${pc.yellow(positionals[0])} specified.`,
       depth,
     };
   }
@@ -101,7 +101,7 @@ const _parseArgs = (
       `${reason}: Expected ${command.args.length} arguments, but was invoked with ${args.length}.${
         remainingArgs
           ? `
-The following arguments could not be processed: ${Utils.pc.yellow(
+The following arguments could not be processed: ${pc.yellow(
               remainingArgs.join(" "),
             )}`
           : ""

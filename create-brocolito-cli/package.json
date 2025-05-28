@@ -10,7 +10,9 @@
     "build/meta.js"
   ],
   "dependencies": {
-    "brocolito": "4.1.0"
+    "@types/prompts": "2.4.9",
+    "brocolito": "4.1.0",
+    "prompts": "2.4.2"
   },
   "scripts": {
     "build": "brocolito",

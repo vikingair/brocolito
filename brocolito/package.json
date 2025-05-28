@@ -35,9 +35,7 @@
     "test:update": "vitest --run -u"
   },
   "dependencies": {
-    "@types/prompts": "^2.4.9",
     "picocolors": "^1.1.1",
-    "prompts": "^2.4.2",
     "vite": "^6.3.5"
   },
   "devDependencies": {

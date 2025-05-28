@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Calling any command containging subcommands that were not targeted will fail and show the help of this command.
 - Options can only be passed after targeting the complete (sub)command.
 - Completion will show only subcommands as long any exist and show only options for completed command targets.
+- Options being passed multiple times without expecting multiple values, will simply omit all options but the last.
+  This is inherited from the `parseArgs` of `node:util`.
+- Removing dependency on `prompts`.
+
+For more detailed information please see [Migration Guide v5](https://github.com/vikingair/brocolito/blob/master/MIGRATIONGUIDE.md#500)
 
 ### Added
 

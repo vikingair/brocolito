@@ -77,3 +77,30 @@ To make the CLI ${packageJSON.name} globally accessible, you have to run this:
 export PATH="${binDir}:$PATH"`);
   }
 };
+
+/**
+ * @param {string[]} opts
+ */
+export const buildWithOpts = async (opts) => {
+  if (!["node", "bun", "deno"].includes(opts[0])) {
+    throw new Error(
+      "Only supported runtimes are node, bun or deno. You passed: " + opts[0],
+    );
+  }
+
+  await createBinFile((binFile) =>
+    fs.writeFile(
+      binFile,
+      `#!/usr/bin/env ${opts.join(" ")}
+
+await import("../meta.js");
+await import("../../src/main.ts");
+`,
+    ),
+  );
+
+  await createGlobalStateFile();
+
+  await createCompletionFiles();
+  showSetupHint();
+};

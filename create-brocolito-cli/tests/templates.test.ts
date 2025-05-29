@@ -18,7 +18,7 @@ describe("templates", () => {
         name: "foo",
         bin: { foo: "./build/cli.js" },
         scripts: expect.objectContaining({
-          build: "brocolito-bun",
+          build: "brocolito bun",
           test: "bun test",
         }),
       }),

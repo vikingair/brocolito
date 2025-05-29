@@ -19,7 +19,7 @@ const packageJson = (name: string, runtime: SupportedRuntime) => {
   };
 
   if (runtime === "bun") {
-    result.scripts.build = "brocolito-bun";
+    result.scripts.build = "brocolito bun";
     result.scripts.test = "bun test";
   }
 

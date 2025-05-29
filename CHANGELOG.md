@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Removed the utility `complainAndExit(...)`. Just replace usages by `throw new Error(...)`.
+- Removed the utility `complainAndExit(...)`.
 - A (sub)command can only have subcommands or an action, but not both.
 - Calling any command containging subcommands that were not targeted will fail and show the help of this command.
 - Options can only be passed after targeting the complete (sub)command.
@@ -17,12 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Options being passed multiple times without expecting multiple values, will simply omit all options but the last.
   This is inherited from the `parseArgs` of `node:util`.
 - Removing dependency on `prompts`.
+- `brocolito-bun` needs to be now `brocolito bun` as it targets the same script.
 
 For more detailed information please see [Migration Guide v5](https://github.com/vikingair/brocolito/blob/master/MIGRATIONGUIDE.md#500)
 
 ### Added
 
 - Supporting Deno as CLI runtime
+- Supporting for passing runtime args to all different supported runtimes
 
 ### Fixed
 

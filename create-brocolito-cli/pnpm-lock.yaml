@@ -12,8 +12,8 @@ importers:
         specifier: 2.4.9
         version: 2.4.9
       brocolito:
-        specifier: 5.0.0-beta.0
-        version: 5.0.0-beta.0(@types/node@22.15.24)
+        specifier: 5.0.0-beta.1
+        version: 5.0.0-beta.1(@types/node@22.15.24)
       prompts:
         specifier: 2.4.2
         version: 2.4.2
@@ -497,8 +497,8 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
-  brocolito@5.0.0-beta.0:
-    resolution: {integrity: sha512-YS8pAifyQxKOfEW9c49UstzrnMoxJOJHSAXxVz3iIKe5zoKq4NCDdtm8I9BDZR9xuHvKvTDQPAnQl/ouayQQkg==}
+  brocolito@5.0.0-beta.1:
+    resolution: {integrity: sha512-eC/uGh/hFBZpYyR4XGbEqG9Qbz9Vwppx4soIvVC9bscXFVb5nF/Z/rAVaommR90GBPVPvnqH9zQzg3QF20z4bA==}
     hasBin: true
 
   cac@6.7.14:
@@ -1438,7 +1438,7 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
-  brocolito@5.0.0-beta.0(@types/node@22.15.24):
+  brocolito@5.0.0-beta.1(@types/node@22.15.24):
     dependencies:
       picocolors: 1.1.1
       vite: 6.3.5(@types/node@22.15.24)

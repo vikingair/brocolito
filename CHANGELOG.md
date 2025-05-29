@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   This is inherited from the `parseArgs` of `node:util`.
 - Removing dependency on `prompts`.
 - `brocolito-bun` needs to be now `brocolito bun` as it targets the same script.
+- Made `vite` an optional peer dependency.
 
 For more detailed information please see [Migration Guide v5](https://github.com/vikingair/brocolito/blob/master/MIGRATIONGUIDE.md#500)
 

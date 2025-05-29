@@ -91,7 +91,7 @@ export const buildWithOpts = async (opts) => {
   await createBinFile((binFile) =>
     fs.writeFile(
       binFile,
-      `#!/usr/bin/env ${opts.join(" ")}
+      `#!/usr/bin/env ${opts.length > 1 ? "-S " : ""}${opts.join(" ")}
 
 await import("../meta.js");
 await import("../../src/main.ts");

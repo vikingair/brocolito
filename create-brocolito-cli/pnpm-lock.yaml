@@ -12,8 +12,8 @@ importers:
         specifier: 2.4.9
         version: 2.4.9
       brocolito:
-        specifier: 5.0.0-beta.3
-        version: 5.0.0-beta.3(vite@6.3.5(@types/node@22.15.24))
+        specifier: 5.0.0-beta.5
+        version: 5.0.0-beta.5(vite@6.3.5(@types/node@22.15.24))
       prompts:
         specifier: 2.4.2
         version: 2.4.2
@@ -39,6 +39,9 @@ importers:
       typescript-eslint:
         specifier: 8.32.1
         version: 8.32.1(eslint@9.27.0)(typescript@5.8.3)
+      vite:
+        specifier: 6.3.5
+        version: 6.3.5(@types/node@22.15.24)
       vitest:
         specifier: 3.1.4
         version: 3.1.4(@types/node@22.15.24)
@@ -497,8 +500,8 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
-  brocolito@5.0.0-beta.3:
-    resolution: {integrity: sha512-l6kfR/D7MqKBS0aGm6eZPVJ7cATm6jP0tX/5mmhGsb+SG0QKUwCPzc7X20yDYR4U+H23PG04SuALuJIvOj+bCw==}
+  brocolito@5.0.0-beta.5:
+    resolution: {integrity: sha512-MBm6I0x6EtbpIf9CRgvx/vYcCGUF/ag4DORWS75Dz+5ab3nqnXYComRHTt9A43qRcXbVIQPhY9bcPcHQy0/r2A==}
     hasBin: true
     peerDependencies:
       vite: ^6.3.5
@@ -1443,7 +1446,7 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
-  brocolito@5.0.0-beta.3(vite@6.3.5(@types/node@22.15.24)):
+  brocolito@5.0.0-beta.5(vite@6.3.5(@types/node@22.15.24)):
     dependencies:
       picocolors: 1.1.1
     optionalDependencies:

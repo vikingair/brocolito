@@ -7,8 +7,9 @@ import process from "node:process";
 import {
   createBinFile,
   createCompletionFiles,
+  getGlobalState,
   createGlobalStateFile,
-  packageJSON,
+  getPackageJsonDependencies,
   showSetupHint,
 } from "./build-common.js";
 
@@ -30,7 +31,7 @@ await vite.build({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: [/^node:.*/, ...Object.keys(packageJSON.dependencies)],
+      external: [/^node:.*/, ...(await getPackageJsonDependencies())],
       output: {
         dir: "build",
       },
@@ -38,7 +39,8 @@ await vite.build({
   },
 });
 
-await createGlobalStateFile();
+const globalState = await getGlobalState();
+await createGlobalStateFile(globalState);
 
 // add global state
 const cliFile = path.resolve("./build/cli.js");
@@ -53,8 +55,8 @@ if (!process.env.CI) {
 // create execution wrapper
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const runFile = path.join(__dirname, "run.js");
-await createBinFile((binFile) => fs.cp(runFile, binFile));
+await createBinFile(globalState.name, (binFile) => fs.cp(runFile, binFile));
 
-await createCompletionFiles();
+await createCompletionFiles(globalState.name);
 
-showSetupHint();
+showSetupHint(globalState.name);

@@ -5,48 +5,73 @@ import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import process from "node:process";
 
-export const packageJSON = JSON.parse(
-  await fs.readFile("package.json", "utf-8"),
-);
-const VALID_NAME = /^[a-zA-Z0-9_-]+$/;
-if (!VALID_NAME.test(packageJSON.name)) {
-  throw new Error(
-    "Please use valid name for the CLI in your package.json. Satisfying the constraint: " +
-      VALID_NAME,
-  );
-}
-
-const GLOBAL_STATE = {
-  name: packageJSON.name,
-  dir: path.resolve("."),
-  version: packageJSON.version,
-};
+const VALID_CLI_NAME = /^[a-zA-Z0-9_-]+$/;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const buildDir = path.resolve("./build/");
 const binDir = path.join(buildDir, "bin");
 
-export const createGlobalStateFile = async () => {
+const getPackageJson = async () => {
+  const packageJSONContent = await fs
+    .readFile("package.json", "utf-8")
+    .catch(() => fs.readFile("deno.json", "utf-8"))
+    .catch(() => {
+      throw new Error("Cannot find package.json nor deno.json");
+    });
+  return JSON.parse(packageJSONContent);
+};
+
+export const getPackageJsonDependencies = async () => {
+  const packageJSON = await getPackageJson();
+  // "imports" in "deno.json"
+  return Object.keys(packageJSON.dependencies || packageJSON.imports);
+};
+
+export const getGlobalState = async () => {
+  const packageJSON = await getPackageJson();
+  const dir = path.resolve(".");
+  const globalState = {
+    name: packageJSON.name || path.basename(dir),
+    dir,
+    version: packageJSON.version,
+  };
+  if (!VALID_CLI_NAME.test(globalState.name)) {
+    throw new Error(
+      `Please use valid name for the CLI in your package.json (current: ${globalState.name}). Satisfying the constraint: ${VALID_CLI_NAME}`,
+    );
+  }
+
+  return globalState;
+};
+
+/**
+ * @param {{name: string; dir: string; version?: string }} globalState
+ */
+export const createGlobalStateFile = async (globalState) => {
   // create execution wrapper
   const file = path.join(buildDir, "meta.js");
   await fs.writeFile(
     file,
-    `globalThis.__BROCOLITO__=${JSON.stringify(GLOBAL_STATE)};\n`,
+    `globalThis.__BROCOLITO__=${JSON.stringify(globalState)};\n`,
   );
 };
 
 /**
+ * @param {string} name
  * @param {(file: string) => Promise<void>} createCb
  */
-export const createBinFile = async (createCb) => {
+export const createBinFile = async (name, createCb) => {
   // create execution wrapper
-  const binFile = path.join(binDir, packageJSON.name);
+  const binFile = path.join(binDir, name);
   await fs.mkdir(binDir, { recursive: true });
   await createCb(binFile);
   await fs.chmod(binFile, "744");
 };
 
-export const createCompletionFiles = async () => {
+/**
+ * @param {string} name
+ */
+export const createCompletionFiles = async (name) => {
   // copy completion scripts into build dir
   const bashCompletion = await fs.readFile(
     path.join(__dirname, "bash_completion.sh"),
@@ -58,22 +83,25 @@ export const createCompletionFiles = async () => {
   );
   await fs.writeFile(
     path.resolve("./build/bash_completion.sh"),
-    bashCompletion.replaceAll("BRO", packageJSON.name),
+    bashCompletion.replaceAll("BRO", name),
   );
   await fs.writeFile(
     path.resolve("./build/zsh_completion.sh"),
-    zshCompletion.replaceAll("BRO", packageJSON.name),
+    zshCompletion.replaceAll("BRO", name),
   );
 };
 
-export const showSetupHint = () => {
+/**
+ * @param {string} name
+ */
+export const showSetupHint = (name) => {
   if (
     !process.env.CI &&
     !process.env.BROCOLITO_REBUILD &&
     !(/** @type {string} */ (process.env.PATH).split(":").includes(binDir))
   ) {
     console.log(`
-To make the CLI ${packageJSON.name} globally accessible, you have to run this:
+To make the CLI ${name} globally accessible, you have to run this:
 export PATH="${binDir}:$PATH"`);
   }
 };
@@ -88,7 +116,9 @@ export const buildWithOpts = async (opts) => {
     );
   }
 
-  await createBinFile((binFile) =>
+  const globalState = await getGlobalState();
+
+  await createBinFile(globalState.name, (binFile) =>
     fs.writeFile(
       binFile,
       `#!/usr/bin/env ${opts.length > 1 ? "-S " : ""}${opts.join(" ")}
@@ -99,8 +129,8 @@ await import("../../src/main.ts");
     ),
   );
 
-  await createGlobalStateFile();
+  await createGlobalStateFile(globalState);
 
-  await createCompletionFiles();
-  showSetupHint();
+  await createCompletionFiles(globalState.name);
+  showSetupHint(globalState.name);
 };

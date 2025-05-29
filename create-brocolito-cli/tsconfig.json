@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
+    "erasableSyntaxOnly": false,
     "sourceMap": false,
     "removeComments": true,
     "resolveJsonModule": true,

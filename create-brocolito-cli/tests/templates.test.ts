@@ -3,7 +3,7 @@ import { Templates } from "../src/templates";
 
 describe("templates", () => {
   it("replaces the properties of the current package.json (runtime: node)", () => {
-    expect(JSON.parse(Templates.packageJson("foo", "node"))).toEqual(
+    expect(Templates.packageJson("foo", "node", "vitest").content).toEqual(
       expect.objectContaining({
         name: "foo",
         bin: { foo: "./build/cli.js" },
@@ -13,7 +13,7 @@ describe("templates", () => {
   });
 
   it("replaces the properties of the current package.json (runtime: bun)", () => {
-    expect(JSON.parse(Templates.packageJson("foo", "bun"))).toEqual(
+    expect(Templates.packageJson("foo", "bun", "vitest").content).toEqual(
       expect.objectContaining({
         name: "foo",
         bin: { foo: "./build/cli.js" },

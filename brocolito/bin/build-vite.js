@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import path from "node:path";
-import { build } from "vite";
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import process from "node:process";
@@ -13,8 +12,14 @@ import {
   showSetupHint,
 } from "./build-common.js";
 
+const vite = await import("vite").catch(() => {
+  throw new Error(
+    "Please install missing dependency 'vite' in order to use vite builds",
+  );
+});
+
 // https://vitejs.dev/config/
-await build({
+await vite.build({
   logLevel: "error",
   build: {
     lib: {

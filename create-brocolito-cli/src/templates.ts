@@ -4,6 +4,7 @@ import packageJSON from "../package.json";
 import gitIgnore from "../.gitignore?raw";
 
 export type SupportedRuntime = "node" | "bun" | "deno";
+export type SupportedPackageManagers = "pnpm" | "npm" | "yarn";
 
 const { name: _, version: _v, bin, ...packageJSONRest } = packageJSON;
 

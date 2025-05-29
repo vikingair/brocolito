@@ -5,7 +5,7 @@
   "dependencies": {
     "@actions/core": "1.11.1",
     "@actions/github": "6.0.1",
-    "brocolito": "5.0.0-beta.2"
+    "brocolito": "5.0.0-beta.3"
   },
   "scripts": {
     "build": "brocolito node --experimental-strip-types --no-warnings",

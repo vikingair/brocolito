@@ -1,22 +1,23 @@
-import { describe, it, expect, vi } from "vitest";
-import { initEnv } from "../src/env";
+import { describe, it } from "node:test";
+import { initEnv } from "../src/env.ts";
+import process from "node:process";
 
 initEnv();
 
 describe("pull_request changed_files", () => {
-  it("returns changed files of given pull_request event", async () => {
+  it("returns changed files of given pull_request event", async (t) => {
     // given
     process.env.GITHUB_REPOSITORY = "vikingair/brocolito";
     process.env.GITHUB_EVENT_NAME = "pull_request";
     process.env.GITHUB_EVENT_PATH = "./tests/pull_request_payload.json";
 
     // load all modules with in env
-    const module = await import("../src/files");
+    const module = await import("../src/files.ts");
 
     // load changed files
     const changedFiles = await module.getChangedFiles();
 
-    expect(changedFiles).toEqual([
+    t.assert.deepEqual(changedFiles, [
       ".github/cli/package.json",
       ".github/cli/pnpm-lock.yaml",
       "brocolito/bin/build.mjs",
@@ -27,24 +28,26 @@ describe("pull_request changed_files", () => {
     ]);
 
     // check printed tree
-    const log = vi
-      .spyOn(console, "log")
-      .mockImplementationOnce(() => undefined);
+    const log = t.mock.method(console, "log");
+    log.mock.mockImplementation(() => undefined);
     module.printFileTree(changedFiles);
 
-    expect(log.mock.lastCall![0]).toMatchInlineSnapshot(`
-      ".github
-        cli
-          package.json
-          pnpm-lock.yaml
-      brocolito
-        bin
-          build.mjs
-          run.cjs
-        src
-          brocolito.ts
-        package.json
-        vite.config.ts"
-    `);
+    t.assert.equal(
+      log.mock.calls.at(-1)!.arguments[0],
+      `
+.github
+  cli
+    package.json
+    pnpm-lock.yaml
+brocolito
+  bin
+    build.mjs
+    run.cjs
+  src
+    brocolito.ts
+  package.json
+  vite.config.ts
+    `.trim(),
+    );
   });
 });

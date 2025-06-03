@@ -99,7 +99,7 @@ describe("Example commands", () => {
     const spy = vi.fn();
     CLI.command("example", "example-description")
       .option("--test <string>", "test option")
-      .option("--some-more", "some-more option")
+      .option("--some-more|-s", "some-more option")
       .action(({ test, someMore, ...rest }) =>
         spy({ test, someMore, ...rest }),
       );
@@ -109,6 +109,13 @@ describe("Example commands", () => {
 
     // then
     expect(spy).toBeCalledWith({ someMore: false });
+
+    // when - called with no options
+    spy.mockReset();
+    await call("example -s");
+
+    // then
+    expect(spy).toBeCalledWith({ someMore: true });
 
     // when
     spy.mockReset();
@@ -137,7 +144,7 @@ describe("Example commands", () => {
     // given
     const spy = vi.fn();
     CLI.command("example", "example-description")
-      .option("--test! <string>", "test option")
+      .option("--test|-t! <string>", "test option")
       .action(({ test, ...rest }) => spy({ test, ...rest }));
 
     // when - called without the mandatory option
@@ -146,7 +153,7 @@ describe("Example commands", () => {
     );
 
     // when - called with option
-    await call("example --test foo");
+    await call("example -t foo");
 
     // then
     expect(spy).toBeCalledWith({ test: "foo" });
@@ -407,7 +414,7 @@ The following arguments could not be processed: ${pc.yellow("invalid")}`,
         // @ts-expect-error option doesn't start with "--"
         .option("-f", "does not matter");
     }).toThrow(
-      "Invalid usage specified for option '-f'. Required pattern: --[a-z0-9-]+( .+)?",
+      "Invalid usage specified for option '-f'. Required pattern: --[a-z0-9-]+(|-[a-z])?!?( .+)?",
     );
 
     expect(() => {

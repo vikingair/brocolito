@@ -29,29 +29,31 @@ const deriveInfo = <S extends `<${string}${string}>`>(
 
 const deriveOptionInfo = (
   usage: string,
-): Pick<OptionMeta, "name" | "type" | "multi" | "mandatory"> => {
+): Pick<OptionMeta, "name" | "type" | "multi" | "mandatory" | "short"> => {
   const match = usage.match(
-    /^--(?<name>[a-z0-9-]+)(?<mandatory>!)?(?: (?<optionType>.+))?$/i,
+    /^--(?<name>[a-z0-9-]+)(\|-(?<short>[a-z]))?(?<mandatory>!)?(?: (?<optionType>.+))?$/i,
   );
   if (!match?.groups) {
     throw new Error(
-      `Invalid usage specified for option '${usage}'. Required pattern: --[a-z0-9-]+( .+)?`,
+      `Invalid usage specified for option '${usage}'. Required pattern: --[a-z0-9-]+(|-[a-z])?!?( .+)?`,
     );
   }
   const name = match.groups.name;
+  const short = match.groups.short;
   const mandatory = !!match.groups.mandatory;
   const optionType = match.groups.optionType;
   // even though mandatory boolean doesn't make sense
   if (!optionType) {
-    return { name, type: "boolean", mandatory, multi: false };
+    return { name, short, type: "boolean", mandatory, multi: false };
   }
   const optionTypeMatch = optionType.match(/^<(.+?)(\.{3})?>$/);
   if (!optionTypeMatch) {
-    return { name, type: "string", mandatory, multi: false };
+    return { name, short, type: "string", mandatory, multi: false };
   }
   const m = optionTypeMatch[1] ?? "string"; // without the collon
   return {
     name,
+    short,
     type: m === "string" || m === "file" ? m : m.split("|"),
     mandatory,
     multi: !!optionTypeMatch[2],

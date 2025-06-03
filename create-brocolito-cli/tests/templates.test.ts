@@ -7,7 +7,7 @@ describe("templates", () => {
       expect.objectContaining({
         name: "foo",
         bin: { foo: "./build/cli.js" },
-        scripts: expect.objectContaining({ build: "brocolito" }),
+        scripts: expect.objectContaining({ prepare: "brocolito" }),
       }),
     );
   });
@@ -18,7 +18,7 @@ describe("templates", () => {
         name: "foo",
         bin: { foo: "./build/cli.js" },
         scripts: expect.objectContaining({
-          build: "brocolito bun",
+          prepare: "brocolito bun",
           test: "bun test",
         }),
       }),

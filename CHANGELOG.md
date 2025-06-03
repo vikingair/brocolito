@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [5.0.0] - 2025-??-??
+## [5.0.0] - 2025-06-03
 
 ### Changed
 
@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removing dependency on `prompts`.
 - `brocolito-bun` needs to be now `brocolito bun` as it targets the same script.
 - Made `vite` an optional peer dependency.
+- Passing options with single dash will interpret each character as short option, e.g. `-ab` is the same as writing `--a --b`.
+  - This matches the Node CLI default behavior and is necessary for the new option short aliases.
 
 For more detailed information please see [Migration Guide v5](https://github.com/vikingair/brocolito/blob/master/MIGRATIONGUIDE.md#500)
 
@@ -26,6 +28,7 @@ For more detailed information please see [Migration Guide v5](https://github.com
 
 - Supporting Deno as CLI runtime
 - Supporting for passing runtime args to all different supported runtimes
+- Supporting option short aliases
 
 ### Fixed
 

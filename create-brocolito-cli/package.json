@@ -1,6 +1,6 @@
 {
   "name": "create-brocolito-cli",
-  "version": "1.2.0-beta.6",
+  "version": "1.2.1",
   "bin": {
     "create-brocolito-cli": "./build/cli.js"
   },
@@ -11,18 +11,19 @@
   ],
   "dependencies": {
     "@types/prompts": "2.4.9",
-    "brocolito": "5.0.0-beta.5",
+    "brocolito": "5.0.0",
     "prompts": "2.4.2"
   },
   "scripts": {
-    "build": "brocolito",
     "lint": "pnpm lint:es && pnpm lint:ts",
     "lint:es": "eslint . --max-warnings 0",
     "lint:ts": "tsc",
+    "prepare": "brocolito",
     "test": "vitest --run"
   },
   "devDependencies": {
     "@eslint/js": "9.27.0",
+    "@types/bun": "1.2.15",
     "@types/node": "22.15.24",
     "eslint": "9.27.0",
     "eslint-plugin-prettier": "5.4.0",

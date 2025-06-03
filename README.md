@@ -19,14 +19,14 @@ in CI / CD workflows? Brocolito aims to support you with that.
 ## How to
 
 ```sh
-pnpm create brocolito-cli
+pnpm create brocolito-cli@latest
 # or
-npx create-brocolito-cli
+npx create-brocolito-cli@latest
 # or
-yarn create brocolito-cli
+yarn create brocolito-cli@latest
+# or
+deno run -A npm:create-brocolito-cli@latest
 ```
-
-Then cd into your CLI and run `pnpm build`.
 
 Feel free to check out the herein provided [example](.github/cli).
 
@@ -101,21 +101,21 @@ flags and will be treated as boolean `true`.
 
 - Specification: `--option-name`
 - Parameter type: `boolean`
-- Completion: `true` or `false`
+- Completion: none
 - Code example:
 
    ```ts
    CLI.command('hello', 'prints hello world')
-      .option('--with-exclamation-mark', 'append exclamation mark')
-      .action(({ withExclamationMark }) => console.log(`hello world${withExclamationMark ? '!' : ''}`));
+      .option('--exclamation-mark', 'append exclamation mark')
+      .action(({ exclamationMark }) => console.log(`hello world${exclamationMark ? '!' : ''}`));
    ```
 
 - Shell examples:
 
    ```sh
-   cli hello --with-exclamation-mark
-   cli hello --with-exclamation-mark=true
-   cli hello --with-exclamation-mark false
+   cli hello --exclamation-mark
+   cli hello --exclamation-mark=false
+   cli hello --no-exclamation-mark
    ```
 
 #### String Options
@@ -192,6 +192,25 @@ flags and will be treated as boolean `true`.
    ```
 
 - Shell example: `cli hello --name mark`
+
+#### Short Option Aliases
+
+- Specification: `--option-name|-s`
+- Parameter type: any of the above
+- Completion: like for the full option name
+- Code example:
+
+   ```ts
+   CLI.command('hello', 'prints hello world')
+      .option('--exclamation-mark|-m', 'append exclamation mark')
+      .action(({ exclamationMark }) => console.log(`hello world${exclamationMark ? '!' : ''}`));
+   ```
+
+- Shell examples:
+
+   ```sh
+   cli hello -m
+   ```
 
 ### Args
 
@@ -273,10 +292,14 @@ subcommand can use further options, args or subcommands as any regular command.
    CLI.command('string', 'do something with strings')
       .option('--error', 'logs as error')
       .subcommand('trim', 'trims a string', (sub) => {
-      sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.trim()));
+         sub
+            .arg('<str>')
+            .action(({ str, error }) => console[error ? 'error' : 'log'](str.trim()));
       })
       .subcommand('length', { description: 'counts the chars', alias: 'l' }, (sub) => {
-      sub.arg('<str>').action(({ str, error }) => console[error ? 'error' : 'log'](str.length));
+         sub
+            .arg('<str>')
+            .action(({ str, error }) => console[error ? 'error' : 'log'](str.length));
       })
    ```
 
@@ -299,14 +322,23 @@ CLI.alias('cf', 'my-cli foo');
 
 ## Extra features
 
-`brocolito` makes use of some utilities that are also made available for your CLI.
+`brocolito` ships already the following package for your CLI:
 
 - `pc`: Default export of the [picocolors](https://www.npmjs.com/package/picocolors) package to add colors
         to your printed output.
-- `prompts`: Default export of the [prompts](https://www.npmjs.com/package/prompts) package to make use
-             of interactive shell prompts.
 
-## External dependencies
+### Recommendations
+
+- `prompts`: Default export of the [prompts](https://www.npmjs.com/package/prompts) package to make use
+             of interactive shell prompts. You need to install along with it `@types/prompts`.
+
+## Vite Powered Build
+
+When you build with `brocolito <runtime>` where runtime can be `node`, `deno` or `bun`, then you are opting out
+of the Vite powered build, which only happens when running `brocolito` without args and having installed the
+optional `vite` dependency. This will bundle all your CLI code in a single JS file.
+
+### External dependencies
 
 If you are using external dependencies, these have to be listed in your `package.json` under
 `"dependencies"`. In case of build-in NodeJS dependencies, make sure to use the prefixed package

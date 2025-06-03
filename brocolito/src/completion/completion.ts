@@ -64,12 +64,18 @@ export const _completion = async ({
   const lastArgInfo = cmd.command.args.at(-1);
   const options = Object.values(cmd.command.options) as OptionMeta[];
   const startedOption = options.find(
-    ({ name }) => "--" + name === partial.prev,
+    ({ name, short }) =>
+      "--" + name === partial.prev || (short && "-" + short === partial.prev),
   );
 
   const availableOptionItems = options
     // TODO: repsect already used options from "full.parts"
-    .filter(({ name, multi }) => multi || !relevantArgs.includes("--" + name))
+    .filter(
+      ({ name, multi, short }) =>
+        multi ||
+        (!relevantArgs.includes("--" + name) &&
+          (!short || !relevantArgs.includes("-" + short))),
+    )
     .map(
       ({ name, description }: OptionMeta): CompleteItem => ({
         name: "--" + name,

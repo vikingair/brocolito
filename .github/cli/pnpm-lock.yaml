@@ -15,8 +15,8 @@ importers:
         specifier: 6.0.1
         version: 6.0.1
       brocolito:
-        specifier: 5.0.0-beta.5
-        version: 5.0.0-beta.5
+        specifier: 5.0.0-beta.6
+        version: 5.0.0-beta.6
     devDependencies:
       '@eslint/js':
         specifier: 9.27.0
@@ -285,8 +285,8 @@ packages:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
 
-  brocolito@5.0.0-beta.5:
-    resolution: {integrity: sha512-MBm6I0x6EtbpIf9CRgvx/vYcCGUF/ag4DORWS75Dz+5ab3nqnXYComRHTt9A43qRcXbVIQPhY9bcPcHQy0/r2A==}
+  brocolito@5.0.0-beta.6:
+    resolution: {integrity: sha512-SuGY7jfXFT7Svx20hBXnjEliG29kuuZYTO6Zom2/91kSceLPAEK0FG7smhi+fDmbJnLewJYKWk26OF2UnJOdDQ==}
     hasBin: true
     peerDependencies:
       vite: ^6.3.5
@@ -971,7 +971,7 @@ snapshots:
     dependencies:
       fill-range: 7.1.1
 
-  brocolito@5.0.0-beta.5:
+  brocolito@5.0.0-beta.6:
     dependencies:
       picocolors: 1.1.1
 

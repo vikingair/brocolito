@@ -43,10 +43,10 @@ describe("completion", () => {
       { name: "--inf", description: "some infinite string" },
     ];
     CLI.command("test", dummyDescription)
-      .option("--flag", dummyDescription)
+      .option("--flag|-f", dummyDescription)
       .option("--file <file>", "some file")
       .option("--str <string>", "some string")
-      .option("--union! <one|two>", "some mandatory union")
+      .option("--union|-u! <one|two>", "some mandatory union")
       .option("--inf <string...>", "some infinite string");
 
     // lists all until there is a space after the flad name
@@ -54,6 +54,9 @@ describe("completion", () => {
       expectedCompletedFlags,
     );
     expect(await _completion(getTabEnv("cli test --flag "))).toEqual(
+      expectedCompletedFlags.toSpliced(0, 1),
+    );
+    expect(await _completion(getTabEnv("cli test -f "))).toEqual(
       expectedCompletedFlags.toSpliced(0, 1),
     );
     expect(await _completion(getTabEnv("cli test --union one "))).toEqual(
@@ -67,6 +70,10 @@ describe("completion", () => {
       "__files__",
     ]);
     expect(await _completion(getTabEnv("cli test --union "))).toEqual([
+      "one",
+      "two",
+    ]);
+    expect(await _completion(getTabEnv("cli test -u "))).toEqual([
       "one",
       "two",
     ]);

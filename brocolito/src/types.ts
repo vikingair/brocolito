@@ -12,9 +12,12 @@ type FirstOptionPart<S extends string> = S extends `--${infer T} ${string}`
     : never;
 
 type RemoveMandatoryFlag<S extends string> = S extends `${infer T}!` ? T : S;
+type RemoveShortOption<S extends string> = S extends `${infer T}|-${string}`
+  ? T
+  : S;
 
 export type OptionToName<S extends string> = SnakeToCamelCase<
-  RemoveMandatoryFlag<FirstOptionPart<S>>
+  RemoveShortOption<RemoveMandatoryFlag<FirstOptionPart<S>>>
 >;
 
 type RemoveArgumentBrackets<S extends string> = S extends `<${infer T}>`

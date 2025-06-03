@@ -55,11 +55,13 @@ const packageJson = (
   if (runtime === "bun") {
     content.scripts.build = "brocolito bun";
     content.scripts.test = "bun test";
+    delete (content.devDependencies as Record<string, string>)["@types/node"];
   }
 
   if (runtime === "node") {
     content.scripts.test =
       "node --experimental-strip-types --no-warnings --test";
+    delete (content.devDependencies as Record<string, string>)["@types/bun"];
   }
 
   if (testFramework !== "vitest") {
@@ -88,6 +90,7 @@ CLI.parse(); // this needs to be executed after all "commands" were set up
 
 // "allowImportingTsExtensions": true, <- node without vite
 // "erasableSyntaxOnly": true <- node without vite
+// "moduleResolution": "nodenext" <- node without vite
 const tsConfig = (
   runtime: SupportedRuntime,
   testFramework: "vitest" | "runtime" | "none",

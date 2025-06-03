@@ -1,6 +1,6 @@
 {
   "name": "brocolito",
-  "version": "5.0.0-beta.6",
+  "version": "5.0.0",
   "description": "Create type-safe CLIs to align local development and pipeline workflows",
   "main": "dist/brocolito.cjs",
   "module": "dist/brocolito.mjs",
@@ -24,11 +24,11 @@
   "author": "Viktor Luft <viktor.luft@freiheit.com> (https://github.com/vikingair)",
   "license": "MIT",
   "scripts": {
-    "dist": "vite build && pnpm dist:ts",
-    "dist:ts": "tsc -p tsconfig.publish.json",
     "lint": "pnpm lint:es && pnpm lint:ts",
     "lint:es": "eslint . --max-warnings 0",
     "lint:ts": "tsc",
+    "prepare": "vite build && pnpm prepare:ts",
+    "prepare:ts": "tsc -p tsconfig.publish.json",
     "test": "vitest --run",
     "test:update": "vitest --run -u"
   },

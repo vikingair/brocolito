@@ -308,6 +308,7 @@ subcommand can use further options, args or subcommands as any regular command.
    ```sh
    cli string trim " foo"
    cli string length "lorem ipsum"
+   cli string l "lorem ipsum"
    ```
 
 ### Aliases
@@ -334,7 +335,7 @@ CLI.alias('cf', 'my-cli foo');
 
 ## Vite Powered Build
 
-When you build with `brocolito <runtime>` where runtime can be `node`, `deno` or `bun`, then you are opting out
+When you "prepare" with `brocolito <runtime>` where runtime can be `node`, `deno` or `bun`, then you are opting out
 of the Vite powered build, which only happens when running `brocolito` without args and having installed the
 optional `vite` dependency. This will bundle all your CLI code in a single JS file.
 

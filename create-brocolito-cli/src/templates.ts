@@ -53,7 +53,7 @@ const packageJson = (
   };
 
   if (runtime === "bun") {
-    content.scripts.build = "brocolito bun";
+    content.scripts.prepare = "brocolito bun";
     content.scripts.test = "bun test";
     delete (content.devDependencies as Record<string, string>)["@types/node"];
   }

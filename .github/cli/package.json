@@ -8,7 +8,7 @@
     "brocolito": "6.0.0"
   },
   "scripts": {
-    "build": "brocolito node --experimental-strip-types --no-warnings",
+    "prepare": "brocolito node --experimental-strip-types --no-warnings",
     "lint": "pnpm lint:es && pnpm lint:ts",
     "lint:es": "eslint . --max-warnings 0",
     "lint:ts": "tsc",

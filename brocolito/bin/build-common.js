@@ -34,7 +34,7 @@ export const getGlobalState = async () => {
     name: packageJSON.name || path.basename(dir),
     dir,
     version: packageJSON.version,
-    aliases: packageJSON.brocoloito?.aliases,
+    aliases: packageJSON.brocolito?.aliases,
   };
   if (!VALID_CLI_NAME.test(globalState.name)) {
     throw new Error(

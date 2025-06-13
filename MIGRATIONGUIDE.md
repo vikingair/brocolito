@@ -2,6 +2,18 @@
 
 You can find here tips for migrating breaking changes.
 
+## 6.0.0
+
+- Replace all usages of `CLI.alias("foo", "bar")` by moving them into your `package.json`
+
+  ```json
+  "brocolito": {
+    "aliases": {
+      "foo": "bar"
+    }
+  }
+  ```
+
 ## 5.0.0
 
 - Replace all usages of `complainAndExit(...)` by `throw new Error(...)`

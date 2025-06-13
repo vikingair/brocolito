@@ -7,11 +7,18 @@ const injected = (globalThis as any).__BROCOLITO__ || {
   dir: path.resolve("."),
   name: "dummy",
   version: "dummy",
+  aliases: undefined,
 };
-const { name, dir, version } = injected;
+const { name, dir, version, aliases } = injected;
 
-export const Meta: { name: string; dir: string; version: string } = {
+export const Meta: {
+  name: string;
+  dir: string;
+  version: string;
+  aliases: Record<string, string>;
+} = {
   name,
   dir,
   version,
+  aliases,
 };

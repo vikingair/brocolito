@@ -1,5 +1,5 @@
 if type complete &>/dev/null; then
-  _BRO_completion () {
+  _BRO_NAME_completion () {
     local words cword
     if type _get_comp_words_by_ref &>/dev/null; then
       _get_comp_words_by_ref -n = -n @ -n : -w words -i cword
@@ -12,7 +12,7 @@ if type complete &>/dev/null; then
     IFS=$'\n' COMPREPLY=($(COMP_CWORD="$cword" \
                            COMP_LINE="$COMP_LINE" \
                            COMP_POINT="$COMP_POINT" \
-                           BRO completion -- "${words[@]}" \
+                           BRO_NAME completion -- "${words[@]}" \
                            2>/dev/null)) || return $?
     IFS="$si"
 
@@ -24,5 +24,6 @@ if type complete &>/dev/null; then
       __ltrim_colon_completions "${words[cword]}"
     fi
   }
-  complete -o default -F _BRO_completion BRO
+  complete -o default -F _BRO_NAME_completion BRO_NAME
+  BRO_ALIASES
 fi

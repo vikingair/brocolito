@@ -34,6 +34,7 @@ export const getGlobalState = async () => {
     name: packageJSON.name || path.basename(dir),
     dir,
     version: packageJSON.version,
+    aliases: packageJSON.brocoloito?.aliases,
   };
   if (!VALID_CLI_NAME.test(globalState.name)) {
     throw new Error(
@@ -70,8 +71,9 @@ export const createBinFile = async (name, createCb) => {
 
 /**
  * @param {string} name
+ * @param {Record<string, string> | undefined} aliases
  */
-export const createCompletionFiles = async (name) => {
+export const createCompletionFiles = async (name, aliases) => {
   // copy completion scripts into build dir
   const bashCompletion = await fs.readFile(
     path.join(__dirname, "bash_completion.sh"),
@@ -83,11 +85,22 @@ export const createCompletionFiles = async (name) => {
   );
   await fs.writeFile(
     path.resolve("./build/bash_completion.sh"),
-    bashCompletion.replaceAll("BRO", name),
+    bashCompletion
+      .replaceAll(
+        "BRO_ALIASES",
+        aliases
+          ? Object.keys(aliases)
+              .map(
+                (name) => `complete -o default -F _BRO_NAME_completion ${name}`,
+              )
+              .join("\n")
+          : "",
+      )
+      .replaceAll("BRO_NAME", name),
   );
   await fs.writeFile(
     path.resolve("./build/zsh_completion.sh"),
-    zshCompletion.replaceAll("BRO", name),
+    zshCompletion.replaceAll("BRO_NAME", name),
   );
 };
 
@@ -131,6 +144,6 @@ await import("../../src/main.ts");
 
   await createGlobalStateFile(globalState);
 
-  await createCompletionFiles(globalState.name);
+  await createCompletionFiles(globalState.name, globalState.aliases);
   showSetupHint(globalState.name);
 };

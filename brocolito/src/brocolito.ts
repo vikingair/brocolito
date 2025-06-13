@@ -134,17 +134,7 @@ const command = (name: string, options: DescriptionOrOpts): Command => {
   return command;
 };
 
-const alias = (aliasName: string, replacement: string) => {
-  State.aliases[aliasName] = replacement;
-};
-
-// TODO: README update
-// TODO: Option aliases
-// TODO: Option parser
-// TODO: Argument parser
-// TODO: Instructions for publishing
-// TODO: create-brocolito-cli
-export const CLI = { command, parse, _state: State, alias, meta: Meta };
+export const CLI = { command, parse, _state: State, meta: Meta };
 
 // Utility re-exported (no additional installation required for the peer)
 export { pc };

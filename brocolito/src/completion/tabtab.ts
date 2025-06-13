@@ -1,6 +1,5 @@
 // Source: https://github.com/mklabs/tabtab/blob/master/lib/index.js
 
-import { State } from "../state.ts";
 import { Meta } from "../meta.ts";
 import process from "node:process";
 
@@ -52,7 +51,7 @@ const parseEnv = (env: Record<string, string | undefined>): TabtabEnv => {
   let point = Number(env.COMP_POINT);
   const line = env.COMP_LINE || "";
   const firstArg = line.split(" ")[0];
-  const alias = State.aliases[firstArg];
+  const alias = Meta.aliases?.[firstArg];
   if (firstArg && !alias && firstArg !== Meta.name) {
     throw new Error(`Completion invoked with not configured alias ${firstArg}.
 Use e.g. -> CLI.alias('${firstArg}', '${Meta.name} my-subcommand')

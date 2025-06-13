@@ -315,10 +315,15 @@ subcommand can use further options, args or subcommands as any regular command.
 
 If you are using aliases for some commands, code completion would stop working correctly, if
 you don't register the aliases. E.g. if you have for that command `my-cli foo` an alias
-configured in your shell via `alias cf=my-cli foo`, then you need to configure it like this:
+configured in your shell via `alias cf=my-cli foo`, then you need to configure it like this in your
+`package.json` or `deno.json`:
 
-```ts
-CLI.alias('cf', 'my-cli foo');
+```json
+"brocolito": {
+   "aliases": {
+      "cf": "my-cli foo"
+   }
+}
 ```
 
 ## Extra features

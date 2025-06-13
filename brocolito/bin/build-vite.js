@@ -57,6 +57,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const runFile = path.join(__dirname, "run.js");
 await createBinFile(globalState.name, (binFile) => fs.cp(runFile, binFile));
 
-await createCompletionFiles(globalState.name);
+await createCompletionFiles(globalState.name, globalState.aliases);
 
 showSetupHint(globalState.name);

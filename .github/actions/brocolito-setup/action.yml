@@ -11,9 +11,6 @@ runs:
     - uses: ./.github/actions/pnpm-install
       with:
         target: ${{ inputs.dir }}
-    - run: pnpm build
-      shell: bash
-      working-directory: ${{ inputs.dir }}
     - run: |
         realpath build/bin >> $GITHUB_PATH
       shell: bash

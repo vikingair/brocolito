@@ -14,6 +14,8 @@ You can find here tips for migrating breaking changes.
   }
   ```
 
+  And re-build your CLI once again.
+
 ## 5.0.0
 
 - Replace all usages of `complainAndExit(...)` by `throw new Error(...)`

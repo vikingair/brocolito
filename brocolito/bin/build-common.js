@@ -83,11 +83,16 @@ export const createCompletionFiles = async (name, aliases) => {
     path.join(__dirname, "zsh_completion.sh"),
     "utf-8",
   );
+  const BRO_ALIASES = aliases
+    ? Object.entries(aliases)
+        .map(([name, value]) => `alias ${name}="${value}"`)
+        .join("\n")
+    : "";
   await fs.writeFile(
     path.resolve("./build/bash_completion.sh"),
     bashCompletion
-      .replaceAll(
-        "BRO_ALIASES",
+      .replace(
+        "BRO_ALIAS_COMPLETIONS",
         aliases
           ? Object.keys(aliases)
               .map(
@@ -96,11 +101,14 @@ export const createCompletionFiles = async (name, aliases) => {
               .join("\n")
           : "",
       )
+      .replace("BRO_ALIASES", BRO_ALIASES)
       .replaceAll("BRO_NAME", name),
   );
   await fs.writeFile(
     path.resolve("./build/zsh_completion.sh"),
-    zshCompletion.replaceAll("BRO_NAME", name),
+    zshCompletion
+      .replace("BRO_ALIASES", BRO_ALIASES)
+      .replaceAll("BRO_NAME", name),
   );
 };
 

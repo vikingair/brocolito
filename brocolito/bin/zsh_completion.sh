@@ -14,3 +14,4 @@ if type compdef &>/dev/null; then
   }
   compdef _BRO_NAME_completion BRO_NAME
 fi
+BRO_ALIASES

@@ -98,7 +98,7 @@ export const createCompletionFiles = async (name, aliases) => {
               .map(
                 (name) => `complete -o default -F _BRO_NAME_completion ${name}`,
               )
-              .join("\n")
+              .join("\n  ")
           : "",
       )
       .replace("BRO_ALIASES", BRO_ALIASES)

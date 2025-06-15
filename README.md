@@ -326,6 +326,8 @@ configured in your shell via `alias cf=my-cli foo`, then you need to configure i
 }
 ```
 
+Also, when setting up completion the shell alias defintion is also already included.
+
 ## Extra features
 
 `brocolito` ships already the following package for your CLI:

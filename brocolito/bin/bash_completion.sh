@@ -25,5 +25,6 @@ if type complete &>/dev/null; then
     fi
   }
   complete -o default -F _BRO_NAME_completion BRO_NAME
-  BRO_ALIASES
+  BRO_ALIAS_COMPLETIONS
 fi
+BRO_ALIASES

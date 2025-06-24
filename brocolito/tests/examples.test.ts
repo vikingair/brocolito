@@ -244,7 +244,14 @@ describe("Example commands", () => {
       'Invalid value "bar" provided for arg <test:foo>.',
     );
 
-    // when - called with single matching option allowing empty multi args
+    // when - called with empty multi args
+    await call("example foo");
+
+    // then
+    expect(spy).toBeCalledWith({ test: "foo", testMulti: [] });
+
+    // when - called with single multi arg
+    spy.mockReset();
     await call("example foo one");
 
     // then
@@ -255,7 +262,8 @@ describe("Example commands", () => {
       'Invalid value "ups" provided for arg <test-multi:one|two...>',
     );
 
-    // when - called with valid multiple entries
+    // when - called with valid multiple args
+    spy.mockReset();
     await call("example foo one two");
 
     // then

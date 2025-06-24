@@ -113,14 +113,16 @@ The following arguments could not be processed: ${pc.yellow(
   const result = Object.fromEntries(
     command.args.map(
       ({ usage, name, type, multi }): [string, string | string[]] => {
+        if (!usedArgs.length) {
+          // by default multi args can be empty as well
+          return multi ? [name, []] : throwError("Too few arguments given");
+        }
         const checkValiditiy = (v: string) => {
           if (Array.isArray(type) && !type.includes(v)) {
             throw new Error(`Invalid value "${v}" provided for arg ${usage}.`);
           }
         };
-        if (!usedArgs.length) {
-          return throwError("Too few arguments given");
-        } else if (!multi) {
+        if (!multi) {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           const arg = usedArgs.shift()!;
           checkValiditiy(arg);

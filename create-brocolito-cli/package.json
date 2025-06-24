@@ -1,6 +1,6 @@
 {
   "name": "create-brocolito-cli",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "bin": {
     "create-brocolito-cli": "./build/cli.js"
   },
@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "@types/prompts": "2.4.9",
-    "brocolito": "6.0.0",
+    "brocolito": "6.1.1",
     "prompts": "2.4.2"
   },
   "scripts": {

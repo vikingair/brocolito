@@ -8,11 +8,11 @@
     "brocolito": "6.1.1"
   },
   "scripts": {
-    "prepare": "brocolito node --experimental-strip-types --no-warnings",
+    "prepare": "brocolito node",
     "lint": "pnpm lint:es && pnpm lint:ts",
     "lint:es": "eslint . --max-warnings 0",
     "lint:ts": "tsc",
-    "test": "node --experimental-strip-types --no-warnings --test ./tests/*.ts"
+    "test": "node --test ./tests/*.ts"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

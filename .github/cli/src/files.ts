@@ -1,15 +1,18 @@
 import * as github from "@actions/github";
-import { execSync } from "node:child_process";
+import { exec } from "node:child_process";
+import { promisify } from "util";
 import path from "node:path";
 
-const getPRNumber = () => {
+const execP = promisify(exec);
+
+const getPRNumber = async () => {
   const prNumber =
     github.context.eventName === "pull_request"
       ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         github.context.payload.pull_request!.number
       : undefined;
   if (!prNumber && github.context.ref !== "refs/heads/main") {
-    const prNumberString = execSync("gh pr view --json number -q .number");
+    const prNumberString = await execP("gh pr view --json number -q .number");
     console.log(
       `Detected PR number on branch ${github.context.ref}: #${prNumberString}`,
     );
@@ -25,7 +28,7 @@ export const getChangedFiles = async (
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN!);
 
-  const prNumber = getPRNumber();
+  const prNumber = await getPRNumber();
 
   // see https://octokit.github.io/rest.js/v21#pulls-list-files
   const files = prNumber

@@ -5,6 +5,7 @@ import * as core from "@actions/core";
 import { CLI } from "brocolito";
 import { initEnv } from "./env.ts";
 import { getChangedFiles, printFileTree } from "./files.ts";
+import { getChangedTargets } from "./targets.ts";
 
 initEnv();
 
@@ -18,7 +19,7 @@ CLI.command("changed_files", "list changed files on GitHub workflows")
 
     // useful for debugging purpose
     printFileTree(changedFiles);
-    core.setOutput("changed_files", changedFiles);
+    core.setOutput("changed_files", await getChangedTargets(changedFiles));
   });
 
 CLI.command("hello", "test description")

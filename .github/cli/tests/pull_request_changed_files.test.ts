@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
-import { initEnv } from "../src/env.ts";
 import process from "node:process";
+import { initEnv } from "../src/env.ts";
 
 initEnv();
 

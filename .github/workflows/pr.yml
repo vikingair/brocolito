@@ -41,3 +41,12 @@ jobs:
         working-directory: ${{ matrix.target.dir }}
         env:
           GITHUB_TOKEN: ${{ matrix.target.dir == '.github/cli' && github.token || '' }}
+
+  done:
+    needs: [checks]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check result
+        if: needs.checks.result != 'success'
+        run: echo "Some build failed" && exit 1

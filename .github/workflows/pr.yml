@@ -4,63 +4,40 @@ on:
   pull_request:
 
 jobs:
-  build:
+  targets:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
+    outputs:
+      changed: ${{ steps.find-changed-targets.outputs.changed }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/brocolito-setup
-      - run: bro changed_files
-        id: find-changed-files
+      - run: bro changed_targets
+        id: find-changed-targets
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - run: echo ${{ steps.find-changed-files.outputs.changed_files }}
 
-  check-brocolito:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/pnpm-install
-        with:
-          target: brocolito
-      - name: Lint 🎨
-        run: pnpm lint
-        working-directory: brocolito
-      - name: Test 🐛
-        run: pnpm test
-        working-directory: brocolito
-
-  check-cli:
+  checks:
+    needs: [targets]
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: read # required for CLI tests
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.targets.outputs.changed) }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/pnpm-install
         with:
-          target: .github/cli
+          target: ${{ matrix.target.dir }}
       - name: Lint 🎨
         run: pnpm lint
-        working-directory: .github/cli
+        working-directory: ${{ matrix.target.dir }}
       - name: Test 🐛
         run: pnpm test
-        working-directory: .github/cli
+        working-directory: ${{ matrix.target.dir }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-  check-create-brocolito-cli:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/pnpm-install
-        with:
-          target: create-brocolito-cli
-      - name: Lint 🎨
-        run: pnpm lint
-        working-directory: create-brocolito-cli
-      - name: Test 🐛
-        run: pnpm test
-        working-directory: create-brocolito-cli
+          GITHUB_TOKEN: ${{ matrix.target.dir == '.github/cli' && github.token || '' }}

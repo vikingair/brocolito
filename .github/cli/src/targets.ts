@@ -22,7 +22,7 @@ const getChangedDirs = async (changedFiles: string[]): Promise<string[]> => {
 
       if (c.startsWith(t)) {
         changed.push(t);
-        continue;
+        break;
       }
     }
   }

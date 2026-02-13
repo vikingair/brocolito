@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  targets:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -16,51 +16,21 @@ jobs:
         id: find-changed-files
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - run: echo ${{ steps.find-changed-files.outputs.changed_files }}
 
-  check-brocolito:
+  checks:
+    needs: [targets]
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: ${{ fromJSON(needs.targets.outputs.changed) }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/pnpm-install
         with:
-          target: brocolito
+          target: ${{ matrix.target.dir }}
       - name: Lint 🎨
         run: pnpm lint
-        working-directory: brocolito
+        working-directory: ${{ matrix.target.dir }}
       - name: Test 🐛
         run: pnpm test
-        working-directory: brocolito
-
-  check-cli:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/pnpm-install
-        with:
-          target: .github/cli
-      - name: Lint 🎨
-        run: pnpm lint
-        working-directory: .github/cli
-      - name: Test 🐛
-        run: pnpm test
-        working-directory: .github/cli
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-  check-create-brocolito-cli:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/pnpm-install
-        with:
-          target: create-brocolito-cli
-      - name: Lint 🎨
-        run: pnpm lint
-        working-directory: create-brocolito-cli
-      - name: Test 🐛
-        run: pnpm test
-        working-directory: create-brocolito-cli
+        working-directory: ${{ matrix.target.dir }}

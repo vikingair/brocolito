@@ -9,7 +9,7 @@ npx create-brocolito-cli@latest
 # or
 yarn create brocolito-cli@latest
 # or
-deno run -A npm:create-brocolito-cli@latest
+deno run -rA npm:create-brocolito-cli@latest
 ```
 
 See latest documentation of `brocolito` on [GitHub](https://github.com/vikingair/brocolito/blob/main/README.md).

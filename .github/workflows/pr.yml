@@ -39,3 +39,5 @@ jobs:
       - name: Test 🐛
         run: pnpm test
         working-directory: ${{ matrix.target.dir }}
+        env:
+          GITHUB_TOKEN: ${{ matrix.target.dir == '.github/cli' && github.token || '' }}

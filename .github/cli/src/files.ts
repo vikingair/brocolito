@@ -27,7 +27,7 @@ export const getChangedFiles = async (
 
   const prNumber = getPRNumber();
 
-  // see https://octokit.github.io/rest.js/v19#pulls-list-files
+  // see https://octokit.github.io/rest.js/v21#pulls-list-files
   const files = prNumber
     ? await octokit.paginate(octokit.rest.pulls.listFiles, {
         owner: github.context.repo.owner,
@@ -35,7 +35,7 @@ export const getChangedFiles = async (
         pull_number: prNumber,
         per_page: 100,
       })
-    : // see https://octokit.github.io/rest.js/v19#repos-compare-commits-with-basehead
+    : // see https://octokit.github.io/rest.js/v21#repos-compare-commits-with-basehead
       await octokit.paginate(
         octokit.rest.repos.compareCommitsWithBasehead,
         {
@@ -44,7 +44,13 @@ export const getChangedFiles = async (
           basehead: `${baseSha}...${currentSha}`, // or use SHAs
           per_page: 100,
         },
-        (r) => r.data.files || [],
+        // Currently, the TS types in combination with octokit.paginate are broken
+        (r) =>
+          (
+            r.data as Awaited<
+              ReturnType<typeof octokit.rest.repos.compareCommitsWithBasehead>
+            >["data"]
+          ).files || [],
       );
 
   return files.flatMap(({ filename, status, previous_filename }) =>

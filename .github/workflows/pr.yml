@@ -10,7 +10,7 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/brocolito-setup
       - run: bro changed_files
         id: find-changed-files
@@ -21,7 +21,7 @@ jobs:
   check-brocolito:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/pnpm-install
         with:
           target: brocolito
@@ -38,7 +38,7 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/pnpm-install
         with:
           target: .github/cli
@@ -54,7 +54,7 @@ jobs:
   check-create-brocolito-cli:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/pnpm-install
         with:
           target: create-brocolito-cli

@@ -9,11 +9,13 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+    outputs:
+      changed: ${{ steps.find-changed-targets.outputs.changed }}
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/brocolito-setup
-      - run: bro changed_files
-        id: find-changed-files
+      - run: bro changed_targets
+        id: find-changed-targets
         env:
           GITHUB_TOKEN: ${{ github.token }}
 

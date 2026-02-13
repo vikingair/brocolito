@@ -9,7 +9,7 @@ import { getChangedTargets } from "./targets.ts";
 
 initEnv();
 
-CLI.command("changed_files", "list changed files on GitHub workflows")
+CLI.command("changed_targets", "list changed files on GitHub workflows")
   .option(
     "--base-sha <string>",
     "Choose a base SHA to compare with (e.g. 41a6ef03). Will be ignored if PR number exists.",

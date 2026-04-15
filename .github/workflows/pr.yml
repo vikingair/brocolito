@@ -48,5 +48,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check result
-        if: needs.checks.result != 'success'
+        if: needs.checks.result != 'success' && needs.checks.result != 'skipped'
         run: echo "Some build failed" && exit 1

@@ -28,7 +28,7 @@ await vite.build({
       fileName: (_format) => "cli.js",
       formats: ["es"],
     },
-    rollupOptions: {
+    rolldownOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [/^node:.*/, ...(await getPackageJsonDependencies())],

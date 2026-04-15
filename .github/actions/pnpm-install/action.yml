@@ -14,8 +14,17 @@ runs:
       with:
         node-version: "24"
         registry-url: 'https://registry.npmjs.org'
-        cache: 'pnpm'
-        cache-dependency-path: ${{ inputs.target }}/pnpm-lock.yaml
+    - name: Get pnpm store directory
+      id: pnpm-store
+      shell: bash
+      run: echo "path=$(pnpm store path)" >> "$GITHUB_OUTPUT"
+    - name: Setup pnpm cache
+      uses: actions/cache@v5
+      with:
+        path: ${{ steps.pnpm-store.outputs.path }}
+        key: pnpm-store-${{ runner.os }}-${{ inputs.target }}-${{ hashFiles(format('{0}/pnpm-lock.yaml', inputs.target)) }}
+        restore-keys: |
+          pnpm-store-${{ runner.os }}-${{ inputs.target }}-
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile

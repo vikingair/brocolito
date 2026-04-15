@@ -1,13 +1,15 @@
 import js from "@eslint/js";
+import { defineConfig } from "eslint/config";
 import prettier from "eslint-plugin-prettier";
-import ts from "typescript-eslint";
+import tseslint from "typescript-eslint";
 
-export default ts.config(
+export default defineConfig(
   { ignores: ["node_modules", "dist"] },
   {
     files: ["**/*.{j,t}s", "**/*.{m,c}js"],
-    extends: [js.configs.recommended, ...ts.configs.recommended],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
     plugins: {
+      "@typescript-eslint": tseslint.plugin,
       prettier,
     },
     rules: {
@@ -30,6 +32,12 @@ export default ts.config(
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
+    },
+  },
+  {
+    files: ["**/*.js"],
+    rules: {
+      "no-undef": "off", // TS is taking care of that
     },
   },
 );

@@ -1,15 +1,17 @@
 // @ts-check
 
 import js from "@eslint/js";
+import { defineConfig } from "eslint/config";
 import prettier from "eslint-plugin-prettier";
-import ts from "typescript-eslint";
+import tseslint from "typescript-eslint";
 
-export default ts.config(
+export default defineConfig(
   { ignores: ["node_modules", "build"] },
   {
     files: ["**/*.{t,j}s"],
-    extends: [js.configs.recommended, ...ts.configs.recommended],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
     plugins: {
+      "@typescript-eslint": tseslint.plugin,
       prettier,
     },
     rules: {

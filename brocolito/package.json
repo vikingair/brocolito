@@ -53,5 +53,10 @@
     "vite": {
       "optional": true
     }
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

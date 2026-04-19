@@ -1,6 +1,6 @@
 {
   "name": "brocolito",
-  "version": "6.1.1",
+  "version": "7.0.0-next.0",
   "description": "Create type-safe CLIs to align local development and pipeline workflows",
   "main": "dist/brocolito.cjs",
   "module": "dist/brocolito.mjs",
@@ -47,7 +47,7 @@
     "vitest": "4.1.4"
   },
   "peerDependencies": {
-    "vite": ">= 7"
+    "vite": ">= 8"
   },
   "peerDependenciesMeta": {
     "vite": {

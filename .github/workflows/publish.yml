@@ -1,0 +1,36 @@
+name: Release new version
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish-brocolio:
+    if: startsWith(github.event.release.tag_name, 'brocolito-v')
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/pnpm-install
+        with:
+          target: ./brocolito
+      - run: pnpm test
+      - run: pnpm publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }} --provenance --access public --no-git-checks
+
+  publish-create-brocolio-cli:
+    if: startsWith(github.event.release.tag_name, 'create-brocolito-cli-v')
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/pnpm-install
+        with:
+          target: ./create-brocolio-cli
+      - run: pnpm test
+      - run: pnpm publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }} --provenance --access public --no-git-checks

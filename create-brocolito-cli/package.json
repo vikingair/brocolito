@@ -9,6 +9,15 @@
     "build/cli.js",
     "build/meta.js"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vikingair/brocolito"
+  },
+  "keywords": [
+    "CLI",
+    "brocolito"
+  ],
+  "author": "Viktor Luft <viktor.luft@freiheit.com> (https://github.com/vikingair)",
   "dependencies": {
     "@types/prompts": "2.4.9",
     "brocolito": "7.0.0",

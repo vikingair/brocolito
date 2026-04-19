@@ -17,8 +17,8 @@ jobs:
       - uses: ./.github/actions/pnpm-install
         with:
           target: ./brocolito
-      - run: pnpm test
       - run: pnpm publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }} --provenance --access public --no-git-checks
+        working-directory: ./brocolito
 
   publish-create-brocolio-cli:
     if: startsWith(github.event.release.tag_name, 'create-brocolito-cli-v')
@@ -32,5 +32,5 @@ jobs:
       - uses: ./.github/actions/pnpm-install
         with:
           target: ./create-brocolio-cli
-      - run: pnpm test
       - run: pnpm publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }} --provenance --access public --no-git-checks
+        working-directory: ./create-brocolio-cli

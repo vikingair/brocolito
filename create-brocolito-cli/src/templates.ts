@@ -54,14 +54,24 @@ const packageJson = (
 
   if (runtime === "bun") {
     content.scripts.prepare = "brocolito bun";
-    content.scripts.test = "bun test";
     delete (content.devDependencies as Record<string, string>)["@types/node"];
   }
 
   if (runtime === "node") {
-    content.scripts.test =
-      "node --experimental-strip-types --no-warnings --test";
+    content.scripts.prepare =
+      "brocolito node --experimental-strip-types --no-warnings";
     delete (content.devDependencies as Record<string, string>)["@types/bun"];
+  }
+
+  if (testFramework === "vitest") {
+    content.scripts.test = "vitest run";
+  } else if (testFramework === "runtime") {
+    if (runtime === "bun") {
+      content.scripts.test = "bun test";
+    } else if (runtime === "node") {
+      content.scripts.test =
+        "node --experimental-strip-types --no-warnings --test";
+    }
   }
 
   if (testFramework !== "vitest") {

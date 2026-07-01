@@ -1,6 +1,6 @@
 {
   "name": "create-brocolito-cli",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "bin": {
     "create-brocolito-cli": "./build/cli.js"
   },
@@ -21,7 +21,7 @@
   "author": "Viktor Luft <viktor.luft@freiheit.com> (https://github.com/vikingair)",
   "dependencies": {
     "@types/prompts": "2.4.9",
-    "brocolito": "7.0.0",
+    "brocolito": "7.1.0",
     "prompts": "2.4.2"
   },
   "scripts": {

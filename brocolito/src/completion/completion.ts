@@ -77,12 +77,10 @@ export const _completion = async ({
         (!relevantArgs.includes("--" + name) &&
           (!short || !relevantArgs.includes("-" + short))),
     )
-    .map(
-      ({ name, description }: OptionMeta): CompleteItem => ({
-        name: "--" + name,
-        description,
-      }),
-    );
+    .map(({ name, description }: OptionMeta): CompleteItem => ({
+      name: "--" + name,
+      description,
+    }));
 
   // debugging autocompletion
   // fs.writeFileSync(

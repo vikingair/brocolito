@@ -24,6 +24,14 @@ describe("arguments", () => {
     { usage: "--foo something", type: "string", name: "foo" },
     { usage: "--foo! something", type: "string", name: "foo", mandatory: true },
     { usage: "--foo! <file>", type: "file", name: "foo", mandatory: true },
+    { usage: "--foo <int>", type: "int", name: "foo" },
+    { usage: "--foo <int...>", type: "int", name: "foo", multi: true },
+    {
+      usage: "--foo! <int>",
+      type: "int",
+      name: "foo",
+      mandatory: true,
+    },
   ])(
     "parses argument info for option with usage '$usage'",
     ({ usage, name, type, mandatory = false, multi = false }) => {
@@ -49,6 +57,8 @@ describe("arguments", () => {
     { usage: "<foo:one|two...>", type: ["one", "two"], multi: true },
     { usage: "<foo:file>", type: "file" },
     { usage: "<foo:file...>", type: "file", multi: true },
+    { usage: "<foo:int>", type: "int" },
+    { usage: "<foo:int...>", type: "int", multi: true },
   ])(
     "parses argument info with usage '$usage'",
     ({ usage, type, multi = false }) => {

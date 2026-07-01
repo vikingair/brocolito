@@ -35,9 +35,11 @@ type UnionFromPipes<TType extends string> =
 
 type TypeFromSpec<TSpec extends string> = TSpec extends `${infer T}...`
   ? TypeFromSpec<T>[]
-  : TSpec extends "file" | "string"
-    ? string
-    : UnionFromPipes<TSpec>;
+  : TSpec extends "int"
+    ? number
+    : TSpec extends "file" | "string"
+      ? string
+      : UnionFromPipes<TSpec>;
 
 export type ArgumentToName<S extends string> = SnakeToCamelCase<
   RemoveArgumentType<RemoveArgumentDots<RemoveArgumentBrackets<S>>>
@@ -76,7 +78,7 @@ type Option<OPTIONS, ARGS, TArgState extends ArgStates> = <
 ) => Command<OPTIONS & OptionArg<USAGE>, ARGS, TArgState>;
 
 export type ArgType = {
-  type: "string" | "file" | string[];
+  type: "string" | "file" | "int" | string[];
   multi: boolean;
 } & CompletionOpt;
 

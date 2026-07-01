@@ -133,6 +133,21 @@ flags and will be treated as boolean `true`.
 
 - Shell example: `cli hello --name mark`
 
+#### Int Options
+
+- Specification: `--option-name <int>`
+- Parameter type: `int | undefined`
+- Completion: none
+- Code example:
+
+   ```ts
+   CLI.command('run', 'runs a task')
+      .option('--repeat <int>', 'repeat counter (defaults to 1)')
+      .action(({ repeat = 1 }) => Array.from({ length: repeat }).forEach(runTask));
+   ```
+
+- Shell example: `cli hello --name mark`
+
 #### File Options
 
 - Specification: `--option-name <file>`
@@ -233,6 +248,21 @@ on a command. If you cannot have another arg after an arg list.
    ```
 
 - Shell example: `cli hello mark`
+
+#### Int Arg
+
+- Specification: `<arg-name:int>`
+- Parameter type: `number` (signed integer)
+- Completion: none
+- Code example:
+
+   ```ts
+   CLI.command('check', 'checks limits')
+      .arg('<count:int>', 'make a guess')
+      .action(({ count }) => console.log(count < 5));
+   ```
+
+- Shell example: `cli check 4`
 
 #### File Arg
 

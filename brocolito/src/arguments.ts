@@ -22,7 +22,7 @@ const deriveInfo = <S extends `<${string}${string}>`>(
   const m = match[2]?.substring(1) ?? "string"; // without the collon
   return {
     name: camelize(match[1]) as ArgumentToName<S>,
-    type: m === "string" || m === "file" ? m : m.split("|"),
+    type: m === "string" || m === "file" || m === "int" ? m : m.split("|"),
     multi: !!match[3],
   };
 };
@@ -54,7 +54,7 @@ const deriveOptionInfo = (
   return {
     name,
     short,
-    type: m === "string" || m === "file" ? m : m.split("|"),
+    type: m === "string" || m === "file" || m === "int" ? m : m.split("|"),
     mandatory,
     multi: !!optionTypeMatch[2],
   };

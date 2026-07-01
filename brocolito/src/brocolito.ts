@@ -18,7 +18,7 @@ import pc from "picocolors";
 
 process.on("unhandledRejection", (err) => {
   // in case of unhandled rejections, these are usually expected to be raised to the caller of the CLI.
-  // Hence, we want to make them very minimal but good visible
+  // Hence, we want to make them very minimal but well visible
   const errMsg = String(
     err instanceof Error ? (process.env.DEBUG ? err.stack : err.message) : err,
   );

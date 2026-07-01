@@ -108,21 +108,21 @@ describe("Example commands", () => {
     await call("example");
 
     // then
-    expect(spy).toBeCalledWith({ someMore: false });
+    expect(spy).toHaveBeenCalledWith({ someMore: false });
 
     // when - called with no options
     spy.mockReset();
     await call("example -s");
 
     // then
-    expect(spy).toBeCalledWith({ someMore: true });
+    expect(spy).toHaveBeenCalledWith({ someMore: true });
 
     // when
     spy.mockReset();
     await call("example --test foo --some-more=false");
 
     // then
-    expect(spy).toBeCalledWith({ test: "foo", someMore: false });
+    expect(spy).toHaveBeenCalledWith({ test: "foo", someMore: false });
 
     // when - called with invalid options
     await expect(() => call("example --invalid=foo")).rejects.toThrow(
@@ -156,7 +156,7 @@ describe("Example commands", () => {
     await call("example -t foo");
 
     // then
-    expect(spy).toBeCalledWith({ test: "foo" });
+    expect(spy).toHaveBeenCalledWith({ test: "foo" });
   });
 
   it("using multi options", async () => {
@@ -173,19 +173,19 @@ describe("Example commands", () => {
     await call("example");
 
     // then
-    expect(spy).toBeCalledWith({ test: undefined });
+    expect(spy).toHaveBeenCalledWith({ test: undefined });
 
     // when - called with single entry
     await call("example --test foo --non-multi one --non-multi two");
 
     // then
-    expect(spy).toBeCalledWith({ test: ["foo"], nonMulti: "two" });
+    expect(spy).toHaveBeenCalledWith({ test: ["foo"], nonMulti: "two" });
 
     // when - called with multiple entries
     await call("example --test foo --test bar");
 
     // then
-    expect(spy).toBeCalledWith({ test: ["foo", "bar"] });
+    expect(spy).toHaveBeenCalledWith({ test: ["foo", "bar"] });
   });
 
   it("using union options", async () => {
@@ -202,7 +202,7 @@ describe("Example commands", () => {
     await call("example");
 
     // then
-    expect(spy).toBeCalledWith({});
+    expect(spy).toHaveBeenCalledWith({});
 
     // when - called with string not matching union constraints
     await expect(() => call("example --test bar")).rejects.toThrow(
@@ -213,7 +213,7 @@ describe("Example commands", () => {
     await call("example --test foo");
 
     // then
-    expect(spy).toBeCalledWith({ test: "foo" });
+    expect(spy).toHaveBeenCalledWith({ test: "foo" });
 
     // when - called with string not matching union constraints
     await expect(() =>
@@ -226,7 +226,7 @@ describe("Example commands", () => {
     await call("example --test-multi one --test-multi two");
 
     // then
-    expect(spy).toBeCalledWith({ testMulti: ["one", "two"] });
+    expect(spy).toHaveBeenCalledWith({ testMulti: ["one", "two"] });
   });
 
   it("using union args", async () => {
@@ -248,14 +248,14 @@ describe("Example commands", () => {
     await call("example foo");
 
     // then
-    expect(spy).toBeCalledWith({ test: "foo", testMulti: [] });
+    expect(spy).toHaveBeenCalledWith({ test: "foo", testMulti: [] });
 
     // when - called with single multi arg
     spy.mockReset();
     await call("example foo one");
 
     // then
-    expect(spy).toBeCalledWith({ test: "foo", testMulti: ["one"] });
+    expect(spy).toHaveBeenCalledWith({ test: "foo", testMulti: ["one"] });
 
     // when - called with string not matching union constraints
     await expect(() => call("example foo one ups")).rejects.toThrow(
@@ -267,10 +267,57 @@ describe("Example commands", () => {
     await call("example foo one two");
 
     // then
-    expect(spy).toBeCalledWith({
+    expect(spy).toHaveBeenCalledWith({
       test: "foo",
       testMulti: ["one", "two"],
     });
+  });
+
+  it("using int options and args", async () => {
+    // given
+    const spy = vi.fn();
+    CLI.command("example", "example-description")
+      .option("--count <int>", "an int")
+      .option("--scores <int...>", "multiple ints")
+      .arg("<ratio:int>", "an int arg")
+      .action(({ count, scores, ratio, ...rest }) =>
+        spy({ count, scores, ratio, ...rest }),
+      );
+
+    // when - called without int option
+    await call("example 5");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ ratio: 5 });
+
+    // when - called with int option
+    spy.mockReset();
+    await call("example --count 42 10");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ count: 42, ratio: 10 });
+
+    // when - called with multiple ints
+    spy.mockReset();
+    await call("example --scores 1 --scores 2 3");
+
+    // then
+    expect(spy).toHaveBeenCalledWith({ scores: [1, 2], ratio: 3 });
+
+    // when - called with invalid int
+    await expect(() => call("example --count abc 5")).rejects.toThrow(
+      'Invalid value "abc" provided for flag --count. Expected an integer.',
+    );
+
+    // when - called with invalid int arg
+    await expect(() => call("example abc")).rejects.toThrow(
+      'Invalid value "abc" provided for arg <ratio:int>. Expected an integer.',
+    );
+
+    // when - called with float
+    await expect(() => call("example --count 3.14 5")).rejects.toThrow(
+      'Invalid value "3.14" provided for flag --count. Expected an integer.',
+    );
   });
 
   it("parses args and options", async () => {
@@ -289,7 +336,7 @@ describe("Example commands", () => {
     await call("example ./some/path hot hotter lotta --test=ups --open");
 
     // then
-    expect(spy).toBeCalledWith({
+    expect(spy).toHaveBeenCalledWith({
       test: "ups",
       open: true,
       testArg: "./some/path",
@@ -300,7 +347,7 @@ describe("Example commands", () => {
     await call("example --open=false foo bar");
 
     // then
-    expect(spy).toBeCalledWith({
+    expect(spy).toHaveBeenCalledWith({
       testArg: "foo",
       testMulti: ["bar"],
       open: false,
@@ -330,13 +377,13 @@ describe("Example commands", () => {
     await call("example bar --open --test ups");
 
     // then
-    expect(barSpy).toBeCalledWith({ test: "ups", open: true });
+    expect(barSpy).toHaveBeenCalledWith({ test: "ups", open: true });
 
     // when - calling the sub command
     await call("example foo --open=false --nice ups");
 
     // then
-    expect(fooSpy).toBeCalledWith({ nice: "ups", open: false });
+    expect(fooSpy).toHaveBeenCalledWith({ nice: "ups", open: false });
   });
 
   it("parses subcommands, args and options", async () => {
@@ -357,7 +404,7 @@ describe("Example commands", () => {
     await call("example foo hot --nice try --open=false");
 
     // then
-    expect(subcommandSpy).toBeCalledWith({
+    expect(subcommandSpy).toHaveBeenCalledWith({
       what: "hot",
       open: false,
       nice: "try",

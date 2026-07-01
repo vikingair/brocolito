@@ -94,7 +94,7 @@ export const findCommand = (args: string[]): FoundCommand => {
 const _parseArgs = (
   command: Command,
   args: string[],
-): Record<string, string | string[] | undefined> => {
+): Record<string, string | string[] | number | number[] | undefined> => {
   const throwError = (reason: string, remainingArgs?: string[]) => {
     Help.show(command);
     throw new Error(
@@ -112,7 +112,12 @@ The following arguments could not be processed: ${pc.yellow(
   let usedArgs = [...args];
   const result = Object.fromEntries(
     command.args.map(
-      ({ usage, name, type, multi }): [string, string | string[]] => {
+      ({
+        usage,
+        name,
+        type,
+        multi,
+      }): [string, string | string[] | number | number[]] => {
         if (!usedArgs.length) {
           // by default multi args can be empty as well
           return multi ? [name, []] : throwError("Too few arguments given");
@@ -121,17 +126,22 @@ The following arguments could not be processed: ${pc.yellow(
           if (Array.isArray(type) && !type.includes(v)) {
             throw new Error(`Invalid value "${v}" provided for arg ${usage}.`);
           }
+          if (type === "int" && !Number.isInteger(Number(v))) {
+            throw new Error(
+              `Invalid value "${v}" provided for arg ${usage}. Expected an integer.`,
+            );
+          }
         };
         if (!multi) {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           const arg = usedArgs.shift()!;
           checkValiditiy(arg);
-          return [name, arg];
+          return [name, type === "int" ? Number(arg) : arg];
         } else {
           const copy = [...usedArgs];
           copy.forEach(checkValiditiy);
           usedArgs = [];
-          return [name, copy];
+          return [name, type === "int" ? copy.map(Number) : copy];
         }
       },
     ),
@@ -143,8 +153,14 @@ The following arguments could not be processed: ${pc.yellow(
 const _parseOptions = (
   command: Command,
   options: ParseResult["values"],
-): Record<string, string[] | string | boolean | undefined> => {
-  const opts: Record<string, string[] | string | boolean | undefined> = {};
+): Record<
+  string,
+  string[] | string | boolean | number | number[] | undefined
+> => {
+  const opts: Record<
+    string,
+    string[] | string | boolean | number | number[] | undefined
+  > = {};
   Object.entries(command.options as Record<string, OptionMeta>).forEach(
     ([camelName, { name, type, mandatory }]) => {
       const value = options[name];
@@ -184,13 +200,19 @@ const _parseOptions = (
               )}`,
             );
           }
+          if (type === "int" && !Number.isInteger(Number(v))) {
+            throw new Error(
+              `Invalid value "${v}" provided for flag --${name}. Expected an integer.`,
+            );
+          }
         };
         if (Array.isArray(value)) {
           value.forEach(checkValiditiy);
-          opts[camelName] = value as string[];
+          opts[camelName] =
+            type === "int" ? value.map(Number) : (value as string[]);
         } else {
           checkValiditiy(value);
-          opts[camelName] = value;
+          opts[camelName] = type === "int" ? Number(value) : value;
         }
       }
     },

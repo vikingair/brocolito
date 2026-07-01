@@ -49,9 +49,8 @@ export type Action<ARGS> = (args: ARGS) => unknown; // take whatever return valu
 export type OptionArg<USAGE extends `--${string}`> = {
   [arg in OptionToName<USAGE>]: USAGE extends `--${string} ${infer T}`
     ? T extends `<${infer U}>`
-      ?
-          | TypeFromSpec<U>
-          | (USAGE extends `--${string}! <${string}>` ? never : undefined)
+      ? | TypeFromSpec<U>
+        | (USAGE extends `--${string}! <${string}>` ? never : undefined)
       : string | undefined
     : boolean;
 };
@@ -93,8 +92,7 @@ export type OptionMeta = {
 } & CompletionOpt;
 
 export type DescriptionOrOpts =
-  | string
-  | { description: string; alias?: string };
+  string | { description: string; alias?: string };
 
 export type Subcommand<OPTIONS, ARGS> = (
   name: string,
